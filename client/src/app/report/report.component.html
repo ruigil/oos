@@ -1,0 +1,36 @@
+<ons-toolbar>
+    <div class="left">
+      <ons-back-button>Back</ons-back-button>
+    </div>
+    <div class="right">
+      <ons-toolbar-button (click)="openMenu()">
+        <ons-icon icon="md-menu"></ons-icon>
+      </ons-toolbar-button>
+    </div>
+  </ons-toolbar>
+
+  <div class="content">
+    <ons-card>
+      <img src="https://monaca.io/img/logos/download_image_onsenui_01.png" alt="Onsen UI" style="width: 100%">
+      <div class="title">{{ cardTitle }}</div>
+      <div class="content">
+        <div>
+          <ons-button>
+            <ons-icon icon="ion-thumbsup"></ons-icon>
+          </ons-button>
+          <ons-button>
+            <ons-icon icon="ion-share"></ons-icon>
+          </ons-button>
+        </div>
+        <ons-list>
+          <ons-list-header>Bindings</ons-list-header>
+          <ons-list-item>Vue</ons-list-item>
+          <ons-list-item>Angular</ons-list-item>
+          <ons-list-item>React</ons-list-item>
+        </ons-list>
+      </div>
+    </ons-card>
+    <p style="text-align: center; opacity: 0.6; padding-top: 20px;">
+      Swipe left to open the menu!
+    </p>
+  </div>

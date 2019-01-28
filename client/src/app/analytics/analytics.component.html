@@ -1,0 +1,20 @@
+<ons-toolbar>
+    <div class="center">Analytics</div>
+    <div class="right">
+      <ons-toolbar-button (click)="openMenu()">
+        <ons-icon icon="md-menu"></ons-icon>
+      </ons-toolbar-button>
+    </div>
+</ons-toolbar>
+<div class="content">
+  <h2>Reports</h2>
+  <ons-list-title>Reports List</ons-list-title>
+  <ons-list>
+    <ons-list-item (click)="push($event)">Report One</ons-list-item>
+    <ons-list-item (click)="push($event)">Report Two</ons-list-item>
+    <ons-list-item (click)="push($event)">Report Three</ons-list-item>
+  </ons-list>
+  <p style="text-align: center; opacity: 0.6; padding-top: 20px;">
+    Swipe left to open the menu!
+  </p>
+</div>
