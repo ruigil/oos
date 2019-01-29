@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { OnsNavigator, Params } from 'ngx-onsenui';
 import { MenuService } from '../menu.service';
+import { DropsService } from '../drops.service';
+import { Drop } from '../drop';
 
 @Component({
   selector: 'ons-page[create]',
@@ -8,23 +9,21 @@ import { MenuService } from '../menu.service';
   styleUrls: ['./create.component.css']
 })
 export class CreateComponent implements OnInit {
-  constructor(private menuService: MenuService, private _navigator: OnsNavigator, private _params: Params) { }
+  
+  drop: Drop = new Drop();
 
-  title: string = 'Custom Page';
+  constructor(
+    private dropsService: DropsService, 
+    private menuService: MenuService, 
+    ) { }
 
   ngOnInit() { 
-    if (this._params.data && this._params.data.title)
-      this.title = this._params.data.title;
+    this.drop.text = "Enter the text...";
+    this.drop.type = "NONE";
   }
 
-  /*
-  push() {
-    this._navigator.element.pushPage(CreateComponent, { data: { title: this._navigator.element.topPage.querySelector('ons-input').value } });
-  }
-  */
-
-  pop() {
-    this._navigator.element.popPage();
+  addTask() {
+    //this.dropsService.createDrop(this.drop).then( () => this._navigator.element.popPage() );
   }
 
   openMenu() {

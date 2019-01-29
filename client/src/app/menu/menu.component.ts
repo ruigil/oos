@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingsComponent } from '../settings/settings.component';
-import { HomeComponent } from '../home/home.component';
+
 import { AnalyticsComponent } from '../analytics/analytics.component';
 import { Observable } from 'rxjs';
 import { MenuService } from '../menu.service';
@@ -13,7 +13,7 @@ import { MenuService } from '../menu.service';
 export class MenuComponent implements OnInit {
 
   settings = SettingsComponent;
-  home = HomeComponent;
+  //home = HomeComponent;
   analytics = AnalyticsComponent;
 
   constructor(private menuService: MenuService) {

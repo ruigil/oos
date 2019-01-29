@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuService } from '../menu.service';
-import { OnsNavigator, Params } from 'ngx-onsenui';
+
 
 @Component({
   selector: 'ons-page[settings]',
@@ -9,7 +9,7 @@ import { OnsNavigator, Params } from 'ngx-onsenui';
 })
 export class SettingsComponent implements OnInit {
 
-  constructor(private menuService: MenuService, private _navigator: OnsNavigator, private _params: Params) { 
+  constructor(private menuService: MenuService) { 
   }
 
   openMenu() {

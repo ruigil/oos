@@ -1,5 +1,4 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { OnsNavigator, Params } from 'ngx-onsenui';
 import { ReportComponent } from '../report/report.component';
 import { MenuService } from '../menu.service';
 
@@ -10,10 +9,10 @@ import { MenuService } from '../menu.service';
 })
 export class AnalyticsComponent implements OnInit {
 
-  constructor(private menuService: MenuService, private _navigator: OnsNavigator) { }
+  constructor(private menuService: MenuService) { }
 
   push(event) {
-    this._navigator.element.pushPage(ReportComponent, { data: { cardTitle: event.target.textContent } });
+    //this._navigator.element.pushPage(ReportComponent, { data: { cardTitle: event.target.textContent } });
   }
 
   openMenu() {
