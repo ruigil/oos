@@ -42,3 +42,6 @@ Thumbs.db
 .firebase/
 .firebaserc
 
+# Environment Angular API Key
+client/src/environments/environment.ts
+client/src/environments/environment.prod.ts
