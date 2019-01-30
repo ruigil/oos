@@ -43,5 +43,5 @@ Thumbs.db
 .firebaserc
 
 # Environment Firestore API Key
-/client/src/environments/environment.ts
-/client/src/environments/environment.prod.ts
+environment.ts
+environment.prod.ts
