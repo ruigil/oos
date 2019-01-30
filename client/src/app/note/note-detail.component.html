@@ -1,0 +1,23 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>
+      Edit Note
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+      <ion-item>
+          <ion-label position="floating">Text</ion-label>
+          <ion-input [(ngModel)]="drop.text"></ion-input>
+      </ion-item>  
+      <ion-button (click)="updateNote()" shape="round" fill="outline">
+          <ion-icon name="add" slot="start"></ion-icon>Update Note
+      </ion-button>    
+      <ion-button (click)="deleteNote()" shape="round" fill="outline">
+          <ion-icon name="add" slot="start"></ion-icon>Delete Note
+      </ion-button>    
+</ion-content>

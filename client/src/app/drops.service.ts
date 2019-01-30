@@ -45,6 +45,17 @@ export class DropsService {
             }),
           );
     }
+    docWithId$<T>(ref: DocPredicate<T>): Observable<any> {
+        return this.doc(ref)
+          .snapshotChanges()
+          .pipe(
+            map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
+                const data: Object = doc.payload.data() as T;
+                const id = doc.payload.id;
+                return { id, ...data };
+            }),
+          );
+    }
     
     col$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<T[]> {
         return this.col(ref, queryFn)

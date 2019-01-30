@@ -14,7 +14,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { MenuComponent } from './menu/menu.component';
-import { AnalyticsComponent } from './analytics/analytics.component';
 import { CreateComponent } from './create/create.component';
 import { ReportComponent } from './report/report.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -23,7 +22,6 @@ import { SettingsComponent } from './settings/settings.component';
 @NgModule({
   declarations: [
     AppComponent,
-    AnalyticsComponent,
     SettingsComponent,
     CreateComponent,
     ReportComponent,
@@ -40,7 +38,6 @@ import { SettingsComponent } from './settings/settings.component';
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   entryComponents: [
-    AnalyticsComponent,
     SettingsComponent,
     CreateComponent,
     ReportComponent,

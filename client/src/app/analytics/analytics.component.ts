@@ -3,21 +3,14 @@ import { ReportComponent } from '../report/report.component';
 import { MenuService } from '../menu.service';
 
 @Component({
-  selector: 'ons-page[analytics]',
+  selector: 'analytics-page',
   templateUrl: './analytics.component.html',
-  styleUrls: ['./analytics.component.css']
+  styleUrls: ['./analytics.component.scss']
 })
 export class AnalyticsComponent implements OnInit {
 
   constructor(private menuService: MenuService) { }
 
-  push(event) {
-    //this._navigator.element.pushPage(ReportComponent, { data: { cardTitle: event.target.textContent } });
-  }
-
-  openMenu() {
-    this.menuService.open();
-  }
 
   ngOnInit() {
   }

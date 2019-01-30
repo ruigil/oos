@@ -13,11 +13,15 @@ const routes: Routes = [
   },
   {
     path: 'analytics',
-    loadChildren: './list/list.module#ListPageModule'
+    loadChildren: './analytics/analytics.module#AnalyticsComponentModule'
   },
   {
     path: 'settings',
-    loadChildren: './list/list.module#ListPageModule'
+    loadChildren: './analytics/analytics.module#AnalyticsComponentModule'
+  },
+  {
+    path: 'note',
+    loadChildren: './note/note.module#NoteModule'
   }
 ];
 
