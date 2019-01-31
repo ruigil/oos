@@ -23,6 +23,11 @@ export class AppComponent {
       icon: 'list'
     },
     {
+      title: 'Labels',
+      url: '/labels',
+      icon: 'pricetags'
+    },
+    {
       title: 'Settings',
       url: '/settings',
       icon: 'settings'
