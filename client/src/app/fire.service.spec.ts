@@ -1,15 +1,15 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { DropsService } from './drops.service';
+import { FireService } from './fire.service';
 
 describe('DropsService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [DropsService]
+      providers: [FireService]
     });
   });
 
-  it('should be created', inject([DropsService], (service: DropsService) => {
+  it('should be created', inject([FireService], (service: FireService) => {
     expect(service).toBeTruthy();
   }));
 });

@@ -13,16 +13,16 @@
     <ion-item>
         <!--[(ngModel)]="labelName"-->
         <ion-input slot="start" placeholder="Enter label name..."></ion-input>
-        <ion-select slot="end" value="primary">
-            <ion-select-option value="primary"><ion-badge color="primary">Blue</ion-badge></ion-select-option>
-            <ion-select-option value="dark">Grey</ion-select-option>
-            <ion-select-option value="sucess">Green</ion-select-option>
-            <ion-select-option value="danger">Red</ion-select-option>
-        </ion-select>
         <ion-button slot="end" (click)="addLabel()" shape="round" fill="outline">
             <ion-icon name="add" slot="start"></ion-icon>Add
         </ion-button>    
     </ion-item>  
+    <ion-select value="primary">
+        <ion-select-option value="primary"><ion-badge color="primary">Blue</ion-badge></ion-select-option>
+        <ion-select-option value="dark">Grey</ion-select-option>
+        <ion-select-option value="sucess">Green</ion-select-option>
+        <ion-select-option value="danger">Red</ion-select-option>
+    </ion-select>
     <ion-item-divider color="light">
         <ion-label>Current Labels</ion-label>
     </ion-item-divider>
