@@ -13,7 +13,6 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { MenuComponent } from './menu/menu.component';
 import { CreateComponent } from './create/create.component';
 import { ReportComponent } from './report/report.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -25,7 +24,6 @@ import { SettingsComponent } from './settings/settings.component';
     SettingsComponent,
     CreateComponent,
     ReportComponent,
-    MenuComponent
   ],
   imports: [
     BrowserModule,
@@ -41,7 +39,6 @@ import { SettingsComponent } from './settings/settings.component';
     SettingsComponent,
     CreateComponent,
     ReportComponent,
-    MenuComponent
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
