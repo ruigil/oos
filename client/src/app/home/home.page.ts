@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Component } from '@angular/core';
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
@@ -21,14 +22,16 @@ export class HomePage {
     'bluetooth',
     'build'
   ];
-  public items: Array<{ id: string, title: string; note: string; icon: string }> = [];
+  public items: Array<{ id: string, date: string, title: string; note: string; icon: string }> = [];
 
   constructor(private dropsService: FireService) {
     this.dropsService.colWithIds$("drops").subscribe( (drops:Drop[])=> {
       this.items = [];
       for (let i = 0; i < drops.length; i++) {
+          console.log(drops[i]);
         this.items.push({
           id: drops[i].id,
+          date: format(drops[i].updatedAt.seconds,'DD/MM HH:mm'),
           title: 'Item ' + i,
           note: drops[i].text,
           icon: this.icons[Math.floor(Math.random() * this.icons.length)]
@@ -36,6 +39,11 @@ export class HomePage {
       }
     });
 
+  }
+
+  formatDate(date) {
+      console.log(date);
+      return format(date,'DD/MM HH:mm');      
   }
 
   deleteDrop(id,event) {

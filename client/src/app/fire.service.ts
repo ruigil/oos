@@ -92,8 +92,8 @@ export class FireService {
       
     update<T>(ref: DocPredicate<T>, data: any): Promise<void> {
         return this.doc(ref).update({
-          ...data,
           updatedAt: this.timestamp,
+          ...data,
         });
     }
       

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --host 0.0.0.0 --port 8080 --disable-host-check",
+    "start": "ng serve --port 8080 --disable-host-check",
     "build": "ng build",
     "dist": "ng build --prod",
     "test": "ng test",
@@ -26,6 +26,7 @@
     "@angular/service-worker": "^7.2.2",
     "@ionic/angular": "^4.0.0",
     "core-js": "^2.6.3",
+    "date-fns": "^1.30.1",
     "firebase": "^5.8.1",
     "rxjs": "^6.3.3",
     "tslib": "^1.9.0",

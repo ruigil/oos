@@ -14,7 +14,11 @@
     <ion-list>
         <ion-item-sliding *ngFor="let item of items; let i = index;" [routerLink]="['/note',item.id]">
             <ion-item>
-                <ion-icon [name]="item.icon" slot="start"></ion-icon>
+                <ion-chip slot="start">
+                    <ion-icon name="time"></ion-icon>                    
+                    <ion-label>{{item.date}}</ion-label>
+                </ion-chip>                
+                <ion-icon [name]="item.icon" ></ion-icon>
                 <ion-label>{{item.note}}</ion-label>
             </ion-item>
             <ion-item-options side="start">
