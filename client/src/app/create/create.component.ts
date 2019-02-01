@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuService } from '../menu.service';
-import { DropsService } from '../drops.service';
+import { FireService } from '../fire.service';
 import { Drop } from '../drop';
 
 @Component({
@@ -13,8 +12,7 @@ export class CreateComponent implements OnInit {
   drop: Drop = new Drop();
 
   constructor(
-    private dropsService: DropsService, 
-    private menuService: MenuService, 
+    private dropsService: FireService, 
     ) { }
 
   ngOnInit() { 
@@ -24,10 +22,6 @@ export class CreateComponent implements OnInit {
 
   addTask() {
     //this.dropsService.createDrop(this.drop).then( () => this._navigator.element.popPage() );
-  }
-
-  openMenu() {
-    this.menuService.open();
   }
 
 }

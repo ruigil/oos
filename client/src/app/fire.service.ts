@@ -20,7 +20,7 @@ type DocPredicate<T> = string | AngularFirestoreDocument<T>;
 @Injectable({
   providedIn: 'root'
 })
-export class DropsService {
+export class FireService {
 
     constructor(private firestore: AngularFirestore) { }
 

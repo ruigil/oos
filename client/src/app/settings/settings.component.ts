@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuService } from '../menu.service';
-
 
 @Component({
   selector: 'ons-page[settings]',
@@ -9,11 +7,7 @@ import { MenuService } from '../menu.service';
 })
 export class SettingsComponent implements OnInit {
 
-  constructor(private menuService: MenuService) { 
-  }
-
-  openMenu() {
-    this.menuService.open();
+  constructor() { 
   }
 
   ngOnInit() {

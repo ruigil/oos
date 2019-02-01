@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuService } from '../menu.service';
 
 
 @Component({
@@ -9,15 +8,11 @@ import { MenuService } from '../menu.service';
 })
 export class ReportComponent implements OnInit {
 
-  constructor(private menuService: MenuService) { }
+  constructor() { }
 
   cardTitle: string = 'Custom Card';
 
   ngOnInit() { 
-  }
-
-  openMenu() {
-    this.menuService.open();
   }
 
 

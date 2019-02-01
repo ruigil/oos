@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DropsService } from '../drops.service';
+import { FireService } from '../fire.service';
 
 @Component({
   selector: 'app-note',
@@ -11,7 +11,7 @@ export class NoteComponent implements OnInit {
 
   text: string = "This is a test";
 
-  constructor(private dropsService: DropsService, private router: Router) { }
+  constructor(private dropsService: FireService, private router: Router) { }
 
   ngOnInit() {
   }

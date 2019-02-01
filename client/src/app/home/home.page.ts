@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { DropsService } from '../drops.service';
+import { FireService } from '../fire.service';
 import { Drop } from '../drop';
 
 @Component({
@@ -23,7 +23,7 @@ export class HomePage {
   ];
   public items: Array<{ id: string, title: string; note: string; icon: string }> = [];
 
-  constructor(private dropsService: DropsService) {
+  constructor(private dropsService: FireService) {
     this.dropsService.colWithIds$("drops").subscribe( (drops:Drop[])=> {
       this.items = [];
       for (let i = 0; i < drops.length; i++) {

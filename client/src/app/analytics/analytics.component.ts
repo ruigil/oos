@@ -1,6 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ReportComponent } from '../report/report.component';
-import { MenuService } from '../menu.service';
 
 @Component({
   selector: 'analytics-page',
@@ -9,7 +8,7 @@ import { MenuService } from '../menu.service';
 })
 export class AnalyticsComponent implements OnInit {
 
-  constructor(private menuService: MenuService) { }
+  constructor() { }
 
 
   ngOnInit() {

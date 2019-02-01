@@ -11,13 +11,13 @@
   
   <ion-content>
     <ion-item>
-        <!--[(ngModel)]="labelName"-->
-        <ion-input slot="start" placeholder="Enter label name..."></ion-input>
+        <!---->
+        <ion-input slot="start" [(ngModel)]="labelName" placeholder="Enter label name..."></ion-input>
         <ion-button slot="end" (click)="addLabel()" shape="round" fill="outline">
             <ion-icon name="add" slot="start"></ion-icon>Add
         </ion-button>    
     </ion-item>  
-    <ion-select value="primary">
+    <ion-select [(ngModel)]="labelColor" value="primary">
         <ion-select-option value="primary"><ion-badge color="primary">Blue</ion-badge></ion-select-option>
         <ion-select-option value="dark">Grey</ion-select-option>
         <ion-select-option value="sucess">Green</ion-select-option>
@@ -27,9 +27,9 @@
         <ion-label>Current Labels</ion-label>
     </ion-item-divider>
     <ion-list>
-        <ion-item *ngFor="let label of labels; let i = index;" (click)="pushLabel(i)">
-            <ion-button color="primary"><ion-icon name="pricetag" slot="start"></ion-icon>{{label}}</ion-button>
-            <ion-button slot="end" (click)="addLabel()" color="danger" fill="clear">
+        <ion-item *ngFor="let label of labels | async; let i = index;">
+            <ion-button color="{{label.color}}"><ion-icon name="pricetag" slot="start"></ion-icon>{{label.name}}</ion-button>
+            <ion-button slot="end" (click)="deleteLabel(label.id)" color="danger" fill="clear">
                 <ion-icon name="trash"></ion-icon>
             </ion-button>    
         </ion-item>

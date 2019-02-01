@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { DropsService } from '../drops.service';
+import { FireService } from '../fire.service';
 import { Drop } from '../drop';
 
 @Component({
@@ -16,7 +16,7 @@ export class NoteDetailComponent implements OnInit {
     drop: Drop = new Drop();
     id: string;
 
-    constructor(private dropsService: DropsService, private route: ActivatedRoute, private router: Router) { }
+    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { }
 
     ngOnInit() {
         console.log("init")
