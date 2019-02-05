@@ -85,20 +85,20 @@ export class FireService {
     }    
 
     set<T>(ref: DocPredicate<T>, data: any): Promise<void> {
-        const timestamp = this.timestamp;
+        const now = this.timestamp;
         return this.doc(ref).set({
             ...data,
-            updatedAt: timestamp,
-            createdAt: timestamp,
+            updatedAt: now,
+            createdAt: now,
         });
     }
       
     update<T>(ref: DocPredicate<T>, data: any): Promise<void> {
         console.log("fireservice update...")
-        const timestamp = this.timestamp;
+        const now = this.timestamp;
         return this.doc(ref).update({
-            updatedAt: timestamp,
             ...data,
+            updatedAt: now
         });
     }
       
@@ -107,11 +107,11 @@ export class FireService {
     }
       
     add<T>(ref: CollectionPredicate<T>, data): Promise<firebase.firestore.DocumentReference> {
-        const timestamp = this.timestamp;
+        const now = this.timestamp;
         return this.col(ref).add({
           ...data,
-          updatedAt: timestamp,
-          createdAt: timestamp,
+          updatedAt: now,
+          createdAt: now,
         });
     }    
 

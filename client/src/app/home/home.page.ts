@@ -2,7 +2,6 @@ import { format, parse } from 'date-fns';
 import { Component } from '@angular/core';
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
-import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'home-page',
@@ -31,12 +30,11 @@ export class HomePage {
       console.log("list drops...")
       console.log(drops);
       for (let i = 0; i < drops.length; i++) {
-        let t = new firebase.firestore.Timestamp(drops[i].updatedAt ? drops[i].updatedAt.seconds: 0, drops[i].updatedAt ? drops[i].updatedAt.nanoseconds: 0);
         this.items.push({
           id: drops[i].id,
           //why oh why do I get two events, and one with uptated == null?
           //date: format(new Date(),'DD/MM HH:mm'),
-          date: format(t.toDate(),'DD/MM HH:mm'),
+          date: format(drops[i].updatedAt,'DD/MM HH:mm'),
           title: 'Item ' + i,
           note: drops[i].text,
           icon: this.icons[Math.floor(Math.random() * this.icons.length)]
