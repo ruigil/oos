@@ -33,10 +33,12 @@ export class FireService {
     }
 
     doc<T>(ref: DocPredicate<T>): AngularFirestoreDocument<T> {
+        console.log("fireservice get doc reference...")
         return typeof ref === 'string' ? this.firestore.doc<T>(ref) : ref;
     }
 
     doc$<T>(ref: DocPredicate<T>): Observable<T> {
+        console.log("fireservice get doc observable...")
         return this.doc(ref)
           .snapshotChanges()
           .pipe(
@@ -58,6 +60,7 @@ export class FireService {
     }
     
     col$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<T[]> {
+        console.log("fireservice get col observable...")
         return this.col(ref, queryFn)
           .snapshotChanges()
           .pipe(
@@ -91,9 +94,11 @@ export class FireService {
     }
       
     update<T>(ref: DocPredicate<T>, data: any): Promise<void> {
+        console.log("fireservice update...")
+        const timestamp = this.timestamp;
         return this.doc(ref).update({
-          updatedAt: this.timestamp,
-          ...data,
+            updatedAt: timestamp,
+            ...data,
         });
     }
       
@@ -109,26 +114,5 @@ export class FireService {
           createdAt: timestamp,
         });
     }    
-
-    getDrops() {
-        return this.firestore.collection<Drop>('drops').snapshotChanges().pipe( 
-                map(actions => actions.map(a => {
-                    const data = a.payload.doc.data() as Drop;
-                    const id = a.payload.doc.id;
-                    return { id, ...data };
-                })));
-    }
-    
-    createDrop(drop: Drop) {
-        return this.firestore.collection<Drop>('drops').add(drop);
-    }
-
-    updateDrop(drop: Drop) {
-        return this.firestore.doc('drops/'+drop["id"]).update(drop);
-    }
-
-    deleteDrop(drop: Drop) {
-        return this.firestore.doc('drops/'+drop["id"]).delete();
-    }
 
 }
