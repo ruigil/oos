@@ -10,11 +10,21 @@
 </ion-header>
 
 <ion-content>
-      <ion-item>
-        <ion-label position="floating">Text</ion-label>
-        <ion-input slot="start" [(ngModel)]="drop.text"></ion-input>
-        <ion-button slot="end" (click)="updateNote()" shape="round" fill="outline">
-            <ion-icon name="add" slot="start"></ion-icon>Update Note
-        </ion-button>    
-      </ion-item>  
+    <ion-item>
+        <ion-textarea rows="10" [(ngModel)]="drop.text"></ion-textarea>
+    </ion-item>  
+    <ion-button (click)="updateNote()" shape="round" fill="outline">
+        <ion-icon name="document" slot="start"></ion-icon>Update Note
+    </ion-button>
+    <ion-item-divider>
+        <ion-label>Note Labels</ion-label>
+    </ion-item-divider>
+    <ion-chip *ngFor="let label of labels; let i = index;" color="{{label.color}}" (click)="removeLabel(i)">
+        <ion-icon name="pricetag"></ion-icon>
+        <ion-label>{{label.name}}</ion-label>
+    </ion-chip>
+    <ion-item-divider>
+        <ion-label>Add new Label</ion-label>
+    </ion-item-divider>
+    <oos-labels [mode]="false" (onLabel)="addLabel($event)"></oos-labels>
 </ion-content>

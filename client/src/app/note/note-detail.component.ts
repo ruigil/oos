@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
+import { LabelsComponent } from '../labels/labels.component';
 
 @Component({
   selector: 'app-note-detail',
@@ -15,6 +16,7 @@ export class NoteDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     id: string;
+    public labels: Array<{ id: string, name: string, color: string; }> = [];
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { }
 
@@ -36,7 +38,13 @@ export class NoteDetailComponent implements OnInit {
         );
     }
 
-    deleteNote() {
+    addLabel(labelId: string) {
+        console.log(" add label id" + labelId);
+        this.dropsService.docWithId$("labels/"+labelId).subscribe( label => this.labels.push({ id: label.id, name: label.name, color: label.color}))
+    }
+
+    removeLabel() {
+        console.log("remove Label");
     }
 
 }

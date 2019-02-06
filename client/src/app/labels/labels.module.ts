@@ -18,6 +18,7 @@ import { LabelsComponent } from './labels.component';
       }
     ])
   ],
-  declarations: [LabelsComponent]
+  declarations: [LabelsComponent],
+  exports: [LabelsComponent]
 })
 export class LabelsModule {}

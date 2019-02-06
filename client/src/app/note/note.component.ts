@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FireService } from '../fire.service';
+import { LabelsComponent } from '../labels/labels.component';
 
 @Component({
   selector: 'app-note',
@@ -9,7 +10,7 @@ import { FireService } from '../fire.service';
 })
 export class NoteComponent implements OnInit {
 
-  text: string = "This is a test";
+  text: string = "";
 
   constructor(private dropsService: FireService, private router: Router) { }
 

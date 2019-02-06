@@ -61,7 +61,7 @@ export class FireService {
     
     col$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<T[]> {
         console.log("fireservice get col observable...")
-        return this.col(ref, queryFn)
+        return this.col(ref, queryFn)            
           .snapshotChanges()
           .pipe(
             map((docs: DocumentChangeAction<T>[]) => {

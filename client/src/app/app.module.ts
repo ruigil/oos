@@ -23,7 +23,7 @@ import { SettingsComponent } from './settings/settings.component';
     AppComponent,
     SettingsComponent,
     CreateComponent,
-    ReportComponent,
+    ReportComponent
   ],
   imports: [
     BrowserModule,

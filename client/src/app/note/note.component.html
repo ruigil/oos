@@ -3,18 +3,15 @@
     <ion-buttons slot="start">
       <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
     </ion-buttons>
-    <ion-title>
-      New Note
-    </ion-title>
+    <ion-title>New Note</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
     <ion-item>
-        <ion-label position="floating">{{text}}</ion-label>
-        <ion-input [(ngModel)]="text"></ion-input>
+        <ion-textarea placeHolder="Enter you text here..." rows="10" [(ngModel)]="text"></ion-textarea>
     </ion-item>  
     <ion-button (click)="addNote()" shape="round" fill="outline">
-        <ion-icon name="add" slot="start"></ion-icon>Add Note
+        <ion-icon name="document" slot="start"></ion-icon>Add Note
     </ion-button>    
 </ion-content>

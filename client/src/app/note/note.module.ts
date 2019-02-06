@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
+import { LabelsModule } from '../labels/labels.module';
 
 import { NoteComponent } from './note.component';
 import { NoteDetailComponent } from './note-detail.component';
@@ -12,6 +13,7 @@ import { NoteDetailComponent } from './note-detail.component';
     CommonModule,
     FormsModule,
     IonicModule,
+    LabelsModule,
     RouterModule.forChild([
       {
         path: '',
