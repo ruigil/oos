@@ -8,16 +8,20 @@ import { FireService } from '../fire.service';
 })
 export class LabelsComponent implements OnInit {
     @Input() mode: boolean = true;
-    labelName: string = "";
-    labelColor: string = "primary";
-    labels;
     @Output() onLabel = new EventEmitter<string>();
+    labelName: string = "";
+    labels: Array<{ id: string, name: string, active: boolean}> = [];
 
     constructor(private fireService: FireService) { 
     }
 
     ngOnInit() {
-      this.labels = this.fireService.colWithIds$("labels");
+      this.fireService.colWithIds$("labels").subscribe( labels => {
+          this.labels = [];
+          for (let i=0; i<labels.length; i++) {
+              this.labels.push({ id: labels[i].id, name: labels[i].name, active: true});
+          }
+      });
       console.log(this.labels);
     }
 
@@ -27,13 +31,7 @@ export class LabelsComponent implements OnInit {
 
     addLabel() {
       console.log(this.labelName);
-      console.log(this.labelColor);
-      this.fireService.add("labels",{ name: this.labelName, color: this.labelColor });
-    }
-
-    selectColor(color) {
-      this.labelColor = color.detail.value;
-      console.log(this.labelColor);
+      this.fireService.add("labels",{ name: this.labelName });
     }
 
     pushLabel(id) {

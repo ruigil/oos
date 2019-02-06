@@ -22,7 +22,7 @@ export class HomePage {
     'bluetooth',
     'build'
   ];
-  public items: Array<{ id: string, date: string, title: string; note: string; icon: string }> = [];
+  public items: Array<{ id: string, date: string, note: string; icon: string }> = [];
 
   constructor(private dropsService: FireService) {
     this.dropsService.colWithIds$("drops", ref => ref.orderBy("createdAt","desc") ).subscribe( (drops:Drop[])=> {
@@ -34,7 +34,6 @@ export class HomePage {
           id: drops[i].id,
           //why oh why do I get two events in update, and one with uptatedAt == null?
           date: format(drops[i].createdAt ? drops[i].createdAt.toDate() : "",'DD/MM HH:mm'),
-          title: 'Item ' + i,
           note: drops[i].text,
           icon: this.icons[Math.floor(Math.random() * this.icons.length)]
         });

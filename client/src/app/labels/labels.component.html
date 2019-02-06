@@ -11,91 +11,31 @@
   
 <ion-content>
     <ion-item>
-        <!---->
         <ion-input slot="start" [(ngModel)]="labelName" placeholder="Enter label name..."></ion-input>
+        <ion-button (click)="addLabel()" shape="round" fill="outline" slot="end">
+                <ion-icon name="add" slot="start"></ion-icon>Add
+        </ion-button>    
     </ion-item>  
-    <ion-segment (ionChange)="selectColor($event)">
-        <ion-segment-button value="primary">
-            <ion-label color="primary">{{labelName}}</ion-label>
-        </ion-segment-button >
-        <ion-segment-button value="secondary">
-            <ion-label color="secondary">{{labelName}}</ion-label>
-        </ion-segment-button >
-        <ion-segment-button value="success">
-            <ion-label color="success">{{labelName}}</ion-label>
-        </ion-segment-button >
-        <ion-segment-button value="warning">
-            <ion-label color="warning">{{labelName}}</ion-label>
-        </ion-segment-button >
-        <ion-segment-button value="danger">
-            <ion-label color="danger">{{labelName}}</ion-label>
-        </ion-segment-button >
-        <ion-segment-button value="medium">
-            <ion-label color="medium">{{labelName}}</ion-label>
-        </ion-segment-button >
-        <ion-segment-button value="dark" checked>
-            <ion-label color="dark">{{labelName}}</ion-label>
-        </ion-segment-button >
-    </ion-segment>
-<!--
-    <ion-radio-group [(ngModel)]="labelColor">
-        <ion-item color="primary">
-            <ion-label color="primary">{{labelName}}</ion-label>
-            <ion-radio value="primary"></ion-radio>
-        </ion-item> 
-        <ion-item color="secondary">
-            <ion-label >{{labelName}}</ion-label>
-            <ion-radio value="secondary"></ion-radio>
-        </ion-item>
-        <ion-item color="success">
-            <ion-label >{{labelName}}</ion-label>
-            <ion-radio value="success"></ion-radio>
-        </ion-item>
-        <ion-item color="warning">
-            <ion-label >{{labelName}}</ion-label>
-            <ion-radio value="warning"></ion-radio>
-        </ion-item>
-        <ion-item color="danger">
-            <ion-label >{{labelName}}</ion-label>
-            <ion-radio value="danger"></ion-radio>
-        </ion-item>
-        <ion-item color="light">
-            <ion-label >{{labelName}}</ion-label>
-            <ion-radio value="light"></ion-radio>
-        </ion-item>
-        <ion-item color="dark">
-            <ion-label >{{labelName}}</ion-label>
-            <ion-radio value="dark"></ion-radio>
-        </ion-item>
-    </ion-radio-group>
--->    
-    <ion-button (click)="addLabel()" shape="round" fill="outline">
-            <ion-icon name="add" slot="start"></ion-icon>Add
-    </ion-button>    
-<!--
-    <ion-select [(ngModel)]="labelColor" value="primary">
-        <ion-select-option value="primary"><ion-badge color="primary">Blue</ion-badge></ion-select-option>
-        <ion-select-option value="dark">Grey</ion-select-option>
-        <ion-select-option value="success">Green</ion-select-option>
-        <ion-select-option value="danger">Red</ion-select-option>
-    </ion-select>
--->    
     <ion-item-divider>
         <ion-label>Available Labels</ion-label>
     </ion-item-divider>
-    <!--*"-->
     <ion-list *ngIf="mode; else blockLabels">
-        <ion-item *ngFor="let label of labels | async; let i = index;">
-            <ion-button color="{{label.color}}"><ion-icon name="pricetag" slot="start"></ion-icon>{{label.name}}</ion-button>
+        <ion-item *ngFor="let label of labels; let i = index;">
+            <ion-chip>
+                <ion-icon name="pricetag"></ion-icon>
+                <ion-label>{{label.name}}</ion-label>
+            </ion-chip>
             <ion-button slot="end" (click)="deleteLabel(label.id)" color="danger" fill="clear">
                 <ion-icon name="trash"></ion-icon>
             </ion-button>    
         </ion-item>
     </ion-list>
     <ng-template #blockLabels>
-        <ion-chip *ngFor="let label of labels | async" color="{{label.color}}" (click)="pushLabel(label.id)">
-                <ion-icon name="pricetag"></ion-icon>
-                <ion-label>{{label.name}}</ion-label>
-        </ion-chip>
+        <span *ngFor="let label of labels" (click)="pushLabel(label.id)">
+            <ion-chip *ngIf="label.active">
+                    <ion-icon name="pricetag"></ion-icon>
+                    <ion-label>{{label.name}}</ion-label>
+            </ion-chip>
+        </span>
     </ng-template>
 </ion-content>
