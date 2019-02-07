@@ -37,13 +37,9 @@ export class NoteDetailComponent implements OnInit {
         );
     }
 
-    addLabel(labelId: string) {
-        console.log(" add label id" + labelId);
-        this.dropsService.docWithId$("labels/"+labelId).subscribe( label => this.drop.labels.push(label.name));
-    }
-
-    removeLabel() {
-        console.log("remove Label");
+    selectedLabels(labels: Array<string>) {
+        console.log(" add labels");
+        this.drop.labels = labels;
     }
 
 }

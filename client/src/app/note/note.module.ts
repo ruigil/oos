@@ -3,17 +3,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
-import { LabelsModule } from '../labels/labels.module';
 
 import { NoteComponent } from './note.component';
 import { NoteDetailComponent } from './note-detail.component';
+import { LabelsComponent } from '../labels/labels.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    LabelsModule,
     RouterModule.forChild([
       {
         path: '',
@@ -25,6 +24,6 @@ import { NoteDetailComponent } from './note-detail.component';
       }
     ])
   ],
-  declarations: [NoteComponent, NoteDetailComponent]
+  declarations: [NoteComponent, NoteDetailComponent, LabelsComponent]
 })
 export class NoteModule {}

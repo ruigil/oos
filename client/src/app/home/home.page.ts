@@ -35,7 +35,7 @@ export class HomePage {
           //why oh why do I get two events in update, and one with uptatedAt == null?
           date: format(drops[i].createdAt ? drops[i].createdAt.toDate() : "",'DD/MM HH:mm'),
           note: drops[i].text,
-          icon: this.icons[Math.floor(Math.random() * this.icons.length)]
+          icon: drops[i].type == "NOTE" ? "document" : "document"
         });
       }
     });

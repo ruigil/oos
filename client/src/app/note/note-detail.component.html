@@ -16,12 +16,5 @@
     <ion-button (click)="updateNote()" shape="round" fill="outline">
         <ion-icon name="document" slot="start"></ion-icon>Update Note
     </ion-button>
-    <ion-item-divider>
-        <ion-label>Note Labels</ion-label>
-    </ion-item-divider>
-    <ion-chip *ngFor="let label of drop.labels; let i = index;" (click)="removeLabel(i)">
-        <ion-icon name="pricetag"></ion-icon>
-        <ion-label>{{label}}</ion-label>
-    </ion-chip>
-    <oos-labels [mode]="false" (onLabel)="addLabel($event)"></oos-labels>
+    <oos-labels [mode]="false" [selected]="drop.labels" (onSelectLabel)="selectedLabels($event)"></oos-labels>
 </ion-content>

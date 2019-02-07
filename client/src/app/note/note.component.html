@@ -9,9 +9,10 @@
 
 <ion-content>
     <ion-item>
-        <ion-textarea placeHolder="Enter you text here..." rows="10" [(ngModel)]="text"></ion-textarea>
+        <ion-textarea placeHolder="Enter you text here..." rows="10" [(ngModel)]="drop.text"></ion-textarea>
     </ion-item>  
     <ion-button (click)="addNote()" shape="round" fill="outline">
         <ion-icon name="document" slot="start"></ion-icon>Add Note
     </ion-button>    
+    <oos-labels [mode]="false" [selected]="drop.labels" (onSelectLabel)="selectedLabels($event)"></oos-labels>
 </ion-content>
