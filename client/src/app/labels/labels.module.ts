@@ -13,7 +13,7 @@ import { LabelsComponent } from './labels.component';
     IonicModule,
     RouterModule.forChild([
       {
-        path: '',
+        path: 'edit',
         component: LabelsComponent
       }
     ])

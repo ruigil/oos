@@ -20,7 +20,7 @@ export class AppComponent {
     },
     {
       title: 'Labels',
-      url: '/labels',
+      url: '/labels/edit',
       icon: 'pricetags'
     },
     {

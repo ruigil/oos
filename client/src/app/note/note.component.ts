@@ -10,7 +10,7 @@ import { Drop } from '../drop';
 })
 export class NoteComponent implements OnInit {
 
-  private drop: Drop = new Drop();
+    drop: Drop = new Drop();
 
   constructor(private dropsService: FireService, private router: Router) { 
     this.drop.labels = [];
