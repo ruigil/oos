@@ -4,7 +4,7 @@
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
       <ion-title>
-        Labels
+        Tags
       </ion-title>
     </ion-toolbar>
 </ion-header>
@@ -15,16 +15,16 @@
         <ion-label>{{label}}</ion-label>
     </ion-chip>
     <ion-item-divider>
-        <ion-label>Labels</ion-label>
+        <ion-label>Tags</ion-label>
     </ion-item-divider>
     <ion-item>
-        <ion-input slot="start" [(ngModel)]="labelName" placeholder="Enter label name..."></ion-input>
+        <ion-input slot="start" [(ngModel)]="labelName" placeholder="Enter tag name..."></ion-input>
         <ion-button (click)="addLabel()" shape="round" fill="outline" slot="end">
                 <ion-icon name="add" slot="start"></ion-icon>Add
         </ion-button>    
     </ion-item>  
     <ion-item-divider>
-        <ion-label>Available Labels</ion-label>
+        <ion-label>Available Tags</ion-label>
     </ion-item-divider>
     <ion-list *ngIf="mode; else blockLabels">
         <ion-item *ngFor="let label of labels">

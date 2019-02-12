@@ -11,25 +11,25 @@ import { Drop } from '../drop';
 export class NoteComponent implements OnInit {
 
     drop: Drop = new Drop();
+    tags: Array<string> = ["Note"];
 
   constructor(private dropsService: FireService, private router: Router) { 
-    this.drop.labels = [];
     this.drop.type = "NOTE";
     this.drop.text = "";
+    this.drop.tags = { Note: true };
   }
 
   ngOnInit() {
   }
 
   addNote() {
-    console.log("add note");
+    this.tags.forEach( t => this.drop.tags[t] = true);
     this.dropsService.add("drops",this.drop);
     this.router.navigate(["/home"]);
   }
   
   selectedLabels(labels: Array<string>) {
-    console.log(" add labels");
-    this.drop.labels = labels;
+    this.tags = labels;
   }
 
 }

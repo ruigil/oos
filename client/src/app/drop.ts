@@ -2,7 +2,7 @@ export class Drop {
     id: string;
     text: string;
     type: string;
-    labels: Array<string>;
+    tags: any;
     updatedAt: any;
     createdAt: any;
 }

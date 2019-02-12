@@ -16,7 +16,7 @@ const routes: Routes = [
     loadChildren: './analytics/analytics.module#AnalyticsComponentModule'
   },
   {
-    path: 'labels',
+    path: 'tags',
     loadChildren: './labels/labels.module#LabelsModule'
   },
   {

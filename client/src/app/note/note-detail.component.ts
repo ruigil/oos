@@ -16,6 +16,7 @@ export class NoteDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     id: string;
+    tags: Array<string> = []
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { }
 
@@ -26,12 +27,13 @@ export class NoteDetailComponent implements OnInit {
                 this.id = params.get("id");
                 return this.dropsService.doc$("drops/"+this.id);
             })
-        ).subscribe( d => this.drop = d );
+        ).subscribe( d => {this.drop = d; this.tags = Object.keys(this.drop.tags)} );
     }
 
     updateNote() {
-        console.log("update "+this.id);
-        this.dropsService.update("drops/"+this.id,{ text: this.drop.text, type: "note", labels: this.drop.labels }).then( 
+        Object.keys(this.drop.tags).forEach( k => delete this.drop.tags[k]);
+        this.tags.forEach( t => this.drop.tags[t] = true);
+        this.dropsService.update("drops/"+this.id,{ text: this.drop.text, tags: this.drop.tags }).then( 
             (value) => { console.log("updated! prepare to navigate"); this.router.navigate(["/home"]) },
             (error) => { console.log("error") }
         );
@@ -39,7 +41,7 @@ export class NoteDetailComponent implements OnInit {
 
     selectedLabels(labels: Array<string>) {
         console.log(" add labels");
-        this.drop.labels = labels;
+        this.tags = labels;
     }
 
 }

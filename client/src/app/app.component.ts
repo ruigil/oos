@@ -19,13 +19,13 @@ export class AppComponent {
       icon: 'list'
     },
     {
-      title: 'Labels',
-      url: '/labels/edit',
+      title: 'Tags',
+      url: '/tags/edit',
       icon: 'pricetags'
     },
     {
       title: 'Settings',
-      url: '/settings',
+      url: '/home',
       icon: 'settings'
     }
   ];

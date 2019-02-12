@@ -14,12 +14,13 @@
     <ion-list>
         <ion-item-sliding *ngFor="let item of items; let i = index;" [routerLink]="['/note',item.id]">
             <ion-item>
-                <ion-chip slot="start" color="warning">
+                <ion-icon slot="start" color="warning" [name]="item.icon" ></ion-icon>
+                <ion-label>{{item.note}}</ion-label>
+                <ion-chip slot="end" color="light">
                     <ion-icon name="time"></ion-icon>                    
                     <ion-label>{{item.date}}</ion-label>
-                    <ion-icon [name]="item.icon" ></ion-icon>
-                  </ion-chip>
-                <ion-label>{{item.note}}</ion-label>
+                    <ion-icon name="sync"></ion-icon>                    
+                </ion-chip>
             </ion-item>
             <ion-item-options side="start">
               <ion-item-option color="medium" (click)="play(item)"><ion-icon name="play"></ion-icon></ion-item-option>
