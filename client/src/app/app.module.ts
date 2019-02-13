@@ -9,6 +9,7 @@ import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 
@@ -16,6 +17,9 @@ import { AppComponent } from './app.component';
 import { CreateComponent } from './create/create.component';
 import { ReportComponent } from './report/report.component';
 import { SettingsComponent } from './settings/settings.component';
+import { TagFilterComponent } from './tag-filter/tag-filter.component';
+import { SearchTagPipe } from './tag-filter/search-tag.pipe';
+import { SortTagPipe } from './tag-filter/sort-tag.pipe';
 
 
 @NgModule({
@@ -23,12 +27,16 @@ import { SettingsComponent } from './settings/settings.component';
     AppComponent,
     SettingsComponent,
     CreateComponent,
-    ReportComponent
+    ReportComponent,
+    TagFilterComponent,
+    SearchTagPipe,
+    SortTagPipe
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),
     AppRoutingModule,
+    FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence(),
     AngularFireStorageModule,

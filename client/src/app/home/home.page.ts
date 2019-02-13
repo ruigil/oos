@@ -2,6 +2,7 @@ import { format, parse } from 'date-fns';
 import { Component } from '@angular/core';
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
+import { TagFilterService } from '../tag-filter.service';
 
 @Component({
   selector: 'home-page',
@@ -24,7 +25,12 @@ export class HomePage {
   ];
   public items: Array<{ id: string, date: string, note: string; icon: string }> = [];
 
-  constructor(private dropsService: FireService) {
+  constructor(private dropsService: FireService, private tagFilterService: TagFilterService) {
+
+    this.tagFilterService.tagFilter().subscribe( filters => {
+      console.log("home filters");
+      console.log(filters);
+    });
     this.dropsService.colWithIds$("drops", ref => ref.orderBy("createdAt","desc") ).subscribe( (drops:Drop[])=> {
       this.items = [];
       console.log("list drops...")
