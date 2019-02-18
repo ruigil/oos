@@ -1,4 +1,4 @@
-import { SortTagPipe } from './tag-filter/sort-tag.pipe';
+import { SortTagPipe } from './sort-tag.pipe';
 
 describe('SortTagPipe', () => {
   it('create an instance', () => {

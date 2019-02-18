@@ -1,6 +1,6 @@
-export class Label {
+export class Tag {
     id: string;
     name: string;
-    updatedAt: any;
+    count: number;
     createdAt: any;
 }

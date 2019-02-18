@@ -28,16 +28,12 @@ export class HomePage implements OnInit {
   dropsObs: Observable<Drop[]>;
 
   constructor(private dropsService: FireService, private tagFilterService: TagFilterService) {
-
-
   }
 
-    ngOnInit(): void {
-        this.tagFilterService.tagFilter().subscribe( filters => {
-            this.dropsObs = this.dropsService.getDropsWithFilters(filters);
-        });
-        this.dropsObs = this.dropsService.getDropsWithFilters([]);
-    }
+  ngOnInit(): void {
+      this.tagFilterService.select().subscribe( () => this.dropsObs = this.tagFilterService.drops() );
+      this.dropsObs = this.tagFilterService.drops();
+  }
 
   formatDate(date) {
       console.log(date);

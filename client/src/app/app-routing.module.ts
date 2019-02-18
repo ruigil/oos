@@ -17,7 +17,7 @@ const routes: Routes = [
   },
   {
     path: 'tags',
-    loadChildren: './labels/labels.module#LabelsModule'
+    loadChildren: './tags/tags.module#TagsModule'
   },
   {
     path: 'settings',

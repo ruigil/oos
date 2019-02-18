@@ -1,4 +1,4 @@
-import { SearchTagPipe } from './tag-filter/search-tag.pipe';
+import { SearchTagPipe } from './search-tag.pipe';
 
 describe('SearchTagPipe', () => {
   it('create an instance', () => {

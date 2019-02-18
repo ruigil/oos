@@ -115,10 +115,4 @@ export class FireService {
         });
     }
 
-    getDropsWithFilters(filters: string[]) {
-        console.log("get drops with filters");
-        console.log(filters);
-        return this.colWithIds$("drops", ref => ref.where("tags.Permis Mer","==",true).where("tags.Note","==", true).orderBy("createdAt","desc") );
-    }
-
 }

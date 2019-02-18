@@ -1,17 +1,17 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FireService } from '../fire.service';
-import { Label } from '../label';
+import { Tag } from '../tag';
 
 @Component({
-  selector: 'oos-labels',
-  templateUrl: './labels.component.html',
-  styleUrls: ['./labels.component.scss']
+  selector: 'oos-tags',
+  templateUrl: './tags.component.html',
+  styleUrls: ['./tags.component.scss']
 })
-export class LabelsComponent implements OnInit {
+export class TagsComponent implements OnInit {
     @Input() mode: boolean = true;
     @Output() onSelectLabel = new EventEmitter<string[]>();
     labelName: string = "";
-    labels: Label[] = [];
+    labels: Tag[] = [];
     @Input() selected: Array<string> = [];
     available: Array<string> = [];
 
@@ -19,7 +19,7 @@ export class LabelsComponent implements OnInit {
     }
 
     ngOnInit() {
-      this.fireService.colWithIds$("labels").subscribe( (lbls:Label[]) => {
+      this.fireService.colWithIds$("labels").subscribe( (lbls:Tag[]) => {
           this.labels = lbls;
           this.available = lbls.map( l => l.name);
           this.available = this.available.filter( l => !this.selected.includes(l));

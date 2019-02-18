@@ -5,7 +5,6 @@ import { switchMap } from 'rxjs/operators';
 
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
-import { LabelsComponent } from '../labels/labels.component';
 
 @Component({
   selector: 'app-note-detail',

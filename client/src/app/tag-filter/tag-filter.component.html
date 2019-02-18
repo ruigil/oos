@@ -7,7 +7,7 @@
     <ion-searchbar [(ngModel)]="searchTerm"></ion-searchbar>
   </ion-item>
   <!---->
-  <ion-item *ngFor="let tag of (tags | sortTag | searchTag:searchTerm ); let i = index" (click)="selectTag(i)" color="{{tag.selected ? 'success' : 'light'}}">
+  <ion-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index" (click)="selectTag(tag.id)" color="{{tag.selected ? 'success' : 'light'}}">
       <ion-icon slot="start" name="pricetag"></ion-icon>
       <ion-label>{{tag.name}}</ion-label>
       <ion-note slot="end">{{tag.count}}</ion-note>

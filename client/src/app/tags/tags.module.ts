@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 
-import { LabelsComponent } from './labels.component';
+import { TagsComponent } from './tags.component';
 
 @NgModule({
   imports: [
@@ -14,11 +14,11 @@ import { LabelsComponent } from './labels.component';
     RouterModule.forChild([
       {
         path: 'edit',
-        component: LabelsComponent
+        component: TagsComponent
       }
     ])
   ],
-  declarations: [LabelsComponent],
-  exports: [LabelsComponent]
+  declarations: [TagsComponent],
+  exports: [TagsComponent]
 })
-export class LabelsModule {}
+export class TagsModule {}
