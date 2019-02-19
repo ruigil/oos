@@ -14,8 +14,8 @@ import { Drop } from '../drop';
 export class NoteDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
+    tags: Array<string> = [];
     id: string;
-    tags: Array<string> = []
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { }
 
@@ -23,24 +23,23 @@ export class NoteDetailComponent implements OnInit {
         console.log("init")
         this.route.paramMap.pipe(
             switchMap( params => {
-                this.id = params.get("id");
-                return this.dropsService.doc$("drops/"+this.id);
+                return this.dropsService.docWithId$("drops/"+params.get("id"));
             })
-        ).subscribe( d => {this.drop = d; this.tags = Object.keys(this.drop.tags)} );
+        ).subscribe( d => this.drop = d );
     }
 
     updateNote() {
-        Object.keys(this.drop.tags).forEach( k => delete this.drop.tags[k]);
-        this.tags.forEach( t => this.drop.tags[t] = true);
-        this.dropsService.update("drops/"+this.id,{ text: this.drop.text, tags: this.drop.tags }).then( 
-            (value) => { console.log("updated! prepare to navigate"); this.router.navigate(["/home"]) },
-            (error) => { console.log("error") }
-        );
+        let id = this.drop.id;
+        if (delete this.drop.id)
+            this.dropsService.update("drops/"+ id, this.drop ).then( 
+                (value) => { console.log("updated! prepare to navigate"); this.router.navigate(["/home"]) },
+                (error) => { console.log("error") }
+            );
     }
 
-    selectedLabels(labels: Array<string>) {
-        console.log(" add labels");
-        this.tags = labels;
+    selectedTags(tags: Array<string>) {
+        console.log(" add tags");
+        this.drop.tags = tags;
     }
 
 }

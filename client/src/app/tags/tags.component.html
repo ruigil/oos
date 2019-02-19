@@ -10,38 +10,37 @@
 </ion-header>
   
 <ion-content>
-    <ion-chip *ngFor="let label of selected; let i = index;" (click)="unselectLabel(i)">
+    <ion-chip *ngFor="let tag of selected; let i = index;" (click)="unselectTag(i)">
         <ion-icon name="pricetag"></ion-icon>
-        <ion-label>{{label}}</ion-label>
+        <ion-label>{{tag}}</ion-label>
     </ion-chip>
     <ion-item-divider>
         <ion-label>Tags</ion-label>
     </ion-item-divider>
     <ion-item>
-        <ion-input slot="start" [(ngModel)]="labelName" placeholder="Enter tag name..."></ion-input>
-        <ion-button (click)="addLabel()" shape="round" fill="outline" slot="end">
+        <ion-input slot="start" [(ngModel)]="tagName" placeholder="Enter tag name..."></ion-input>
+        <ion-button (click)="addTag()" shape="round" fill="outline" slot="end">
                 <ion-icon name="add" slot="start"></ion-icon>Add
         </ion-button>    
     </ion-item>  
     <ion-item-divider>
         <ion-label>Available Tags</ion-label>
     </ion-item-divider>
-    <ion-list *ngIf="mode; else blockLabels">
-        <ion-item *ngFor="let label of labels">
-            <ion-chip>
-                <ion-icon name="pricetag"></ion-icon>
-                <ion-label>{{label.name}}</ion-label>
-            </ion-chip>
-            <ion-button slot="end" (click)="deleteLabel(label.id)" color="danger" fill="clear">
+    <ion-list *ngIf="mode; else blockTags">
+        <ion-item *ngFor="let tag of tags">
+            <ion-icon name="pricetag" slot="start"></ion-icon>
+            <ion-label>{{tag.name}}</ion-label>
+            <ion-badge color="dark">{{tag.count}}</ion-badge>
+            <ion-button slot="end" (click)="deleteTag(tag.id)" color="danger" fill="clear">
                 <ion-icon name="trash"></ion-icon>
             </ion-button>    
         </ion-item>
     </ion-list>
-    <ng-template #blockLabels>
-        <span *ngFor="let label of available; let i = index;" (click)="selectLabel(i)">
+    <ng-template #blockTags>
+        <span *ngFor="let tag of available; let i = index;" (click)="selectTag(i)">
             <ion-chip>
                     <ion-icon name="pricetag"></ion-icon>
-                    <ion-label>{{label}}</ion-label>
+                    <ion-label>{{tag}}</ion-label>
             </ion-chip>
         </span>
     </ng-template>

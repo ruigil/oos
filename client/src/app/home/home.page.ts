@@ -1,4 +1,3 @@
-import { format, parse } from 'date-fns';
 import { Component, OnInit } from '@angular/core';
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
@@ -37,7 +36,8 @@ export class HomePage implements OnInit {
 
   formatDate(date) {
       console.log(date);
-      return format(date,'DD/MM HH:mm');      
+      //return format(date,'DD/MM HH:mm');      
+      return "";
   }
 
   deleteDrop(id,event) {

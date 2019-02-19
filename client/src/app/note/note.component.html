@@ -14,5 +14,5 @@
     <ion-button (click)="addNote()" shape="round" fill="outline">
         <ion-icon name="document" slot="start"></ion-icon>Add Note
     </ion-button>    
-    <oos-labels [mode]="false" [selected]="tags" (onSelectLabel)="selectedLabels($event)"></oos-labels>
+    <oos-tags [mode]="false" [selected]="tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </ion-content>

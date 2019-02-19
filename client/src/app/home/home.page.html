@@ -18,7 +18,7 @@
                 <ion-label>{{drop.text}}</ion-label>
                 <ion-chip slot="end" color="light">
                     <ion-icon name="time"></ion-icon>                    
-                    <ion-label>{{drop.updatedAt}}</ion-label>
+                    <ion-label>{{drop.updatedAt.toDate() | formatDate }}</ion-label>
                     <ion-icon name="sync"></ion-icon>                    
                 </ion-chip>
             </ion-item>

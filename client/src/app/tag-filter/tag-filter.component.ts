@@ -13,18 +13,24 @@ export class TagFilterComponent implements OnInit {
   tagCount: number = 0;
   dropCount: number = 500;
   searchTerm: string = "";
-  tagsObs: Observable<Tag[]>
+  tagsObs: Observable<Tag[]>;
+  selectedTags: string[] = [];
 
   constructor(private fireService: FireService, private tagFilterService: TagFilterService) {
   }
 
   ngOnInit() {
-    this.tagFilterService.select().subscribe( () => this.tagsObs = this.tagFilterService.tags() );
+    this.tagFilterService.select().subscribe( tags => {this.selectedTags = tags; this.tagsObs = this.tagFilterService.tags() } );
     this.tagsObs = this.tagFilterService.tags();
   }
 
   selectTag(id) {
-    this.tagFilterService.selectTag(id);
+    if (!this.selectedTags.includes(id)) this.selectedTags.push(id);
+    else this.selectedTags.splice(this.selectedTags.indexOf(id),1);
+    console.log("selected tags:")
+    console.log(this.selectedTags);
+
+    this.tagFilterService.selectTag(this.selectedTags);
   }
 
 }

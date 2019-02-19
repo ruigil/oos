@@ -9,7 +9,7 @@ import { FireService } from './fire.service';
 })
 export class TagFilterService {
 
-  private selectedTag: string[] = [];
+  private selectedTags: string[] = [];
   dropsObservable = new Subject<Drop[]>();
   tagsObservable = new Subject<Tag[]>();
   selectObservable = new Subject();
@@ -17,10 +17,10 @@ export class TagFilterService {
   constructor(private fireService: FireService) {
   }
 
-  selectTag(tag: string) {
-    console.log(tag);
+  selectTag(tags: string[]) {
     //this.dropsObservable.next(tags);
-    this.selectObservable.next();
+    this.selectedTags = tags;
+    this.selectObservable.next(tags);
   }
 
   select(): Observable<any> {
@@ -28,13 +28,13 @@ export class TagFilterService {
   }
 
   tags():Observable<Tag[]> {
-    return this.fireService.colWithIds$("labels");
+    return this.fireService.colWithIds$("tags");
   }
 
   drops():Observable<Drop[]> {
       console.log("get drops with filters");
-      if (this.selectedTag[0]) 
-        return this.fireService.colWithIds$("drops", ref => ref.where("tags","array-contains",this.selectedTag[0]).orderBy("updatedAt","asc"));
+      if (this.selectedTags[0]) 
+        return this.fireService.colWithIds$("drops", ref => ref.where("tags","array-contains",this.selectedTags[0]).orderBy("updatedAt","asc"));
       else 
         return this.fireService.colWithIds$("drops", ref => ref.orderBy("updatedAt","asc"));
     }

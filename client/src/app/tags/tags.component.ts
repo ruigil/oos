@@ -9,9 +9,9 @@ import { Tag } from '../tag';
 })
 export class TagsComponent implements OnInit {
     @Input() mode: boolean = true;
-    @Output() onSelectLabel = new EventEmitter<string[]>();
-    labelName: string = "";
-    labels: Tag[] = [];
+    @Output() onSelectTag = new EventEmitter<string[]>();
+    tagName: string = "";
+    tags: Tag[] = [];
     @Input() selected: Array<string> = [];
     available: Array<string> = [];
 
@@ -19,36 +19,36 @@ export class TagsComponent implements OnInit {
     }
 
     ngOnInit() {
-      this.fireService.colWithIds$("labels").subscribe( (lbls:Tag[]) => {
-          this.labels = lbls;
-          this.available = lbls.map( l => l.name);
+      this.fireService.colWithIds$("tags").subscribe( (tags:Tag[]) => {
+          this.tags = tags;
+          this.available = tags.map( l => l.name);
           this.available = this.available.filter( l => !this.selected.includes(l));
       });
     }
 
-    deleteLabel(labelId:string) {
-      this.fireService.delete("labels/"+labelId).then( () => console.log(labelId + " deleted.") );
+    deleteTag(tagId:string) {
+      this.fireService.delete("tags/"+tagId).then( () => console.log(tagId + " deleted.") );
     }
 
-    addLabel() {
-      this.fireService.add("labels",{ name: this.labelName });
+    addTag() {
+      this.fireService.add("tags",{ name: this.tagName, count: 0 });
       if (!this.mode) {
-        this.selected.push(this.labelName);
-        this.available = this.available.filter( l => l != this.labelName);
+        this.selected.push(this.tagName);
+        this.available = this.available.filter( l => l != this.tagName);
       }
-      this.labelName = "";
+      this.tagName = "";
     }
 
-    selectLabel(i) {
+    selectTag(i) {
       this.selected.push(this.available[i]);
       this.available.splice(i,1);
-      this.onSelectLabel.emit(this.selected);
+      this.onSelectTag.emit(this.selected);
     }
 
-    unselectLabel(i) {
+    unselectTag(i) {
       this.available.push(this.selected[i]);
       this.selected.splice(i,1);
-      this.onSelectLabel.emit(this.selected);
+      this.onSelectTag.emit(this.selected);
     }
 
 }
