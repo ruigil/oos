@@ -3,6 +3,7 @@ import { FireService } from '../fire.service';
 import { Tag } from '../tag';
 import { TagFilterService } from '../tag-filter.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'oos-tag-filter',
@@ -21,6 +22,8 @@ export class TagFilterComponent implements OnInit {
 
   ngOnInit() {
     this.tagFilterService.select().subscribe( tags => {this.selectedTags = tags; this.tagsObs = this.tagFilterService.tags() } );
+    //this.tagFilterService.select().subscribe( selectTags => 
+      //this.tagsObs = this.tagFilterService.tags().pipe( map( (tags:Tag[]) => tags.map( t => ({...t, selected: selectTags.includes(t.name) }) ) ) ) );
     this.tagsObs = this.tagFilterService.tags();
   }
 
