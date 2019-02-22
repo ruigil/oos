@@ -10,39 +10,41 @@ import { FireService } from './fire.service';
 })
 export class TagFilterService {
 
-  private selectedTags: string[] = [];
   dropsObservable = new Subject<Drop[]>();
   tagsObservable = new Subject<Tag[]>();
-  selectObservable = new Subject();
+  allTags:Tag[];
 
   constructor(private fireService: FireService) {
-  }
+    console.log("get drops with filters");
+    this.fireService.colWithIds$("drops", ref => ref.orderBy("updatedAt","asc"))
+      .subscribe( (drops:Drop[]) => this.dropsObservable.next(drops));
+    this.fireService.colWithIds$("tags")
+      .subscribe( (tags:Tag[]) => { 
+        this.allTags = tags; 
+        this.tagsObservable.next(tags) 
+      });
+}
 
   selectTag(tags: string[]) {
-    //this.dropsObservable.next(tags);
-    this.selectedTags = tags ;
-    this.selectObservable.next(tags);
-  }
-
-  select(): Observable<any> {
-    return this.selectObservable.asObservable();
+    if (tags.length == 0) {
+      this.fireService.colWithIds$("drops", ref => ref.orderBy("updatedAt","asc")).subscribe( (drops:Drop[]) => this.dropsObservable.next(drops));
+      this.tagsObservable.next(this.allTags);
+    }
+    if (tags.length >= 1) {
+      this.fireService.colWithIds$("drops", ref => ref.where("tags","array-contains",tags[0]).orderBy("updatedAt","asc"))
+      .pipe( map( (drops:Drop[]) => drops.filter( d => tags.every(t => d.tags.includes(t),this) )) )
+      .subscribe((drops:Drop[]) => { 
+        this.tagsObservable.next(this.allTags.filter( t => drops.some( d => d.tags.includes(t.name)) ) ); 
+        this.dropsObservable.next(drops) 
+      });
+    }
   }
 
   tags():Observable<Tag[]> {
-    if (this.selectedTags[0]) 
-      return this.fireService.colWithIds$("tags");
-    else 
-      return this.fireService.colWithIds$("tags");
-    
+    return this.tagsObservable.asObservable();
   }
 
   drops():Observable<Drop[]> {
-      console.log("get drops with filters");
-      let self = this;
-      if (this.selectedTags[0]) 
-        return this.fireService.colWithIds$("drops", ref => ref.where("tags","array-contains",this.selectedTags[0]).orderBy("updatedAt","asc"))
-        .pipe( map( (drops:Drop[]) => drops.filter( d => this.selectedTags.every(t => d.tags.includes(t),this) )) ) ;
-      else 
-        return this.fireService.colWithIds$("drops", ref => ref.orderBy("updatedAt","asc"));
-    }
+    return this.dropsObservable.asObservable();
+  }
 }

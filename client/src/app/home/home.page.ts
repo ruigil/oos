@@ -30,7 +30,6 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit(): void {
-      this.tagFilterService.select().subscribe( () => this.dropsObs = this.tagFilterService.drops() );
       this.dropsObs = this.tagFilterService.drops();
   }
 
