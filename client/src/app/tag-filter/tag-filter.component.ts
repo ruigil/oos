@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Tag } from '../tag';
 import { TagFilterService } from '../tag-filter.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'oos-tag-filter',
@@ -19,7 +20,7 @@ export class TagFilterComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.tagsObs = this.tagFilterService.tags();
+    this.tagsObs = this.tagFilterService.tags().pipe( map( (tags:Tag[]) => tags.map( t =>  ( {...t, selected: this.selectedTags.includes(t.name)} ) )));
   }
 
   selectTag(id) {
