@@ -33,12 +33,10 @@ export class FireService {
     }
 
     doc<T>(ref: DocPredicate<T>): AngularFirestoreDocument<T> {
-        console.log("fireservice get doc reference...")
         return typeof ref === 'string' ? this.firestore.doc<T>(ref) : ref;
     }
 
     doc$<T>(ref: DocPredicate<T>): Observable<T> {
-        console.log("fireservice get doc observable...")
         return this.doc(ref)
           .snapshotChanges()
           .pipe(
@@ -60,7 +58,6 @@ export class FireService {
     }
     
     col$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<T[]> {
-        console.log("fireservice get col observable...")
         return this.col(ref, queryFn)            
           .snapshotChanges()
           .pipe(
@@ -107,7 +104,8 @@ export class FireService {
     }
       
     add<T>(ref: CollectionPredicate<T>, data): Promise<firebase.firestore.DocumentReference> {
-        const now = this.timestamp;
+      console.log("fireservice add...")
+      const now = this.timestamp;
         return this.col(ref).add({
           ...data,
           updatedAt: now,

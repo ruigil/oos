@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { map  } from 'rxjs/operators';
 
 type Tag  = {name:string,count:number,selected:boolean}
 
@@ -9,8 +9,8 @@ type Tag  = {name:string,count:number,selected:boolean}
 })
 export class SearchTagPipe implements PipeTransform {
 
-  transform(tags: Observable<Tag[]>, searchTerm: string): Observable<Tag[]> {
-    return tags.pipe( map( tags => tags.filter(t => t.name.includes(searchTerm)) ));
+  transform(tags: Observable<Tag[]>, searchTerm: Observable<string>): Observable<Tag[]> {
+    return combineLatest(tags,searchTerm).pipe( map( ([tags, term]) => tags.filter( t => t.name.includes(term) ) ));
   }
 
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Tag } from '../tag';
 import { TagFilterService } from '../tag-filter.service';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 export class TagFilterComponent implements OnInit {
   tagCount: number = 0;
   dropCount: number = 500;
-  searchTerm: string = "";
+  searchTerm: BehaviorSubject<string> = new BehaviorSubject("");
   tagsObs: Observable<Tag[]>;
   selectedTags: string[] = [];
 
@@ -26,9 +26,11 @@ export class TagFilterComponent implements OnInit {
   selectTag(id) {
     if (!this.selectedTags.includes(id)) this.selectedTags.push(id);
     else this.selectedTags.splice(this.selectedTags.indexOf(id),1);
-    console.log("selected tags:")
-    console.log(this.selectedTags);
     this.tagFilterService.selectTag(this.selectedTags);
+  }
+
+  filterTags(event){
+    this.searchTerm.next(event.detail.value);
   }
 
 }

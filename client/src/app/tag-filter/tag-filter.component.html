@@ -4,7 +4,7 @@
   </ion-item-divider>
 
   <ion-item color="light">
-    <ion-searchbar [(ngModel)]="searchTerm"></ion-searchbar>
+    <ion-searchbar (ionChange)="filterTags($event)"></ion-searchbar>
   </ion-item>
   <!---->
   <ion-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index" (click)="selectTag(tag.name)" color="{{tag.selected ? 'success' : 'light'}}">
