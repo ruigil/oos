@@ -31,8 +31,9 @@ export class NoteDetailComponent implements OnInit {
     updateNote() {
         let id = this.drop.id;
         if (delete this.drop.id)
-            this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { console.log("updated! prepare to navigate"); this.router.navigate(["/home"]) },
+            this.dropsService.update("drops/"+ id, this.drop )
+            .then( 
+                (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }
             );
     }

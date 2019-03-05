@@ -3,6 +3,16 @@ import { FireService } from '../fire.service';
 import { Drop } from '../drop';
 import { TagFilterService } from '../tag-filter.service';
 import { Observable } from 'rxjs';
+import { tap,map } from 'rxjs/operators';
+import { 
+    AngularFirestore, 
+    AngularFirestoreCollection, 
+    AngularFirestoreDocument,
+    DocumentChangeAction,
+    Action,
+    DocumentSnapshotDoesNotExist,
+    DocumentSnapshotExists    
+ } from '@angular/fire/firestore';
 
 @Component({
   selector: 'home-page',
@@ -31,12 +41,6 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
       this.dropsObs = this.tagFilterService.drops();
-  }
-
-  formatDate(date) {
-      console.log(date);
-      //return format(date,'DD/MM HH:mm');      
-      return "";
   }
 
   deleteDrop(id,event) {

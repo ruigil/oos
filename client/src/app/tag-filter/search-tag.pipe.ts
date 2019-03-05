@@ -10,7 +10,7 @@ type Tag  = {name:string,count:number,selected:boolean}
 export class SearchTagPipe implements PipeTransform {
 
   transform(tags: Observable<Tag[]>, searchTerm: Observable<string>): Observable<Tag[]> {
-    return combineLatest(tags,searchTerm).pipe( map( ([tags, term]) => tags.filter( t => t.name.includes(term) ) ));
+    return combineLatest(tags,searchTerm).pipe( map( ([tags, term]) => tags.filter( t => t.name.toUpperCase().includes(term.toUpperCase()) ) ));
   }
 
 }
