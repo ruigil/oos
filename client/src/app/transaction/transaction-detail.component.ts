@@ -2,16 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { format } from 'date-fns';
 
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
 
 @Component({
-  selector: 'app-note-detail',
-  templateUrl: './note-detail.component.html',
-  styleUrls: ['./note-detail.component.css']
+  selector: 'app-transaction-detail',
+  templateUrl: './transaction-detail.component.html',
+  styleUrls: ['./transaction-detail.component.css']
 })
-export class NoteDetailComponent implements OnInit {
+export class TransactionDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
 
@@ -21,21 +22,20 @@ export class NoteDetailComponent implements OnInit {
         this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
-                return id === "new" ? of({ ...this.drop, text: "", tags: ["Note"] }) : this.dropsService.docWithId$("drops/"+id);
+                return id === "new" ? of({ ...this.drop, 
+                    text: "", 
+                    tags: ["Transaction"], 
+                    date: format(new Date(),"YYYY-MM-DDTHH:mm"),
+                    transaction: {
+                        value: 3.45,
+                        expense: false,
+                        recurrence: "none"
+                    } }) : this.dropsService.docWithId$("drops/"+id);
             })
-        ).subscribe( d => this.drop = d );
+        ).subscribe( d => this.drop = d )
     }
 
-    updateNote() {
-        let id = this.drop.id;
-        if (delete this.drop.id)
-            this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { this.router.navigate(["note",id]) },
-                (error) => { console.log("error") }
-            );
-    }
-
-    addNote() {
+    addTransaction() {
         this.dropsService.add("drops",this.drop).then(
             (value) => { this.router.navigate(["home"]) },
             (error) => { console.log("error") }

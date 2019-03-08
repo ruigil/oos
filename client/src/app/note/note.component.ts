@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-note',
@@ -11,23 +13,18 @@ import { Drop } from '../drop';
 export class NoteComponent implements OnInit {
 
   drop: Drop = new Drop();
-  tags: Array<string> = [];
 
-  constructor(private dropsService: FireService, private router: Router) { 
-    this.drop.text = "";
-    this.tags.push("Note");
+  constructor(private dropsService: FireService, private route: ActivatedRoute) { 
   }
 
   ngOnInit() {
-  }
+    this.route.paramMap.pipe(
+        switchMap( params => {
+            let id = params.get("id");
+            return this.dropsService.docWithId$("drops/"+id);
+        })
+    ).subscribe( d => this.drop = d );
 
-  addNote() {
-    this.dropsService.add("drops",{ ...this.drop, tags: this.tags});
-    this.router.navigate(["/home"]);
-  }
-  
-  selectedTags(tags: Array<string>) {
-    this.tags = tags;
   }
 
 }

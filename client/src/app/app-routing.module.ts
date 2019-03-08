@@ -26,6 +26,10 @@ const routes: Routes = [
   {
     path: 'note',
     loadChildren: './note/note.module#NoteModule'
+  },
+  {
+    path: 'transaction',
+    loadChildren: './transaction/transaction.module#TransactionModule'
   }
 ];
 

@@ -5,9 +5,8 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { TagsModule } from '../tags/tags.module';
 
-import { NoteComponent } from './note.component';
-import { NoteDetailComponent } from './note-detail.component';
-import { NewLinePipe } from './new-line.pipe';
+import { TransactionComponent } from './transaction.component';
+import { TransactionDetailComponent } from './transaction-detail.component';
 
 @NgModule({
   imports: [
@@ -18,14 +17,14 @@ import { NewLinePipe } from './new-line.pipe';
     RouterModule.forChild([
       {
         path: ':id', 
-        component: NoteComponent
+        component: TransactionComponent
       },
       {
         path: 'edit/:id',
-        component: NoteDetailComponent
+        component: TransactionDetailComponent
       }
     ])
   ],
-  declarations: [NoteComponent, NoteDetailComponent,NewLinePipe]
+  declarations: [TransactionComponent, TransactionDetailComponent]
 })
-export class NoteModule {}
+export class TransactionModule {}

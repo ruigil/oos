@@ -3,16 +3,25 @@
     <ion-buttons slot="start">
       <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
     </ion-buttons>
-    <ion-title>New Note</ion-title>
+    <ion-title>Note</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-    <ion-item>
-        <ion-textarea placeHolder="Enter you text here..." rows="10" [(ngModel)]="drop.text"></ion-textarea>
-    </ion-item>  
-    <ion-button (click)="addNote()" shape="round" fill="outline">
-        <ion-icon name="document" slot="start"></ion-icon>Add Note
-    </ion-button>    
-    <oos-tags [mode]="false" [selected]="tags" (onSelectTag)="selectedTags($event)"></oos-tags>
+    <ion-card>
+        <ion-item>
+            <ion-icon name="document" slot="start"></ion-icon>
+            <ion-label>Note</ion-label>
+            <ion-button fill="outline" slot="end" routerLink="/note/edit/{{drop.id}}">Edit</ion-button>
+        </ion-item>
+
+        <ion-card-content>
+            <ion-text color="dark" [innerHTML]="drop.text | newLine "></ion-text>
+            <ion-item-divider></ion-item-divider>
+            <ion-chip *ngFor="let tag of drop.tags">
+                <ion-icon name="pricetags"></ion-icon>
+                <ion-label>{{tag}}</ion-label>
+            </ion-chip>                
+        </ion-card-content>
+    </ion-card>
 </ion-content>

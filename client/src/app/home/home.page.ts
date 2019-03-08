@@ -43,14 +43,16 @@ export class HomePage implements OnInit {
       this.dropsObs = this.tagFilterService.drops();
   }
 
+  isNote(tags:string[]) {
+      
+  }
+
   deleteDrop(id,event) {
     console.log("delete "+id);
     this.dropsService.delete("drops/"+id).then( 
         (value) => { console.log("deletes") },
         (error) => { console.log("error") }
     );
-    event.preventDefault();
-    event.stopPropagation();
   }
 
 }

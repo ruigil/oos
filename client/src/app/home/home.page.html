@@ -12,24 +12,17 @@
   
   <ion-content>
     <ion-list>
-        <ion-item-sliding *ngFor="let drop of dropsObs | async;" [routerLink]="['/note',drop.id]">
-            <ion-item>
-                <ion-icon slot="start" color="warning" name="document" ></ion-icon>
-                <ion-label>{{drop.text}}</ion-label>
-                <ion-chip slot="end" color="light">
-                    <ion-icon name="time"></ion-icon>                    
-                    <ion-label>{{ (drop.updatedAt ? drop.updatedAt.toDate() : "NO") | formatDate }}</ion-label>
-                    <ion-icon name="sync"></ion-icon>                    
-                </ion-chip>
-            </ion-item>
-            <ion-item-options side="start">
-              <ion-item-option color="medium" (click)="play(item)"><ion-icon name="play"></ion-icon></ion-item-option>
-              <ion-item-option color="medium" (click)="share(item)"><ion-icon name="star"></ion-icon></ion-item-option>
-            </ion-item-options>
-            <ion-item-options side="end">
-              <ion-item-option color="medium" (click)="deleteDrop(item.id,$event)"><ion-icon name="trash"></ion-icon></ion-item-option>
-            </ion-item-options>
-        </ion-item-sliding>
+        <ion-item *ngFor="let drop of dropsObs | async;" [routerLink]="['/note',drop.id]">
+            <ion-icon *ngIf="drop.tags.includes('Note')" slot="start" color="warning" name="document" ></ion-icon>
+            <ion-icon *ngIf="drop.tags.includes('Transaction')" slot="start" color="secondary" name="cash" ></ion-icon>
+            <ion-label *ngIf="drop.tags.includes('Note')">{{drop.text}}</ion-label>
+            <ion-label *ngIf="drop.tags.includes('Transaction')" color="{{drop.transaction.expense ? 'danger' : 'success' }}">{{drop.transaction.value}}</ion-label>
+            <ion-chip slot="end" color="light">
+                <ion-icon name="time"></ion-icon>                    
+                <ion-label>{{ (drop.updatedAt ? drop.updatedAt.toDate() : "NO") | formatDate }}</ion-label>
+                <ion-icon name="sync"></ion-icon>
+            </ion-chip>
+        </ion-item>
     </ion-list>
     <!--
 
@@ -49,8 +42,8 @@
         <ion-icon name="add"></ion-icon>
         </ion-fab-button>
         <ion-fab-list side="top">
-        <ion-fab-button color="warning" routerLink="/note"><ion-icon name="document"></ion-icon></ion-fab-button>
-        <ion-fab-button color="secondary" routerLink="/note"><ion-icon name="cash"></ion-icon></ion-fab-button> 
+        <ion-fab-button color="warning" routerLink="/note/edit/new"><ion-icon name="document"></ion-icon></ion-fab-button>
+        <ion-fab-button color="secondary" routerLink="/transaction/edit/new"><ion-icon name="cash"></ion-icon></ion-fab-button> 
         <ion-fab-button color="tertiary" routerLink="/note"><ion-icon name="filing"></ion-icon></ion-fab-button> 
         </ion-fab-list>
     </ion-fab>    
