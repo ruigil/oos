@@ -14,7 +14,6 @@ import { FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
-import { CreateComponent } from './create/create.component';
 import { ReportComponent } from './report/report.component';
 import { SettingsComponent } from './settings/settings.component';
 import { TagFilterComponent } from './tag-filter/tag-filter.component';
@@ -26,7 +25,6 @@ import { SortTagPipe } from './tag-filter/sort-tag.pipe';
   declarations: [
     AppComponent,
     SettingsComponent,
-    CreateComponent,
     ReportComponent,
     TagFilterComponent,
     SearchTagPipe,
@@ -45,7 +43,6 @@ import { SortTagPipe } from './tag-filter/sort-tag.pipe';
   ],
   entryComponents: [
     SettingsComponent,
-    CreateComponent,
     ReportComponent,
   ],
   providers: [

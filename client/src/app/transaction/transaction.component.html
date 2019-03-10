@@ -1,3 +1,32 @@
-<p>
-  transaction works!
-</p>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>Transaction</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-card>
+        <ion-item>
+            <ion-icon name="cash" slot="start"></ion-icon>
+            <ion-label>Transaction</ion-label>
+            <ion-button fill="outline" slot="end" routerLink="/transaction/edit/{{drop.id}}">Edit</ion-button>
+        </ion-item>
+
+        <ion-card-content>
+            <ion-chip color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">            
+                <ion-icon name="{{drop.transaction.type === 'expense' ? 'remove' : 'add'}}"> </ion-icon>
+                <ion-label>{{drop.transaction.value}}</ion-label>
+            </ion-chip>
+            <ion-text color="dark">{{drop.date}}</ion-text>
+            <ion-text color="dark" [innerHTML]="drop.text"></ion-text>
+            <ion-item-divider></ion-item-divider>
+            <ion-chip *ngFor="let tag of drop.tags">
+                <ion-icon name="pricetags"></ion-icon>
+                <ion-label>{{tag}}</ion-label>
+            </ion-chip>                
+        </ion-card-content>
+    </ion-card>
+</ion-content>

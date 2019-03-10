@@ -13,14 +13,14 @@
     <ion-item>
         <ion-input type="number" value="0.00" [(ngModel)]="drop.transaction.value"></ion-input>
     </ion-item>
-  <ion-radio-group [(ngModel)]="drop.transaction.expense">
+  <ion-radio-group [(ngModel)]="drop.transaction.type">
     <ion-item>
       <ion-label>Expense</ion-label>
-      <ion-radio value="true"></ion-radio>
+      <ion-radio value="expense"></ion-radio>
     </ion-item>
     <ion-item>
       <ion-label>Income</ion-label>
-      <ion-radio value="false"></ion-radio>
+      <ion-radio value="income"></ion-radio>
     </ion-item>
   </ion-radio-group>
 <ion-item>
@@ -31,9 +31,9 @@
     <ion-label>Recurrent</ion-label>
     <ion-select [(ngModel)]="drop.transaction.recurrence" okText="Okay" cancelText="Dismiss">
       <ion-select-option value="none">No</ion-select-option>
-      <ion-select-option value="week">Montly</ion-select-option>
-      <ion-select-option value="month">Weekly</ion-select-option>
-      <ion-select-option value="daily">Daily</ion-select-option>
+      <ion-select-option value="month">Montly</ion-select-option>
+      <ion-select-option value="week">Weekly</ion-select-option>
+      <ion-select-option value="day">Daily</ion-select-option>
     </ion-select>
   </ion-item>
 <ion-item>

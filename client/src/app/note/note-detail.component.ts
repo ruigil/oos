@@ -42,6 +42,13 @@ export class NoteDetailComponent implements OnInit {
         );
     }
 
+    deleteNote() {
+        this.dropsService.update("drops/"+ this.drop.id, this.drop ).then( 
+            (value) => { this.router.navigate(["home"]) },
+            (error) => { console.log("error") }
+        );
+    }
+
     selectedTags(tags: Array<string>) {
         this.drop.tags = tags;
     }

@@ -43,8 +43,16 @@ export class HomePage implements OnInit {
       this.dropsObs = this.tagFilterService.drops();
   }
 
-  isNote(tags:string[]) {
-      
+  isNote(drop:Drop) {
+      return drop.tags.includes('Note');
+  }
+
+  isTransaction(drop:Drop) {
+      return drop.tags.includes('Transaction');
+  }
+  
+  isTask(drop:Drop) {
+      return drop.tags.includes('Task');
   }
 
   deleteDrop(id,event) {

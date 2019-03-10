@@ -16,7 +16,9 @@ export class TransactionDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
 
-    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { }
+    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
+        this.drop.transaction = {value: 0.0, type: 'expense', recurrence: 'week'};
+    }
 
     ngOnInit() {
         this.route.paramMap.pipe(
@@ -37,6 +39,22 @@ export class TransactionDetailComponent implements OnInit {
 
     addTransaction() {
         this.dropsService.add("drops",this.drop).then(
+            (value) => { this.router.navigate(["home"]) },
+            (error) => { console.log("error") }
+        );
+    }
+    
+    updateTransaction() {
+        let id = this.drop.id;
+        if (delete this.drop.id)
+            this.dropsService.update("drops/"+ id, this.drop ).then( 
+                (value) => { this.router.navigate(["transaction",id]) },
+                (error) => { console.log("error") }
+            );
+    }
+
+    deleteTransaction() {
+        this.dropsService.update("drops/"+ this.drop.id, this.drop ).then( 
             (value) => { this.router.navigate(["home"]) },
             (error) => { console.log("error") }
         );

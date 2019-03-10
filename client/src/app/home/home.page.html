@@ -12,11 +12,19 @@
   
   <ion-content>
     <ion-list>
-        <ion-item *ngFor="let drop of dropsObs | async;" [routerLink]="['/note',drop.id]">
-            <ion-icon *ngIf="drop.tags.includes('Note')" slot="start" color="warning" name="document" ></ion-icon>
-            <ion-icon *ngIf="drop.tags.includes('Transaction')" slot="start" color="secondary" name="cash" ></ion-icon>
-            <ion-label *ngIf="drop.tags.includes('Note')">{{drop.text}}</ion-label>
-            <ion-label *ngIf="drop.tags.includes('Transaction')" color="{{drop.transaction.expense ? 'danger' : 'success' }}">{{drop.transaction.value}}</ion-label>
+        <ion-item *ngFor="let drop of dropsObs | async;" [routerLink]="isNote(drop) ? ['/note',drop.id] : ['/transaction',drop.id] ">
+            <!-- Note -->
+            <ion-icon *ngIf="isNote(drop)" slot="start" color="warning" name="document" ></ion-icon>
+            <ion-label *ngIf="isNote(drop)">{{drop.text}}</ion-label>
+            <!-- Transaction -->
+            <ion-icon *ngIf="isTransaction(drop)" slot="start" color="secondary" name="cash" ></ion-icon>
+            <ion-chip *ngIf="isTransaction(drop)" color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
+                <ion-icon name="{{drop.transaction.type === 'expense' ? 'remove' : 'add'}}" ></ion-icon>
+                <ion-label>{{drop.transaction.value}}</ion-label>
+            </ion-chip>
+            <ion-label *ngIf="isTransaction(drop)" color="primary">{{drop.text}}</ion-label>
+
+            <!-- Common -->
             <ion-chip slot="end" color="light">
                 <ion-icon name="time"></ion-icon>                    
                 <ion-label>{{ (drop.updatedAt ? drop.updatedAt.toDate() : "NO") | formatDate }}</ion-label>
