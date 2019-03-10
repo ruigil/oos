@@ -20,8 +20,5 @@
     <ion-button (click)="updateNote()" shape="round" fill="outline" *ngIf="drop.id">
         <ion-icon name="document" slot="start"></ion-icon>Update Note
     </ion-button>
-    <ion-button (click)="deleteNote()" shape="round" fill="outline" *ngIf="drop.id">
-        <ion-icon name="document" slot="start"></ion-icon>Delete Note
-    </ion-button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </ion-content>

@@ -14,7 +14,7 @@ export class NoteComponent implements OnInit {
 
   drop: Drop = new Drop();
 
-  constructor(private dropsService: FireService, private route: ActivatedRoute) { 
+  constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
   }
 
   ngOnInit() {
@@ -26,5 +26,13 @@ export class NoteComponent implements OnInit {
     ).subscribe( d => this.drop = d );
 
   }
+
+    deleteNote() {
+        this.dropsService.delete("drops/"+ this.drop.id).then( 
+            (value) => { this.router.navigate(["home"]) },
+            (error) => { console.log("error") }
+        );
+    }
+
 
 }

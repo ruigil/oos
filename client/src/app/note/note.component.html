@@ -13,6 +13,7 @@
             <ion-icon name="document" slot="start"></ion-icon>
             <ion-label>Note</ion-label>
             <ion-button fill="outline" slot="end" routerLink="/note/edit/{{drop.id}}">Edit</ion-button>
+            <ion-button fill="outline" slot="end" (click)="deleteNote()">Delete</ion-button>
         </ion-item>
 
         <ion-card-content>
