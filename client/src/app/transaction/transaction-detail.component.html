@@ -46,8 +46,5 @@
     <ion-button (click)="updateTransaction()" shape="round" fill="outline" *ngIf="drop.id">
         <ion-icon name="document" slot="start"></ion-icon>Update Transaction
     </ion-button>
-    <ion-button (click)="deleteTransaction()" shape="round" fill="outline" *ngIf="drop.id">
-        <ion-icon name="document" slot="start"></ion-icon>Delete Transaction
-    </ion-button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </ion-content>

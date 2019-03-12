@@ -12,7 +12,8 @@
         <ion-item>
             <ion-icon name="cash" slot="start"></ion-icon>
             <ion-label>Transaction</ion-label>
-            <ion-button fill="outline" slot="end" routerLink="/transaction/edit/{{drop.id}}">Edit</ion-button>
+            <ion-button fill="outline" slot="end" routerLink="/transaction/edit/{{drop.id}}"><ion-icon name="create"></ion-icon></ion-button>
+            <ion-button fill="outline" slot="end" (click)="deleteTransaction()"><ion-icon name="trash"></ion-icon></ion-button>
         </ion-item>
 
         <ion-card-content>

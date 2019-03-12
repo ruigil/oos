@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
@@ -29,8 +29,8 @@ export class TransactionDetailComponent implements OnInit {
                     tags: ["Transaction"], 
                     date: format(new Date(),"YYYY-MM-DDTHH:mm"),
                     transaction: {
-                        value: 3.45,
-                        expense: false,
+                        value: 0.0,
+                        type: "expense",
                         recurrence: "none"
                     } }) : this.dropsService.docWithId$("drops/"+id);
             })
@@ -38,7 +38,7 @@ export class TransactionDetailComponent implements OnInit {
     }
 
     addTransaction() {
-        this.dropsService.add("drops",this.drop).then(
+        this.dropsService.add("drops",{...this.drop, date: this.dropsService.date2ts(parse(this.drop.date))}).then(
             (value) => { this.router.navigate(["home"]) },
             (error) => { console.log("error") }
         );
@@ -51,13 +51,6 @@ export class TransactionDetailComponent implements OnInit {
                 (value) => { this.router.navigate(["transaction",id]) },
                 (error) => { console.log("error") }
             );
-    }
-
-    deleteTransaction() {
-        this.dropsService.update("drops/"+ this.drop.id, this.drop ).then( 
-            (value) => { this.router.navigate(["home"]) },
-            (error) => { console.log("error") }
-        );
     }
 
     selectedTags(tags: Array<string>) {

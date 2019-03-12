@@ -113,4 +113,8 @@ export class FireService {
         });
     }
 
+    date2ts(date): firebase.firestore.Timestamp {
+        return firebase.firestore.Timestamp.fromDate(date);
+    }
+
 }

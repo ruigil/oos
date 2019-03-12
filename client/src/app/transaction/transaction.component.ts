@@ -14,7 +14,7 @@ export class TransactionComponent implements OnInit {
 
   drop: Drop = new Drop();
 
-  constructor(private dropsService: FireService, private route: ActivatedRoute) { 
+  constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
       this.drop.transaction = { value: 0.0, type: 'expense', recurrence: 'week'};
   }
 
@@ -27,5 +27,10 @@ export class TransactionComponent implements OnInit {
     ).subscribe( d => this.drop = d );
 
   }
+    deleteTransaction() {
+        this.dropsService.delete("drops/"+ this.drop.id);
+        this.router.navigate(["home"]);
+    }
+
 
 }
