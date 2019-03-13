@@ -25,7 +25,7 @@
   </ion-radio-group>
 <ion-item>
   <ion-label>Date</ion-label>
-  <ion-datetime display-format="DD MMM YYYY, HH:mm" value="{{drop.date}}"></ion-datetime>
+  <ion-datetime display-format="DD MMM YYYY, HH:mm" value="{{ drop.date | iso8601 }}"></ion-datetime>
 </ion-item>
   <ion-item>
     <ion-label>Recurrent</ion-label>

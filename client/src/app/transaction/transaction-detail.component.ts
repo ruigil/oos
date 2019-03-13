@@ -24,15 +24,15 @@ export class TransactionDetailComponent implements OnInit {
         this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
-                return id === "new" ? of({ ...this.drop, 
+                return id === "new" ? of(new Drop({ ...this.drop, 
                     text: "", 
                     tags: ["Transaction"], 
-                    date: format(new Date(),"YYYY-MM-DDTHH:mm"),
+                    date: this.dropsService.date2ts(new Date()),
                     transaction: {
                         value: 0.0,
                         type: "expense",
                         recurrence: "none"
-                    } }) : this.dropsService.docWithId$("drops/"+id);
+                    } })) : this.dropsService.docWithId$("drops/"+id);
             })
         ).subscribe( d => this.drop = d )
     }

@@ -19,6 +19,7 @@ import { HomePage } from './home.page';
       }
     ])
   ],
-  declarations: [HomePage,FormatDatePipe]
+  declarations: [HomePage, FormatDatePipe],
+  exports: [FormatDatePipe]
 })
 export class HomePageModule {}

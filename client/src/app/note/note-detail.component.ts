@@ -21,7 +21,7 @@ export class NoteDetailComponent implements OnInit {
         this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
-                return id === "new" ? of({ ...this.drop, text: "", tags: ["Note"] }) : this.dropsService.docWithId$("drops/"+id);
+                return id === "new" ? of(new Drop({ text: "", tags: ["Note"], date: this.dropsService.date2ts(new Date()) }) ) : this.dropsService.docWithId$("drops/"+id);
             })
         ).subscribe( d => this.drop = d );
     }
