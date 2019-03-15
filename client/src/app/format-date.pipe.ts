@@ -6,7 +6,7 @@ import { format, parse } from 'date-fns';
 })
 export class FormatDatePipe implements PipeTransform {
 
-  transform(value: string, args?: any): String {
+  transform(value: any, args?: any): String {
     return format(value, "DD/MM HH:mm");
   }
 

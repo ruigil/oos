@@ -15,6 +15,7 @@ import { Drop } from '../drop';
 export class TransactionDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
+    dropDate: string = "";
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
         this.drop = new Drop({ transaction: {value: 0.0, type: 'expense', recurrence: 'week'} });
@@ -34,11 +35,11 @@ export class TransactionDetailComponent implements OnInit {
                         recurrence: "none"
                     } })) : this.dropsService.docWithId$("drops/"+id);
             })
-        ).subscribe( d => this.drop = d )
+        ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm")})
     }
 
     addTransaction() {
-        this.dropsService.add("drops",{...this.drop, date: this.dropsService.date2ts(parse(this.drop.date))}).then(
+        this.dropsService.add("drops",{...this.drop, date: this.dropsService.date2ts(parse(this.dropDate))}).then(
             (value) => { this.router.navigate(["home"]) },
             (error) => { console.log("error") }
         );
@@ -47,6 +48,7 @@ export class TransactionDetailComponent implements OnInit {
     updateTransaction() {
         let id = this.drop.id;
         if (delete this.drop.id)
+            this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
             this.dropsService.update("drops/"+ id, this.drop ).then( 
                 (value) => { this.router.navigate(["transaction",id]) },
                 (error) => { console.log("error") }

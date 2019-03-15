@@ -8,6 +8,7 @@ import { TagsModule } from '../tags/tags.module';
 import { NoteComponent } from './note.component';
 import { NoteDetailComponent } from './note-detail.component';
 import { NewLinePipe } from './new-line.pipe';
+import { FormatDatePipe } from '../format-date.pipe';
 
 @NgModule({
   imports: [
@@ -26,6 +27,6 @@ import { NewLinePipe } from './new-line.pipe';
       }
     ])
   ],
-  declarations: [NoteComponent, NoteDetailComponent,NewLinePipe]
+  declarations: [NoteComponent, NoteDetailComponent,NewLinePipe, FormatDatePipe]
 })
 export class NoteModule {}
