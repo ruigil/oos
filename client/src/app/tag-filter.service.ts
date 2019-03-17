@@ -21,8 +21,8 @@ export class TagFilterService {
     this.drops$ = this.selectedTags$.pipe( flatMap( tags => {
         console.log("selecting drops with tags: "+tags)
         const dropsObs = tags.length > 0 ? 
-            this.fireService.colWithIds$("drops", ref => ref.where("tags","array-contains",tags[0]).orderBy("updatedAt","desc")) :
-            this.fireService.colWithIds$("drops", ref => ref.orderBy("updatedAt","desc"));
+            this.fireService.colWithIds$("drops", ref => ref.where("tags","array-contains",tags[0]).orderBy("date","desc")) :
+            this.fireService.colWithIds$("drops", ref => ref.orderBy("date","desc"));
         // local filter by the selected tags.
         return dropsObs.pipe ( map( drops => drops.filter( d => tags.every(t => d.tags.includes(t),this) )));
     }));

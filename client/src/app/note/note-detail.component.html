@@ -13,6 +13,10 @@
     <ion-item>
         <ion-textarea placeHolder="Enter you text here..." rows="10" [(ngModel)]="drop.text"></ion-textarea>
     </ion-item>
+    <ion-item>
+        <ion-label>Date</ion-label>
+        <ion-datetime display-format="DD MMM YYYY, HH:mm" [(ngModel)]="dropDate"></ion-datetime>
+    </ion-item>
     
     <ion-button (click)="addNote()" shape="round" fill="outline" *ngIf="!drop.id">
         <ion-icon name="document" slot="start"></ion-icon>Add Note

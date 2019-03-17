@@ -10,19 +10,20 @@
 <ion-content>
     <ion-card>
         <ion-item>
-            <ion-icon name="document" slot="start"></ion-icon>
+            <ion-icon slot="start" name="document" color="warning"></ion-icon>
             <ion-label>Note</ion-label>
-            <ion-chip>
-                <ion-icon name="time"></ion-icon>
-                <ion-label>{{drop.date?.toDate() | formatDate }}</ion-label>
-            </ion-chip>
             <ion-button fill="outline" slot="end" routerLink="/note/edit/{{drop.id}}"><ion-icon name="create"></ion-icon></ion-button>
             <ion-button fill="outline" slot="end" (click)="deleteNote()"><ion-icon name="trash"></ion-icon></ion-button>
         </ion-item>
 
         <ion-card-content>
             <ion-text color="dark" [innerHTML]="drop.text | newLine "></ion-text>
-            <ion-item-divider></ion-item-divider>
+            <ion-item-divider>
+                <ion-chip color="light">
+                    <ion-icon name="time"></ion-icon>
+                    <ion-label>{{drop.date?.toDate() | formatDate }}</ion-label>
+                </ion-chip>
+            </ion-item-divider>
             <ion-chip *ngFor="let tag of drop.tags">
                 <ion-icon name="pricetags"></ion-icon>
                 <ion-label>{{tag}}</ion-label>

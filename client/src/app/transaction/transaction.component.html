@@ -10,17 +10,13 @@
 <ion-content>
     <ion-card>
         <ion-item>
-            <ion-icon name="cash" slot="start"></ion-icon>
+            <ion-icon name="cash" slot="start" color="secondary"></ion-icon>
             <ion-label>Transaction</ion-label>
             <ion-button fill="outline" slot="end" routerLink="/transaction/edit/{{drop.id}}"><ion-icon name="create"></ion-icon></ion-button>
             <ion-button fill="outline" slot="end" (click)="deleteTransaction()"><ion-icon name="trash"></ion-icon></ion-button>
         </ion-item>
 
         <ion-card-content>
-            <ion-chip slot="start" color="warning">
-                <ion-icon name="time"></ion-icon>                    
-                <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
-            </ion-chip>
             <ion-chip color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">            
                 <ion-icon name="{{drop.transaction.type === 'expense' ? 'remove' : 'add'}}"> </ion-icon>
                 <ion-label>{{drop.transaction.value}}</ion-label>
@@ -28,7 +24,12 @@
             <ion-chip slot="start" color="primary">
                 <ion-label [innerHTML]="drop.text"></ion-label>
             </ion-chip>
-            <ion-item-divider></ion-item-divider>
+            <ion-item-divider>
+                <ion-chip slot="start" color="light">
+                    <ion-icon name="time"></ion-icon>                    
+                    <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
+                </ion-chip>
+            </ion-item-divider>
             <ion-chip *ngFor="let tag of drop.tags">
                 <ion-icon name="pricetags"></ion-icon>
                 <ion-label>{{tag}}</ion-label>

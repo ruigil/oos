@@ -12,7 +12,7 @@
   
   <ion-content>
     <ion-list>
-        <ion-item *ngFor="let drop of dropsObs | async;" [routerLink]="isNote(drop) ? ['/note',drop.id] : ['/transaction',drop.id] ">
+        <ion-item *ngFor="let drop of dropsObs | async; let i = index;" [routerLink]="isNote(drop) ? ['/note',drop.id] : ['/transaction',drop.id] " color="light">
             <!-- Note -->
             <ion-icon *ngIf="isNote(drop)" slot="start" color="warning" name="document" ></ion-icon>
             <ion-label *ngIf="isNote(drop)">{{drop.text}}</ion-label>
@@ -25,11 +25,10 @@
             <ion-label *ngIf="isTransaction(drop)" color="primary">{{drop.text}}</ion-label>
 
             <!-- Common -->
+            <ion-icon *ngIf="drop.transaction?.recurrence" name="sync"></ion-icon>
             <ion-chip slot="end" color="light">
-                
                 <ion-icon name="time"></ion-icon>                    
-                <ion-label>{{ (drop.updatedAt ? drop.updatedAt.toDate() : "NO") | formatDate }}</ion-label>
-                <ion-icon name="sync"></ion-icon>
+                <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
             </ion-chip>
         </ion-item>
     </ion-list>

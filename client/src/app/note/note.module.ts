@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { TagsModule } from '../tags/tags.module';
+import { HomePageModule } from '../home/home.module';
 
 import { NoteComponent } from './note.component';
 import { NoteDetailComponent } from './note-detail.component';
 import { NewLinePipe } from './new-line.pipe';
-import { FormatDatePipe } from '../format-date.pipe';
 
 @NgModule({
   imports: [
@@ -16,6 +16,7 @@ import { FormatDatePipe } from '../format-date.pipe';
     FormsModule,
     IonicModule,
     TagsModule,
+    HomePageModule,
     RouterModule.forChild([
       {
         path: ':id', 
@@ -27,6 +28,6 @@ import { FormatDatePipe } from '../format-date.pipe';
       }
     ])
   ],
-  declarations: [NoteComponent, NoteDetailComponent,NewLinePipe, FormatDatePipe]
+  declarations: [NoteComponent, NoteDetailComponent,NewLinePipe]
 })
 export class NoteModule {}
