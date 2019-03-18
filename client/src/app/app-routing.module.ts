@@ -30,6 +30,10 @@ const routes: Routes = [
   {
     path: 'transaction',
     loadChildren: './transaction/transaction.module#TransactionModule'
+  },
+  {
+    path: 'task',
+    loadChildren: './task/task.module#TaskModule'
   }
 ];
 

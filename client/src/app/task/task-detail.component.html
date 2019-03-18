@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
+    </ion-buttons>
+    <ion-title>Edit Task</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-item>
+        <ion-input type="text" placeHolder="Title..." [(ngModel)]="drop.task.title"></ion-input>
+    </ion-item>
+    <ion-item>
+        <ion-label>Due Date</ion-label>
+        <ion-datetime display-format="DD MMM YYYY, HH:mm" [(ngModel)]="dropDate"></ion-datetime>
+    </ion-item>
+    <ion-item>
+        <ion-label>Recurrent</ion-label>
+        <ion-select [(ngModel)]="drop.task.recurrence" okText="Okay" cancelText="Dismiss">
+        <ion-select-option value="none">No</ion-select-option>
+        <ion-select-option value="month">Montly</ion-select-option>
+        <ion-select-option value="week">Weekly</ion-select-option>
+        <ion-select-option value="day">Daily</ion-select-option>
+        </ion-select>
+    </ion-item>
+    <ion-item>
+        <ion-textarea placeHolder="Enter you text here..." rows="4" [(ngModel)]="drop.text"></ion-textarea>
+    </ion-item>
+
+    <ion-button (click)="addTask()" shape="round" fill="outline" *ngIf="!drop.id">
+        <ion-icon name="document" slot="start"></ion-icon>Add Task
+    </ion-button>
+    <ion-button (click)="updateTask()" shape="round" fill="outline" *ngIf="drop.id">
+        <ion-icon name="document" slot="start"></ion-icon>Update Task
+    </ion-button>
+    <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
+</ion-content>
