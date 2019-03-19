@@ -55,6 +55,11 @@ export class HomePage implements OnInit {
       return drop.tags.includes('Task');
   }
 
+  isRecurrent(drop:Drop) {
+      return (this.isTransaction(drop) && drop.transaction.recurrence !== 'none') || 
+            (this.isTask(drop) && drop.task.recurrence !== 'none')
+  }
+
   deleteDrop(id,event) {
     console.log("delete "+id);
     this.dropsService.delete("drops/"+id).then( 

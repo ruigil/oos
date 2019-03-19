@@ -13,7 +13,7 @@
   <ion-content>
     <ion-list>
         <ion-item *ngFor="let drop of dropsObs | async; let i = index;" [routerLink]="isNote(drop) ? ['/note',drop.id] : isTransaction(drop) ? ['/transaction',drop.id] : ['/task',drop.id] ">
-            <ion-icon *ngIf="drop.transaction?.recurrence || drop.task?.recurrence" name="sync"></ion-icon>
+            <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
             <!-- Note -->
             <ion-icon *ngIf="isNote(drop)" slot="start" color="warning" name="document" ></ion-icon>
             <ion-label *ngIf="isNote(drop)">{{drop.text}}</ion-label>
@@ -22,11 +22,10 @@
             <ion-chip *ngIf="isTransaction(drop)" color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
                 <ion-label>{{drop.transaction.value}}</ion-label>
             </ion-chip>
-            <ion-label *ngIf="isTransaction(drop)" color="primary">{{drop.text}}</ion-label>
+            <ion-chip *ngIf="isTransaction(drop)" color="light">{{drop.text}}</ion-chip>
             <!-- Task -->
-            <ion-icon *ngIf="isTask(drop)" slot="start" color="tertiary" name="filing" ></ion-icon>
+            <ion-icon *ngIf="isTask(drop)" slot="start" color="tertiary" name="folder" ></ion-icon>
             <ion-chip *ngIf="isTask(drop)" color="medium">
-                <ion-icon name="folder-open"></ion-icon>
                 <ion-label>{{drop.task.title}}</ion-label>
             </ion-chip>
 
