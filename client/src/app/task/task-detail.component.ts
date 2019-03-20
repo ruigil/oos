@@ -18,7 +18,7 @@ export class TaskDetailComponent implements OnInit {
     dropDate: string = "";
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
-        this.drop = new Drop({ task: {title: "", completed: false, recurrence: 'week', date: null} });
+        this.drop = new Drop({ task: {title: "", date: null}, recurrence: 'none', completed: null });
     }
 
     ngOnInit() {
@@ -29,11 +29,11 @@ export class TaskDetailComponent implements OnInit {
                     text: "", 
                     tags: ["Task"],
                     date: this.dropsService.date2ts(new Date()),
+                    completed: null,
+                    recurrence: 'none',
                     task: {
                         title: "",
-                        date: null,
-                        completed: false,
-                        recurrence: "none"
+                        date: null
                     } })) : this.dropsService.docWithId$("drops/"+id);
             })
         ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm")})
@@ -51,7 +51,7 @@ export class TaskDetailComponent implements OnInit {
         if (delete this.drop.id)
             this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
             this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { this.router.navigate(["task",id]) },
+                (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }
             );
     }

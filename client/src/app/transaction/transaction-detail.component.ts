@@ -18,7 +18,7 @@ export class TransactionDetailComponent implements OnInit {
     dropDate: string = "";
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
-        this.drop = new Drop({ transaction: {value: 0.0, type: 'expense', recurrence: 'week'} });
+        this.drop = new Drop({ transaction: {value: 0.0, type: 'expense'}, recurrence: 'none' });
     }
 
     ngOnInit() {
@@ -29,10 +29,10 @@ export class TransactionDetailComponent implements OnInit {
                     text: "", 
                     tags: ["Transaction"], 
                     date: this.dropsService.date2ts(new Date()),
+                    recurrence: 'none',
                     transaction: {
                         value: 0.0,
-                        type: "expense",
-                        recurrence: "none"
+                        type: "expense"
                     } })) : this.dropsService.docWithId$("drops/"+id);
             })
         ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm")})

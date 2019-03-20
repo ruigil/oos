@@ -4,6 +4,8 @@ import { Drop } from '../drop';
 import { TagFilterService } from '../tag-filter.service';
 import { Observable } from 'rxjs';
 import { tap,map } from 'rxjs/operators';
+import { Router } from '@angular/router';
+
 import { 
     AngularFirestore, 
     AngularFirestoreCollection, 
@@ -20,23 +22,9 @@ import {
   styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit {
-  private selectedItem: any;
-  private icons = [
-    'flask',
-    'wifi',
-    'beer',
-    'football',
-    'basketball',
-    'paper-plane',
-    'american-football',
-    'boat',
-    'bluetooth',
-    'build'
-  ];
-  public items: Array<{ id: string, date: string, note: string; icon: string }> = [];
   dropsObs: Observable<Drop[]>;
 
-  constructor(private dropsService: FireService, private tagFilterService: TagFilterService) {
+  constructor(private dropsService: FireService, private tagFilterService: TagFilterService, private router: Router) {
   }
 
   ngOnInit(): void {
@@ -56,20 +44,24 @@ export class HomePage implements OnInit {
   }
 
   isRecurrent(drop:Drop) {
-      return (this.isTransaction(drop) && drop.transaction.recurrence !== 'none') || 
-            (this.isTask(drop) && drop.task.recurrence !== 'none')
+      return (this.isTransaction(drop) || this.isTask(drop)) && drop.recurrence !== 'none';
   }
 
   getRouterLink(drop:Drop) {
       return this.isNote(drop) ? ['/note',drop.id] : this.isTransaction(drop) ? ['/transaction',drop.id] : ['/task',drop.id];
   }
 
-  deleteDrop(id,event) {
-    console.log("delete "+id);
-    this.dropsService.delete("drops/"+id).then( 
-        (value) => { console.log("deletes") },
+  delete(slidingItem,drop:Drop) {
+      slidingItem.close(); // important 
+    let id = drop.id;
+    this.dropsService.delete("drops/"+drop.id).then(
+        (value) => { console.log(" deleted item") },
         (error) => { console.log("error") }
     );
+  }
+
+  edit(drop:Drop) {
+      return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.router.navigate(['/task/edit',drop.id]);
   }
 
 }

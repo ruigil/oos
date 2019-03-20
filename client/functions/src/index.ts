@@ -30,7 +30,7 @@ export const updateTags = functions.firestore
                 querySnapshot.forEach(doc => {
                     const data = doc.data();
                     if (newTags.includes(data.name) && !oldTags.includes(data.name))
-                        return admin.firestore().doc('tags/'+doc.id).update({ count: data.count + 1 })
+                        return admin.firestore().doc('tags/'+doc.id).update({ count: data.count + 1, updatedAt: admin.firestore.FieldValue.serverTimestamp() })
                     if (!newTags.includes(data.name) && oldTags.includes(data.name))
                         return admin.firestore().doc('tags/'+doc.id).update({ count: data.count - 1 })
                     return null;
