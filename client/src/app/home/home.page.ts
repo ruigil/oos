@@ -60,6 +60,10 @@ export class HomePage implements OnInit {
             (this.isTask(drop) && drop.task.recurrence !== 'none')
   }
 
+  getRouterLink(drop:Drop) {
+      return this.isNote(drop) ? ['/note',drop.id] : this.isTransaction(drop) ? ['/transaction',drop.id] : ['/task',drop.id];
+  }
+
   deleteDrop(id,event) {
     console.log("delete "+id);
     this.dropsService.delete("drops/"+id).then( 

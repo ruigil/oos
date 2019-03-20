@@ -12,7 +12,7 @@
   
   <ion-content>
     <ion-list>
-        <ion-item *ngFor="let drop of dropsObs | async; let i = index;" [routerLink]="isNote(drop) ? ['/note',drop.id] : isTransaction(drop) ? ['/transaction',drop.id] : ['/task',drop.id] ">
+        <ion-item *ngFor="let drop of dropsObs | async; let i = index;" [routerLink]="getRouterLink(drop)">
             <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
             <!-- Note -->
             <ion-icon *ngIf="isNote(drop)" slot="start" color="warning" name="document" ></ion-icon>
@@ -56,7 +56,7 @@
         <ion-fab-list side="top">
         <ion-fab-button color="warning" routerLink="/note/edit/new"><ion-icon name="document"></ion-icon></ion-fab-button>
         <ion-fab-button color="secondary" routerLink="/transaction/edit/new"><ion-icon name="cash"></ion-icon></ion-fab-button> 
-        <ion-fab-button color="tertiary" routerLink="/task/edit/new"><ion-icon name="filing"></ion-icon></ion-fab-button> 
+        <ion-fab-button color="tertiary" routerLink="/task/edit/new"><ion-icon name="folder"></ion-icon></ion-fab-button> 
         </ion-fab-list>
     </ion-fab>    
   </ion-content>

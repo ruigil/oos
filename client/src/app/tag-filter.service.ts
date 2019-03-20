@@ -27,7 +27,7 @@ export class TagFilterService {
         return dropsObs.pipe ( map( drops => drops.filter( d => tags.every(t => d.tags.includes(t),this) )));
     }));
 
-    this.tags$ = this.fireService.colWithIds$("tags");
+    this.tags$ = this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc'));
 
 }
 
@@ -37,9 +37,6 @@ export class TagFilterService {
 
   tags():Observable<Tag[]> {
     return combineLatest(this.tags$,this.drops$).pipe( map( ([tags,drops]) => {
-        console.log("tags obs");
-        console.log(tags);
-        console.log(drops);
       // filter the tags that are contained in a least one those drops.
       return tags.filter( t => drops.some( d => d.tags.includes(t.name)) );
     }) );
