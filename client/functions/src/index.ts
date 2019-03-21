@@ -10,6 +10,21 @@ admin.initializeApp(functions.config().firebase);
 //  response.send("Hello from Firebase!");
 // });
 
+export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async message => {
+    console.log(Buffer.from(message.data,'base64').toString());
+
+    return admin.firestore().collection("drops").add(
+        { 
+            text: "This is a minute drop...", 
+            tags: ["Note"], 
+            recurrence: "none",
+            completed: null,
+            date: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        });
+});
+
 export const updateTags = functions.firestore
     .document('drops/{dropID}')
     .onWrite((change, context) => {
