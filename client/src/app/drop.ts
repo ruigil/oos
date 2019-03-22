@@ -1,5 +1,6 @@
 export class Drop {
     id: string;
+    type: string;
     text: string;
     transaction?: { value: number, type: string };
     task?: { title: string, date: any};

@@ -26,8 +26,9 @@ export class TransactionDetailComponent implements OnInit {
             switchMap( params => {
                 let id = params.get("id");
                 return id === "new" ? of(new Drop({ ...this.drop, 
-                    text: "", 
-                    tags: ["Transaction"], 
+                    text: "",
+                    type: "TRX",
+                    tags: [], 
                     date: this.dropsService.date2ts(new Date()),
                     recurrence: 'none',
                     transaction: {
@@ -53,7 +54,7 @@ export class TransactionDetailComponent implements OnInit {
             this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
             this.drop.transaction.value = this.drop.transaction.type === "expense" ? -Math.abs(this.drop.transaction.value) : Math.abs(this.drop.transaction.value);
             this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { this.router.navigate(["transaction",id]) },
+                (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }
             );
     }

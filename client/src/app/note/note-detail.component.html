@@ -17,6 +17,15 @@
         <ion-label>Date</ion-label>
         <ion-datetime display-format="DD MMM YYYY, HH:mm" [(ngModel)]="dropDate"></ion-datetime>
     </ion-item>
+    <ion-item>
+        <ion-label>Recurrent</ion-label>
+        <ion-select [(ngModel)]="drop.recurrence" okText="Okay" cancelText="Dismiss">
+        <ion-select-option value="none">No</ion-select-option>
+        <ion-select-option value="month">Montly</ion-select-option>
+        <ion-select-option value="week">Weekly</ion-select-option>
+        <ion-select-option value="day">Daily</ion-select-option>
+        </ion-select>
+    </ion-item>
     
     <ion-button (click)="addNote()" shape="round" fill="outline" *ngIf="!drop.id">
         <ion-icon name="document" slot="start"></ion-icon>Add Note

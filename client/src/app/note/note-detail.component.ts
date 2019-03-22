@@ -23,7 +23,14 @@ export class NoteDetailComponent implements OnInit {
         this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
-                return id === "new" ? of(new Drop({ text: "", tags: ["Note"], date: this.dropsService.date2ts(new Date()) }) ) : this.dropsService.docWithId$("drops/"+id);
+                return id === "new" ? of(new Drop(
+                    { 
+                        text: "", 
+                        type: "NOTE",
+                        recurrence: "none",
+                        tags: [], 
+                        date: this.dropsService.date2ts(new Date())
+                    }) ) : this.dropsService.docWithId$("drops/"+id);
             })
         ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm")} );
     }
@@ -33,7 +40,7 @@ export class NoteDetailComponent implements OnInit {
         this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
         if (delete this.drop.id)
             this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { this.router.navigate(["note",id]) },
+                (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }
             );
     }

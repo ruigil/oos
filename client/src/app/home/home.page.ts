@@ -32,19 +32,19 @@ export class HomePage implements OnInit {
   }
 
   isNote(drop:Drop) {
-      return drop.tags.includes('Note');
+      return drop.tags.includes('Note') || drop.type === "NOTE";
   }
 
   isTransaction(drop:Drop) {
-      return drop.tags.includes('Transaction');
+      return drop.tags.includes('Transaction') || drop.type === "TRX";
   }
   
   isTask(drop:Drop) {
-      return drop.tags.includes('Task');
+      return drop.tags.includes('Task') || drop.type === "TASK"
   }
 
   isRecurrent(drop:Drop) {
-      return (this.isTransaction(drop) || this.isTask(drop)) && drop.recurrence !== 'none';
+      return drop.recurrence !== 'none';
   }
 
   getRouterLink(drop:Drop) {
@@ -52,15 +52,16 @@ export class HomePage implements OnInit {
   }
 
   delete(slidingItem,drop:Drop) {
-      slidingItem.close(); // important 
-    let id = drop.id;
-    this.dropsService.delete("drops/"+drop.id).then(
-        (value) => { console.log(" deleted item") },
-        (error) => { console.log("error") }
-    );
+        slidingItem.close(); // important 
+        let id = drop.id;
+        this.dropsService.delete("drops/"+drop.id).then(
+            (value) => { console.log(" deleted item") },
+            (error) => { console.log("error") }
+        );
   }
 
-  edit(drop:Drop) {
+  edit(slidingItem, drop:Drop) {
+      slidingItem.close(); // important 
       return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.router.navigate(['/task/edit',drop.id]);
   }
 

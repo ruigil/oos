@@ -13,32 +13,51 @@
   <ion-content>
     <ion-list>
         <ion-item-sliding *ngFor="let drop of dropsObs | async; let i = index;" #slidingItem>
-        <ion-item >
-            <ion-checkbox mode="ios" color="success" *ngIf="isTask(drop) || isTransaction(drop)"></ion-checkbox>
-            <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
-            <!-- Note -->
-            <ion-icon *ngIf="isNote(drop)" slot="start" color="warning" name="document" ></ion-icon>
-            <ion-label *ngIf="isNote(drop)">{{drop.text}}</ion-label>
-            <!-- Transaction -->
-            <ion-icon *ngIf="isTransaction(drop)" slot="start" color="secondary" name="cash" ></ion-icon>
-            <ion-chip *ngIf="isTransaction(drop)" color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
-                <ion-label>{{drop.transaction.value}}</ion-label>
-            </ion-chip>
-            <ion-chip *ngIf="isTransaction(drop)" color="light">{{drop.text}}</ion-chip>
-            <!-- Task -->
-            <ion-icon *ngIf="isTask(drop)" slot="start" color="tertiary" name="folder" ></ion-icon>
-            <ion-chip *ngIf="isTask(drop)" color="medium">
-                <ion-label>{{drop.task.title}}</ion-label>
-            </ion-chip>
 
-            <!-- Common -->
-            <ion-chip slot="end" color="light">
-                <ion-icon name="time"></ion-icon>               
-                <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
-            </ion-chip>
-        </ion-item>
+            <!-- Note -->
+            <ion-item *ngIf="isNote(drop)">
+                <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
+                <ion-icon slot="start" color="warning" name="document" ></ion-icon>
+                <ion-label>{{drop.text}}</ion-label>
+                <!-- Common -->
+                <ion-chip slot="end" color="light">
+                    <ion-icon name="time"></ion-icon>               
+                    <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
+                </ion-chip>
+            </ion-item>
+
+            <!-- Transaction -->
+            <ion-item *ngIf="isTransaction(drop)">
+                <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
+                <ion-icon slot="start" color="secondary" name="cash" ></ion-icon>
+                <ion-chip color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
+                    <ion-label>{{drop.transaction.value}} CHF</ion-label>
+                </ion-chip>
+                <ion-chip color="light">{{drop.text}}</ion-chip>
+                <!-- Common -->
+                <ion-chip slot="end" color="light">
+                    <ion-icon name="time"></ion-icon>               
+                    <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
+                </ion-chip>
+            </ion-item>
+
+            <!-- Task -->
+            <ion-item *ngIf="isTask(drop)" color="{{drop.completed==null ? 'light' : 'light'}}">
+                <ion-checkbox mode="ios" color="success"></ion-checkbox>
+                <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
+                <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>
+                <ion-chip color="medium">
+                    <ion-label>{{drop.task.title}}</ion-label>
+                </ion-chip>
+                <!-- Common -->
+                <ion-chip slot="end" color="light">
+                    <ion-icon name="time"></ion-icon>               
+                    <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
+                </ion-chip>
+            </ion-item>
+
             <ion-item-options side="start">
-                <ion-item-option (click)="edit(drop)"><ion-icon name="create"></ion-icon></ion-item-option>
+                <ion-item-option (click)="edit(slidingItem,drop)"><ion-icon name="create"></ion-icon></ion-item-option>
             </ion-item-options>
 
             <ion-item-options side="end">
@@ -47,19 +66,7 @@
         </ion-item-sliding>
 
     </ion-list>
-    <!--
 
-
-<ion-item (click)="buttonClick()">
-    <ion-label>
-      Button Item
-    </ion-label>
-  </ion-item>
-      <div *ngIf="selectedItem" padding>
-        You navigated here from <b>{{selectedItem.title }}</b>
-      </div>
-    -->
-  <!-- fab placed to the top end -->
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button>
         <ion-icon name="add"></ion-icon>

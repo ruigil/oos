@@ -27,7 +27,8 @@ export class TaskDetailComponent implements OnInit {
                 let id = params.get("id");
                 return id === "new" ? of(new Drop({ ...this.drop, 
                     text: "", 
-                    tags: ["Task"],
+                    type: "TASK",
+                    tags: [],
                     date: this.dropsService.date2ts(new Date()),
                     completed: null,
                     recurrence: 'none',
