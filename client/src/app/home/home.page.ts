@@ -65,4 +65,9 @@ export class HomePage implements OnInit {
       return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.router.navigate(['/task/edit',drop.id]);
   }
 
+  complete(drop:Drop) {
+      drop.completed = !drop.completed;
+      console.log("complete");
+  }
+
 }
