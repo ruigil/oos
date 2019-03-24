@@ -3,8 +3,7 @@ export class Drop {
     type: string;
     text: string;
     transaction?: { value: number, type: string };
-    task?: { title: string, date: any};
-    completed: any;
+    task?: { title: string, date: any, completed: boolean };
     recurrence: string;
     tags: Array<string>;
     date: any;

@@ -11,14 +11,19 @@
   </ion-header>
   
   <ion-content>
+    <!-- System -->
+    <ion-item color="light">
+        <ion-icon slot="start" color="warning" name="cog" ></ion-icon>
+        <ion-label>Sunday, 24, March</ion-label>
+    </ion-item>
     <ion-list>
         <ion-item-sliding *ngFor="let drop of dropsObs | async; let i = index;" #slidingItem>
 
             <!-- Note -->
-            <ion-item *ngIf="isNote(drop)" color="light">
+            <ion-item *ngIf="isNote(drop)">
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
                 <ion-icon slot="start" color="warning" name="document" ></ion-icon>
-                <ion-label>{{drop.text}}</ion-label>
+                <ion-label><ion-text color="dark">{{drop.text}}</ion-text></ion-label>
                 <!-- Common -->
                 <ion-chip slot="end" color="light">
                     <ion-icon name="time"></ion-icon>               
@@ -42,11 +47,11 @@
             </ion-item>
 
             <!-- Task -->
-            <ion-item *ngIf="isTask(drop)" color="light">
-                <ion-checkbox mode="ios" color="success" (click)="complete(drop)"></ion-checkbox>
+            <ion-item *ngIf="isTask(drop)">
+                <ion-checkbox mode="ios" checked="{{drop.task.completed}}" color="success" (click)="complete(drop)"></ion-checkbox>
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>
-                <ion-chip color="{{drop.completed ? 'success' : 'medium'}}">
+                <ion-chip color="{{drop.task.completed ? 'success' : 'dark'}}">
                     <ion-label>{{drop.task.title}}</ion-label>
                 </ion-chip>
                 <!-- Common -->

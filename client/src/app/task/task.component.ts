@@ -15,7 +15,7 @@ export class TaskComponent implements OnInit {
     drop: Drop = new Drop();
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
-        this.drop = new Drop({ task: {title: "", date: null}, completed: false, recurrence: 'week' });
+        this.drop = new Drop({ task: {title: "", date: null, completed: false}, recurrence: 'none' });
     }
 
     ngOnInit() {

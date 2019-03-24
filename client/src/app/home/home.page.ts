@@ -66,8 +66,15 @@ export class HomePage implements OnInit {
   }
 
   complete(drop:Drop) {
-      drop.completed = !drop.completed;
-      console.log("complete");
+        drop.task.completed = !drop.task.completed;
+        let id = drop.id;
+        drop.task.date = this.dropsService.date2ts(new Date());
+        if (delete drop.id)
+            this.dropsService.update("drops/"+ id, drop ).then( 
+                (value) => { this.router.navigate(["home"]) },
+                (error) => { console.log("error") }
+            );
+    console.log("complete");
   }
 
 }
