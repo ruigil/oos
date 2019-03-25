@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { format, parse } from 'date-fns';
+import { Settings } from '../settings';
+import { SettingsService } from '../settings.service';
 
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
@@ -15,10 +17,12 @@ import { Drop } from '../drop';
 export class TransactionDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
+    settings: Settings = new Settings();
     dropDate: string = "";
 
-    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
-        this.drop = new Drop({ transaction: {value: 0.0, type: 'expense'}, recurrence: 'none' });
+    constructor(private dropsService: FireService, private settingsService: SettingsService, private route: ActivatedRoute, private router: Router) { 
+        this.drop = new Drop({ transaction: {value: 0.0, type: 'expense', currency: ''}, recurrence: 'none' });
+        settingsService.getSettings().subscribe( s => this.settings = s);
     }
 
     ngOnInit() {
@@ -33,7 +37,8 @@ export class TransactionDetailComponent implements OnInit {
                     recurrence: 'none',
                     transaction: {
                         value: 0.0,
-                        type: "expense"
+                        type: "expense",
+                        currency: ''
                     } })) : this.dropsService.docWithId$("drops/"+id);
             })
         ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm")})
@@ -42,6 +47,7 @@ export class TransactionDetailComponent implements OnInit {
     addTransaction() {
         this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
         this.drop.transaction.value = this.drop.transaction.type === "expense" ? -Math.abs(this.drop.transaction.value) : Math.abs(this.drop.transaction.value);
+        this.drop.transaction.currency = this.settings.transaction.currency;
         this.dropsService.add("drops",this.drop).then(
             (value) => { this.router.navigate(["home"]) },
             (error) => { console.log("error") }
@@ -53,6 +59,7 @@ export class TransactionDetailComponent implements OnInit {
         if (delete this.drop.id)
             this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
             this.drop.transaction.value = this.drop.transaction.type === "expense" ? -Math.abs(this.drop.transaction.value) : Math.abs(this.drop.transaction.value);
+            this.drop.transaction.currency = this.settings.transaction.currency;
             this.dropsService.update("drops/"+ id, this.drop ).then( 
                 (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }

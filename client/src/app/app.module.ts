@@ -15,7 +15,6 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { AppComponent } from './app.component';
 import { ReportComponent } from './report/report.component';
-import { SettingsComponent } from './settings/settings.component';
 import { TagFilterComponent } from './tag-filter/tag-filter.component';
 import { SearchTagPipe } from './tag-filter/search-tag.pipe';
 import { SortTagPipe } from './tag-filter/sort-tag.pipe';
@@ -24,7 +23,6 @@ import { SortTagPipe } from './tag-filter/sort-tag.pipe';
 @NgModule({
   declarations: [
     AppComponent,
-    SettingsComponent,
     ReportComponent,
     TagFilterComponent,
     SearchTagPipe,
@@ -42,7 +40,6 @@ import { SortTagPipe } from './tag-filter/sort-tag.pipe';
     ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
   ],
   entryComponents: [
-    SettingsComponent,
     ReportComponent,
   ],
   providers: [

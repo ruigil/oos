@@ -11,6 +11,7 @@
 
 <ion-content>
     <ion-item>
+        <ion-label>{{settings.transaction?.currency}}</ion-label>
         <ion-input type="number" value="0.00" [(ngModel)]="drop.transaction.value"></ion-input>
     </ion-item>
   <ion-radio-group [(ngModel)]="drop.transaction.type">

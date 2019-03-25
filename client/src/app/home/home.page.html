@@ -36,7 +36,7 @@
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="secondary" name="cash" ></ion-icon>
                 <ion-chip color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
-                    <ion-label>{{drop.transaction.value}} CHF</ion-label>
+                    <ion-label>{{drop.transaction.value}} {{drop.transaction.currency}}</ion-label>
                 </ion-chip>
                 <ion-chip color="light">{{drop.text}}</ion-chip>
                 <!-- Common -->
@@ -51,7 +51,7 @@
                 <ion-checkbox mode="ios" checked="{{drop.task.completed}}" color="success" (click)="complete(drop)"></ion-checkbox>
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>
-                <ion-chip color="{{drop.task.completed ? 'success' : 'dark'}}">
+                <ion-chip color="{{drop.task.completed ? 'success' : 'dark' }}">
                     <ion-label>{{drop.task.title}}</ion-label>
                 </ion-chip>
                 <!-- Common -->

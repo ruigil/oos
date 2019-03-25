@@ -15,7 +15,7 @@ export class TransactionComponent implements OnInit {
   drop: Drop = new Drop();
 
   constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
-      this.drop = new Drop({ transaction: { value: 0.0, type: 'expense'}, recurrence: 'none'});
+      this.drop = new Drop({ transaction: { value: 0.0, type: 'expense', currency: ''}, recurrence: 'none'});
   }
 
   ngOnInit() {

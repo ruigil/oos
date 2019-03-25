@@ -2,7 +2,7 @@ export class Drop {
     id: string;
     type: string;
     text: string;
-    transaction?: { value: number, type: string };
+    transaction?: { value: number, type: string, currency: string };
     task?: { title: string, date: any, completed: boolean };
     recurrence: string;
     tags: Array<string>;

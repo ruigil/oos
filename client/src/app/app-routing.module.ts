@@ -21,7 +21,7 @@ const routes: Routes = [
   },
   {
     path: 'settings',
-    loadChildren: './analytics/analytics.module#AnalyticsComponentModule'
+    loadChildren: './settings/settings.module#SettingsModule'
   },
   {
     path: 'note',
