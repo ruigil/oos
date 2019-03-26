@@ -13,7 +13,7 @@ const routes: Routes = [
   },
   {
     path: 'analytics',
-    loadChildren: './analytics/analytics.module#AnalyticsComponentModule'
+    loadChildren: './analytics/analytics.module#AnalyticsModule'
   },
   {
     path: 'tags',

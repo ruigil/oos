@@ -11,7 +11,8 @@ export class TagsComponent implements OnInit {
     @Input() mode: boolean = true;
     @Output() onSelectTag = new EventEmitter<string[]>();
     tagName: string = "";
-    tags: Tag[] = [];
+    tagColor: string = "dark";
+    tags: Array<{ name: string, color: string, available: boolean}> = [];
     @Input() selected: Array<string> = [];
     available: Array<string> = [];
 
@@ -19,10 +20,8 @@ export class TagsComponent implements OnInit {
     }
 
     ngOnInit() {
-      this.fireService.colWithIds$("tags").subscribe( (tags:Tag[]) => {
-          this.tags = tags;
-          this.available = tags.map( l => l.name);
-          this.available = this.available.filter( l => !this.selected.includes(l));
+      this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc')).subscribe( (tags:Tag[]) => {
+          this.tags = tags.map( t => ({ name: t.name, color: t.color, available: !this.selected.includes(t.name)}) );
       });
     }
 
@@ -31,24 +30,33 @@ export class TagsComponent implements OnInit {
     }
 
     addTag() {
-      this.fireService.add("tags",{ name: this.tagName, count: 0 });
+      this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: 0, color: this.tagColor });
       if (!this.mode) {
         this.selected.push(this.tagName);
-        this.available = this.available.filter( l => l != this.tagName);
       }
       this.tagName = "";
     }
 
-    selectTag(i) {
-      this.selected.push(this.available[i]);
-      this.available.splice(i,1);
-      this.onSelectTag.emit(this.selected);
+    tagsAvailable() {
+        return this.tags.filter( t => t.available);
     }
 
-    unselectTag(i) {
-      this.available.push(this.selected[i]);
-      this.selected.splice(i,1);
-      this.onSelectTag.emit(this.selected);
+    tagsSelected() {
+        return this.tags.filter( t => !t.available);
+    }
+
+    selectTag(name) {
+        this.tags = this.tags.map( t => ({...t, available: t.name === name ? false : t.available}) )
+        this.onSelectTag.emit(this.tags.filter(t => !t.available).map( t => t.name) );
+    }
+
+    unselectTag(name) {
+        this.tags = this.tags.map( t => ({...t, available: t.name === name ? true : t.available}) )
+        this.onSelectTag.emit(this.tags.filter(t => !t.available).map( t => t.name) );
+    }
+
+    colorChoice($event) {
+        this.tagColor = $event.detail.value;
     }
 
 }

@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 
 import { AnalyticsComponent } from './analytics.component';
+import { TagsStatsComponent } from './tags-stats.component';
 
 @NgModule({
   imports: [
@@ -15,9 +16,13 @@ import { AnalyticsComponent } from './analytics.component';
       {
         path: '',
         component: AnalyticsComponent
+      },
+      {
+        path: 'notes/:month/:year',
+        component: TagsStatsComponent
       }
     ])
   ],
-  declarations: [AnalyticsComponent]
+  declarations: [AnalyticsComponent, TagsStatsComponent]
 })
-export class AnalyticsComponentModule {}
+export class AnalyticsModule {}

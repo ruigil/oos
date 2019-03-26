@@ -32,7 +32,7 @@ export class NoteDetailComponent implements OnInit {
                         date: this.dropsService.date2ts(new Date())
                     }) ) : this.dropsService.docWithId$("drops/"+id);
             })
-        ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm")} );
+        ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm:ss")} );
     }
 
     updateNote() {

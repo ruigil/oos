@@ -19,9 +19,6 @@ export class SettingsService {
   }
 
   saveSettings(settings: Settings) {
-      this.fireService.update("settings/settings",settings).then(
-          (value) => console.log("success"),
-          (error) => console.log("error")
-      );
+      return this.fireService.update("settings/settings",settings);
   }
 }

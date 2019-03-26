@@ -9,9 +9,11 @@
     <ion-searchbar (ionChange)="filterTags($event)"></ion-searchbar>
   </ion-item>
   <!---->
-  <ion-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index" (click)="selectTag(tag.name)" color="{{tag.selected ? 'success' : 'light'}}">
-      <ion-icon slot="start" name="pricetag"></ion-icon>
-      <ion-label>{{tag.name}}</ion-label>
+  <ion-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index" (click)="selectTag(tag.name)" color="{{tag.selected ? 'light' : ''}}">
+      <ion-chip color="{{tag.color}}">
+        <ion-icon name="pricetag"></ion-icon>
+        <ion-label>{{tag.name}}</ion-label> 
+      </ion-chip>
       <ion-note slot="end">{{tag.count}}</ion-note>
   </ion-item>
 </ion-item-group>

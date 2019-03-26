@@ -10,9 +10,9 @@
 </ion-header>
   
 <ion-content>
-    <ion-chip *ngFor="let tag of selected; let i = index;" (click)="unselectTag(i)">
+    <ion-chip *ngFor="let tag of tagsSelected()" (click)="unselectTag(tag.name)" color="{{tag.color}}">
         <ion-icon name="pricetag"></ion-icon>
-        <ion-label>{{tag}}</ion-label>
+        <ion-label>{{tag.name}}</ion-label>
     </ion-chip>
     <ion-item-divider>
         <ion-label>Tags</ion-label>
@@ -20,27 +20,51 @@
     <ion-item>
         <ion-input slot="start" [(ngModel)]="tagName" placeholder="Enter tag name..."></ion-input>
         <ion-button (click)="addTag()" shape="round" fill="outline" slot="end">
-                <ion-icon name="add" slot="start"></ion-icon>Add
+            <ion-icon name="add" slot="start"></ion-icon>Add
         </ion-button>    
-    </ion-item>  
+    </ion-item>
+    <ion-segment (ionChange)="colorChoice($event)" color="dark" scrollable value="{{tagColor}}">
+        <ion-segment-button value="dark">
+            <ion-chip color="dark">{{tagName}}</ion-chip>
+        </ion-segment-button>
+        <ion-segment-button value="primary">
+            <ion-chip color="primary">{{tagName}}</ion-chip>
+        </ion-segment-button>
+        <ion-segment-button value="secondary">
+            <ion-chip color="secondary">{{tagName}}</ion-chip>
+        </ion-segment-button>
+        <ion-segment-button value="tertiary">
+            <ion-chip color="tertiary">{{tagName}}</ion-chip>
+        </ion-segment-button>
+        <ion-segment-button value="warning">
+            <ion-chip color="warning">{{tagName}}</ion-chip>
+        </ion-segment-button>
+        <ion-segment-button value="success">
+            <ion-chip color="success">{{tagName}}</ion-chip>
+        </ion-segment-button>
+        <ion-segment-button value="danger">
+            <ion-chip color="danger">{{tagName}}</ion-chip>
+        </ion-segment-button>
+    </ion-segment>
     <ion-item-divider>
         <ion-label>Available Tags</ion-label>
     </ion-item-divider>
     <ion-list *ngIf="mode; else blockTags">
         <ion-item *ngFor="let tag of tags">
-            <ion-icon name="pricetag" slot="start"></ion-icon>
-            <ion-label>{{tag.name}}</ion-label>
-            <ion-badge color="dark">{{tag.count}}</ion-badge>
+            <ion-chip color="{{tag.color ? tag.color: 'dark'}}">
+                <ion-icon name="pricetag"></ion-icon>
+                <ion-label>{{tag.name}}</ion-label>
+            </ion-chip>
             <ion-button slot="end" (click)="deleteTag(tag.id)" color="danger" fill="clear">
                 <ion-icon name="trash"></ion-icon>
             </ion-button>    
         </ion-item>
     </ion-list>
     <ng-template #blockTags>
-        <span *ngFor="let tag of available; let i = index;" (click)="selectTag(i)">
-            <ion-chip>
+        <span *ngFor="let tag of tagsAvailable()" (click)="selectTag(tag.name)"> 
+            <ion-chip color="{{tag.color}}">
                     <ion-icon name="pricetag"></ion-icon>
-                    <ion-label>{{tag}}</ion-label>
+                    <ion-label>{{tag.name}}</ion-label>
             </ion-chip>
         </span>
     </ng-template>
