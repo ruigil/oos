@@ -71,7 +71,7 @@ export class TagsStatsComponent implements OnInit {
   single: any[];
   multi: any[];
 
-  view: any[] = [700, 400];
+  view: any[] = [850, 400];
 
   // options
   showXAxis = true;
@@ -90,15 +90,49 @@ export class TagsStatsComponent implements OnInit {
   onSelect(event) {
     console.log(event);
   }
+  analytics: any;
+    data: Array<any> = [];
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
-        Object.assign(this, { single })
+            this.analytics = { tags: [] }
+            for (let i=1; i<31; i++) this.data.push(
+                {
+                    "name": "" + i,
+                    "series": [
+                    {
+                        "name": "Note",
+                        "value": 0
+                    },
+                    {
+                        "name": "Transaction",
+                        "value": 0
+                    },
+                    {
+                        "name": "Task",
+                        "value": 0
+                    }
+                    ]
+                }
+            );
     }
 
     ngOnInit() {
         this.route.paramMap.subscribe( params => {
-            console.log("month : "+params.get("month"));
-            console.log("year : "+params.get("year"));
+        this.route.paramMap.pipe(
+            switchMap( params => {
+                let month = Number(params.get("month"));
+                let year = Number(params.get("year"));
+                return this.dropsService.col$("analytics", ref => ref.where("month","==",month).where("year","==",year) );
+            })
+        ).subscribe( a => {
+            this.analytics = a[0];
+            this.analytics.days.map( d => {
+                this.data[d.day-1].series[0].value = d.notes;
+                this.data[d.day-1].series[1].value = d.transactions;
+                this.data[d.day-1].series[2].value = d.tasks;
+            });
+            this.data = this.data.slice(0);
+        });
         });
     }
 

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AnalyticsComponent } from './analytics.component';
 import { TagsStatsComponent } from './tags-stats.component';
@@ -15,7 +14,6 @@ import { TagsStatsComponent } from './tags-stats.component';
     FormsModule,
     IonicModule,
     NgxChartsModule,
-    //BrowserAnimationsModule,
     RouterModule.forChild([
       {
         path: '',

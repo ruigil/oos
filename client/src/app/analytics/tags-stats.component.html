@@ -19,7 +19,7 @@
 <ngx-charts-bar-vertical-stacked
   [view]="view"
   [scheme]="colorScheme"
-  [results]="single"
+  [results]="data"
   [gradient]="gradient"
   [xAxis]="showXAxis"
   [yAxis]="showYAxis"
@@ -37,41 +37,23 @@
         <ion-item-divider color="light">
             <ion-label>Tags</ion-label>
         </ion-item-divider>
-        <ion-item>
+        <ion-item *ngFor="let tag of analytics.tags">
             <ion-chip color="medium">
                 <ion-icon name="pricetag"></ion-icon>
-                <ion-label>Reflections</ion-label>
+                <ion-label>{{tag.name}}</ion-label>
             </ion-chip>
             <ion-chip color="warning" slot="end">
                 <ion-icon name="document"></ion-icon>
-                <ion-label>45</ion-label>
+                <ion-label>{{tag.notes}}</ion-label>
             </ion-chip>
             <ion-chip color="secondary" slot="end">
                 <ion-icon name="cash"></ion-icon>
-                <ion-label>4500</ion-label>
+                <ion-label>{{tag.transactions}} CHF</ion-label>
             </ion-chip>
             <ion-chip color="tertiary" slot="end">
                 <ion-icon name="folder"></ion-icon>
-                <ion-label>451</ion-label>
+                <ion-label>{{tag.tasks}}</ion-label>
             </ion-chip>
-        </ion-item>
-        <ion-item>
-            <ion-chip color="medium">
-                <ion-icon name="pricetag"></ion-icon>
-                <ion-label>OOS</ion-label>
-            </ion-chip>
-            <ion-badge color="warning" slot="end">45</ion-badge>
-            <ion-badge color="secondary" slot="end">45</ion-badge>
-            <ion-badge color="tertiary" slot="end">45</ion-badge>
-        </ion-item>
-        <ion-item>
-            <ion-chip color="medium">
-                <ion-icon name="pricetag"></ion-icon>
-                <ion-label>Ideas</ion-label>
-            </ion-chip>
-            <ion-badge color="warning" slot="end">45</ion-badge>
-            <ion-badge color="secondary" slot="end">45</ion-badge>
-            <ion-badge color="tertiary" slot="end">45</ion-badge>
         </ion-item>
     </ion-list>
 </ion-content>
