@@ -30,42 +30,32 @@
   </ion-tab-bar>
 </ion-tabs>    
 
+    <ion-card *ngFor="let item of analytics">
+  <ion-card-header>
+    <ion-card-title>{{item.month}}, {{item.year}}</ion-card-title>
+    <ion-card-subtitle>Totals per type</ion-card-subtitle>
+  </ion-card-header>
+
+    <ion-card-content>
     <ion-list lines="none">
-        <ion-item-divider color="light">
-            <ion-label>March, 2019</ion-label>
-        </ion-item-divider>
-        <ion-item routerLink="/analytics/notes/3/2019">
+        <ion-item>
             <ion-icon slot="start" color="warning" name="document"></ion-icon>
             <ion-label>Notes</ion-label>
-            <ion-badge color="warning" slot="end">11</ion-badge>
+            <ion-badge color="warning" slot="end">{{item.totals.notes}}</ion-badge>
         </ion-item>
         <ion-item>
             <ion-icon slot="start" color="secondary" name="cash"></ion-icon>
             <ion-label>Transactions</ion-label>
-            <ion-badge color="success" slot="end">3500 CHF</ion-badge>
+            <ion-badge color="success" slot="end">{{item.totals.transactions}} CHF</ion-badge>
         </ion-item>
         <ion-item>
             <ion-icon slot="start" color="tertiary" name="folder"></ion-icon>
             <ion-label>Tasks</ion-label>
-            <ion-badge color="tertiary" slot="end">32</ion-badge>
-        </ion-item>
-        <ion-item-divider color="light">
-            <ion-label>February, 2019</ion-label>
-        </ion-item-divider>
-        <ion-item>
-            <ion-icon slot="start" color="warning" name="document"></ion-icon>
-            <ion-label>Notes</ion-label>
-            <ion-badge color="warning" slot="end">45</ion-badge>
-        </ion-item>
-        <ion-item>
-            <ion-icon slot="start" color="secondary" name="cash"></ion-icon>
-            <ion-label>Transactions</ion-label>
-            <ion-badge color="success" slot="end">3400 CHF</ion-badge>
-        </ion-item>
-        <ion-item>
-            <ion-icon slot="start" color="tertiary" name="folder"></ion-icon>
-            <ion-label>Tasks</ion-label>
-            <ion-badge color="tertiary" slot="end">132</ion-badge>
+            <ion-badge color="tertiary" slot="end">{{item.totals.tasks}}</ion-badge>
         </ion-item>
     </ion-list>
+    <ion-button fill="outline" routerLink="3/2019">Details</ion-button>
+    </ion-card-content>
+    </ion-card>
+
 </ion-content>

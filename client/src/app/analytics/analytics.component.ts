@@ -1,5 +1,11 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ReportComponent } from '../report/report.component';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+
+import { FireService } from '../fire.service';
+import { Drop } from '../drop';
+import { format, parse } from 'date-fns';
 
 @Component({
   selector: 'analytics-page',
@@ -8,10 +14,13 @@ import { ReportComponent } from '../report/report.component';
 })
 export class AnalyticsComponent implements OnInit {
 
-  constructor() { }
+    analytics: any[];
 
+    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+        this.dropsService.col$("analytics").subscribe( a => this.analytics = a);
+    }
 
 }
