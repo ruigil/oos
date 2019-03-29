@@ -13,77 +13,74 @@ admin.initializeApp(functions.config().firebase);
 
 
 async function getAnalytics(month:number,year:number) {
-    var doc = await admin.firestore().doc("analytics/"+month+year).get();
-    console.log("await done.");
-    if (doc.exists) { 
-        console.log("return doc.");
+    var doc = await admin.firestore().doc("analytics/"+year+"-"+month).get();
+    
+    if (doc.exists) 
         return doc.data();
-    } else {
-        return Promise.resolve({ totals: [0,0,0], days: [  ], tags: [ ] } );
-    }
+    else 
+        return Promise.resolve({ month: month, year: year, totals: [0,0,0], days: [  ], tags: [ ] } );
 }
+
+type Days = { day: number, totals: Array<number> }
+type Tags = { tag: string, totals: Array<number> }
+type Drop = { date: Date, tags: Array<string>, type: string }
 
 export const updateStats = functions.firestore
     .document('drops/{dropID}')
     .onWrite((change, context) => {
 
-        return admin.firestore().doc("drops/aCag1iLYarTc1NlGcm6z").get().then(d => {
-            var dr = d.data();
-            var date = dr ? dr.date.toDate() : new Date();
+        var drop:Drop = { date: new Date(), tags: ["AAA", "CCC"], type:"TRX" }
+        console.log(drop.date);
+        var day:number = drop.date.getDate();
+        var month:number = drop.date.getMonth() + 1;
+        var year:number = drop.date.getFullYear();
 
-            var day = date.getDay();
-            var month = Number(date.getMonth());
-            var year = Number(date.getFullYear());
+        getAnalytics(month,year).then( a => {
 
-            console.log(month);
-            console.log(year);
+/**
+if new add date and tag
+if delete substract date and tag
 
-            getAnalytics(month,year).then( (a) => {
-                console.log("doing a");
-                console.log(a);
-                var type = 0;
-                switch(dr ? dr.type: "NOTE") {
-                    case "NOTE": type = 0; break;
-                    case "TASK": type = 1; break;
-                    case "TRX": type = 2; break;
-                }
-                type Days = { day: number, totals: Array<number> }
-                type Tags = { tag: string, totals: Array<number> }
-                var tot = [0,0,0].splice(0,3,1);
-                console.log(tot);
-                if (a) {
-                    a.totals[type]++;
-                    // update days structure
-                    var dayExist:boolean  = a.days.filter( (d:Days) => d.day == 1).length != 0;
-                    if (dayExist) {
-                        a.days = a.days.map( (d:Days) => d.day == day ? { day: day, totals: d.totals.map((v,i) =>  i === type ? ++v : v) } : d )
-                    } else a.days.push( { day: day, totals: [0,0,0].map((v,i) =>  i === type ? ++v : v)});
-                    // update tag structure
-                    if (dr) dr.tags.map( (tag:string) => {
-                        var tagExist:boolean = a.tags.filter( (t:Tags) => t.tag === tag).length != 0;
-                        if (tagExist) {
-                            a.tags = a.tags.map( (t:Tags) => t.tag === tag ? { tag: tag, totals: t.totals.map((v,i) =>  i === type ? ++v : v) } : d )
-                        } else a.tags.push( { tag: tag, totals: [0,0,0].map((v,i) =>  i === type ? ++v : v) } );
-                    }); 
+if updated
+ if date changed subtract before date, add new Date
+ if tags changed substract removed tags, add new tags
+ */
 
-                    admin.firestore().doc("analytics/"+month+year).set(a);
+            var type:number = 0;
+            switch(drop.type) {
+                case "NOTE": type = 0; break;
+                case "TASK": type = 1; break;
+                case "TRX": type = 2; break;
+            }
+
+            const addType = function(totals: Array<number>, t:number){ return totals.map((v,i) =>  i === t ? ++v : v)}
+            if (a) {
+                a.totals[type]++;
+                // update days structure
+                var dayExist:boolean  = a.days.filter( (d:Days) => d.day == day).length != 0;
+                
+                if (dayExist) {
+                    a.days = a.days.map( (d:Days) => d.day == day ? { day: day, totals: addType(d.totals,type) } : d )
+                } else 
+                    a.days.push( { day: day, totals: addType([0,0,0],type)});
+
+                // update tag structure
+                drop.tags.map( (tag:string) => {
+                    var tagExist:boolean = a.tags.filter( (t:Tags) => t.tag === tag).length != 0;
+                    
+                    if (tagExist) {
+                        a.tags = a.tags.map( (t:Tags) => t.tag === tag ? { tag: tag, totals: addType(t.totals,type) } : t )
+                    } else 
+                        a.tags.push( { tag: tag, totals: addType([0,0,0],type) } );
+                }); 
+
                 console.log(a);
                 console.log(a.days);
                 console.log(a.tags);
-                }               
-            });
-
-
-            /**
-                get the month and the year and the day
-                see if there is a analytics bucket for This
-                if there is update it ifnot create one
-
-                update the totals by type
-                update the tags map with each tag of the drop and the type 
-                update the day map with the day and type 
-             */
+                admin.firestore().doc("analytics/"+year+"-"+month).set(a);
+            }
         });
+        return drop;
     });
 
 // updateStats({ before: {foo: "old"}, after: {foo: "new"} })
