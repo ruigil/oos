@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-button routerLink="/analytics"><ion-icon name="arrow-back"></ion-icon></ion-button>
     </ion-buttons>
-    <ion-title>Analytics, March, 2019</ion-title>
+    <ion-title>Analytics, {{analytics.month | monthNames}} {{analytics.year}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,7 +11,7 @@
 
     <ion-card>
   <ion-card-header>
-    <ion-card-title>March 2019</ion-card-title>
+    <ion-card-title>{{analytics.month | monthNames}} {{analytics.year}}</ion-card-title>
     <ion-card-subtitle>Drops Total per day</ion-card-subtitle>
   </ion-card-header>
 
@@ -38,21 +38,21 @@
             <ion-label>Tags</ion-label>
         </ion-item-divider>
         <ion-item *ngFor="let tag of analytics.tags">
-            <ion-chip color="medium">
+            <ion-chip color="{{tag.color}}">
                 <ion-icon name="pricetag"></ion-icon>
-                <ion-label>{{tag.name}}</ion-label>
+                <ion-label>{{tag.tag}}</ion-label>
             </ion-chip>
-            <ion-chip color="warning" slot="end">
+            <ion-chip color="warning" slot="end" *ngIf="tag.totals[0] != 0">
                 <ion-icon name="document"></ion-icon>
-                <ion-label>{{tag.notes}}</ion-label>
+                <ion-label>{{tag.totals[0]}}</ion-label>
             </ion-chip>
-            <ion-chip color="secondary" slot="end">
-                <ion-icon name="cash"></ion-icon>
-                <ion-label>{{tag.transactions}} CHF</ion-label>
-            </ion-chip>
-            <ion-chip color="tertiary" slot="end">
+            <ion-chip color="tertiary" slot="end" *ngIf="tag.totals[1] != 0">
                 <ion-icon name="folder"></ion-icon>
-                <ion-label>{{tag.tasks}}</ion-label>
+                <ion-label>{{tag.totals[1]}}</ion-label>
+            </ion-chip>
+            <ion-chip color="secondary" slot="end" *ngIf="tag.totals[2] != 0">
+                <ion-icon name="cash"></ion-icon>
+                <ion-label>{{tag.totals[2]}} CHF</ion-label>
             </ion-chip>
         </ion-item>
     </ion-list>

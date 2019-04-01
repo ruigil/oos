@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { MonthNamesPipe } from '../month-names.pipe';
 
 import { AnalyticsComponent } from './analytics.component';
 import { TagsStatsComponent } from './tags-stats.component';
@@ -25,6 +26,6 @@ import { TagsStatsComponent } from './tags-stats.component';
       }
     ])
   ],
-  declarations: [AnalyticsComponent, TagsStatsComponent]
+  declarations: [AnalyticsComponent, TagsStatsComponent, MonthNamesPipe]
 })
 export class AnalyticsModule {}

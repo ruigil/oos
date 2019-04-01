@@ -12,7 +12,7 @@ export class TagsComponent implements OnInit {
     @Output() onSelectTag = new EventEmitter<string[]>();
     tagName: string = "";
     tagColor: string = "dark";
-    tags: Array<{ name: string, color: string, available: boolean}> = [];
+    tags: Array<{ name: string, color: string, count: number, available: boolean}> = [];
     @Input() selected: Array<string> = [];
     available: Array<string> = [];
 
@@ -21,7 +21,7 @@ export class TagsComponent implements OnInit {
 
     ngOnInit() {
       this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc')).subscribe( (tags:Tag[]) => {
-          this.tags = tags.map( t => ({ name: t.name, color: t.color, available: !this.selected.includes(t.name)}) );
+          this.tags = tags.map( t => ({ name: t.name, color: t.color, count: t.count, available: !this.selected.includes(t.name)}) );
       });
     }
 
@@ -30,7 +30,9 @@ export class TagsComponent implements OnInit {
     }
 
     addTag() {
-      this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: 0, color: this.tagColor });
+      const ta = this.tags.filter( t => t.name === this.tagName);
+      const tagCount = ta.length == 0 ? 0 : ta[0].count;
+      this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: tagCount, color: this.tagColor });
       if (!this.mode) {
         this.selected.push(this.tagName);
       }

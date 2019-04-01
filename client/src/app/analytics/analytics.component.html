@@ -32,7 +32,7 @@
 
     <ion-card *ngFor="let item of analytics">
   <ion-card-header>
-    <ion-card-title>{{item.month}}, {{item.year}}</ion-card-title>
+    <ion-card-title>{{item.month | monthNames}}, {{item.year}}</ion-card-title>
     <ion-card-subtitle>Totals per type</ion-card-subtitle>
   </ion-card-header>
 
@@ -41,20 +41,20 @@
         <ion-item>
             <ion-icon slot="start" color="warning" name="document"></ion-icon>
             <ion-label>Notes</ion-label>
-            <ion-badge color="warning" slot="end">{{item.totals.notes}}</ion-badge>
-        </ion-item>
-        <ion-item>
-            <ion-icon slot="start" color="secondary" name="cash"></ion-icon>
-            <ion-label>Transactions</ion-label>
-            <ion-badge color="success" slot="end">{{item.totals.transactions}} CHF</ion-badge>
+            <ion-badge color="warning" slot="end">{{item.totals[0]}}</ion-badge>
         </ion-item>
         <ion-item>
             <ion-icon slot="start" color="tertiary" name="folder"></ion-icon>
             <ion-label>Tasks</ion-label>
-            <ion-badge color="tertiary" slot="end">{{item.totals.tasks}}</ion-badge>
+            <ion-badge color="tertiary" slot="end">{{item.totals[1]}}</ion-badge>
+        </ion-item>
+        <ion-item>
+            <ion-icon slot="start" color="secondary" name="cash"></ion-icon>
+            <ion-label>Transactions</ion-label>
+            <ion-badge color="secondary" slot="end">{{item.totals[2]}} CHF</ion-badge>
         </ion-item>
     </ion-list>
-    <ion-button fill="outline" routerLink="3/2019">Details</ion-button>
+    <ion-button fill="outline" routerLink="{{item.month}}/{{item.year}}">Details</ion-button>
     </ion-card-content>
     </ion-card>
 

@@ -1,66 +1,12 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of,  combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { FireService } from '../fire.service';
 import { Drop } from '../drop';
+import { Tag } from '../tag';
 import { format, parse } from 'date-fns';
-
-
-export var single = [
-  {
-    "name": "2, March",
-    "series": [
-      {
-        "name": "Note",
-        "value": 20
-      },
-      {
-        "name": "Transaction",
-        "value": 2
-      },
-      {
-        "name": "Task",
-        "value": 22
-      }
-    ]
-  },
-  {
-    "name": "3, March",
-    "series": [
-      {
-        "name": "Note",
-        "value": 12
-      },
-      {
-        "name": "Transaction",
-        "value": 7
-      },
-      {
-        "name": "Task",
-        "value": 2
-      }
-    ]
-  },
-  {
-    "name": "4, March",
-    "series": [
-      {
-        "name": "Note",
-        "value": 12
-      },
-      {
-        "name": "Transaction",
-        "value": 7
-      },
-      {
-        "name": "Task",
-        "value": 2
-      }
-    ]
-  }
-]
 
 @Component({
   selector: 'analytics-page',
@@ -68,15 +14,13 @@ export var single = [
   styleUrls: ['./tags-stats.component.scss']
 })
 export class TagsStatsComponent implements OnInit {
-  single: any[];
-  multi: any[];
 
   view: any[] = [850, 400];
 
   // options
   showXAxis = true;
   showYAxis = true;
-  gradient = false;
+  gradient = true;
   showLegend = true;
   showXAxisLabel = true;
   xAxisLabel = 'Day';
@@ -87,10 +31,11 @@ export class TagsStatsComponent implements OnInit {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
   };
 
-  onSelect(event) {
-    console.log(event);
-  }
-  analytics: any;
+    onSelect(event) {
+        console.log(event);
+    }
+    
+    analytics: any;
     data: Array<any> = [];
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
@@ -104,35 +49,42 @@ export class TagsStatsComponent implements OnInit {
                         "value": 0
                     },
                     {
-                        "name": "Transaction",
+                        "name": "Task",
                         "value": 0
                     },
                     {
-                        "name": "Task",
+                        "name": "Transaction",
                         "value": 0
                     }
                     ]
                 }
-            );
+            ); 
     }
 
     ngOnInit() {
-        this.route.paramMap.subscribe( params => {
-        this.route.paramMap.pipe(
+        combineLatest(this.route.paramMap.pipe(
             switchMap( params => {
                 let month = Number(params.get("month"));
                 let year = Number(params.get("year"));
                 return this.dropsService.col$("analytics", ref => ref.where("month","==",month).where("year","==",year) );
             })
-        ).subscribe( a => {
+        ),
+        this.dropsService.col$("tags"))
+        .subscribe( ([a,t]) => {
             this.analytics = a[0];
             this.analytics.days.map( d => {
-                this.data[d.day-1].series[0].value = d.notes;
-                this.data[d.day-1].series[1].value = d.transactions;
-                this.data[d.day-1].series[2].value = d.tasks;
+                this.data[d.day-1].series[0].value = d.totals[0];
+                this.data[d.day-1].series[1].value = d.totals[1];
+                this.data[d.day-1].series[2].value = d.totals[2];
             });
             this.data = this.data.slice(0);
-        });
+            var colors = {};
+            t.map( (t:any) => colors[t.name] = t.color );
+            this.analytics.tags = this.analytics.tags.map( tag => ({...tag,color: colors[tag.tag]})).sort( (a,b) => {
+                const atot = a.totals.reduce( (acc,v) => acc + v );
+                const btot = b.totals.reduce( (acc,v) => acc + v );
+                return atot > btot ? -1 : atot < btot ? 1 : 0; 
+            });
         });
     }
 
