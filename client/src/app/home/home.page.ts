@@ -32,15 +32,19 @@ export class HomePage implements OnInit {
   }
 
   isNote(drop:Drop) {
-      return drop.tags.includes('Note') || drop.type === "NOTE";
+      return drop.type === "NOTE";
   }
 
   isTransaction(drop:Drop) {
-      return drop.tags.includes('Transaction') || drop.type === "TRX";
+      return drop.type === "TRX";
   }
   
   isTask(drop:Drop) {
-      return drop.tags.includes('Task') || drop.type === "TASK"
+      return drop.type === "TASK";
+  }
+
+  isSystem(drop:Drop) {
+      return drop.type === "SYS";
   }
 
   isRecurrent(drop:Drop) {

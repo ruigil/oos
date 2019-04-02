@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-//import { addDays } from 'date-fns';
+import { format } from 'date-fns';
 
 admin.initializeApp(functions.config().firebase);
 
@@ -204,15 +204,18 @@ export const statsUpdate = functions.firestore
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async message => {
     console.log(Buffer.from(message.data,'base64').toString());
 
+    const currentDate = new Date();
+    const currentTS:any = admin.firestore.Timestamp.fromDate(currentDate);
+    const dateStr = format(currentDate,"dddd, D MMMM YYYY" );
     return admin.firestore().collection("drops").add(
-        { 
-            text: "This is a minute drop...", 
-            tags: ["Note"], 
+        {
+            text: dateStr,
+            type: "SYS",
+            tags: [],
             recurrence: "none",
-            completed: null,
-            date: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
+            date: currentTS,
+            updatedAt: currentTS,
+            createdAt: currentTS,
         });
 });
 
