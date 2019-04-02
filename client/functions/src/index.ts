@@ -60,7 +60,7 @@ const decTagType = function(tags:Array<Tags>, tag:string, type:number) {
 }
 
 const getTypeDrop = function(drop:Drop):number {
-    var type:number = 0;
+    var type:number = -1;
     switch(drop.type) {
         case "NOTE": type = 0; break;
         case "TASK": type = 1; break;
@@ -86,12 +86,12 @@ export const statsCreate = functions.firestore
 
             const type:number = getTypeDrop(drop);
 
-            a.totals[type]++;
+            if (type >= 0) a.totals[type]++;
             // update days structure
-            a.days = incDayType(a.days, day, type)
+            a.days = (type >= 0) ? incDayType(a.days, day, type) : a.days;
             // update tag structure
             drop.tags.map( (tag:string) => {
-                a.tags = incTagType(a.tags, tag, type)
+                a.tags = (type >= 0) ? incTagType(a.tags, tag, type) : a.tags;
             });
             admin.firestore().doc("analytics/"+year+"-"+month).set(a);
         });
@@ -114,12 +114,12 @@ export const statsDelete = functions.firestore
         getAnalytics(month,year).then( (a:any) => {
             const type:number = getTypeDrop(drop);
 
-            a.totals[type]--;
+            if (type >= 0) a.totals[type]--;
             // update days structure
-            a.days = decDayType(a.days, day, type)
+            a.days = (type >= 0) ? decDayType(a.days, day, type) : a.days;
             // update tag structure
             drop.tags.map( (tag:string) => {
-                a.tags = decTagType(a.tags, tag, type)
+                a.tags = (type >= 0) ? decTagType(a.tags, tag, type) : a.tags;
             });
             admin.firestore().doc("analytics/"+year+"-"+month).set(a);
         });
@@ -158,24 +158,24 @@ export const statsUpdate = functions.firestore
             getAnalytics(beforeMonth,beforeYear).then( (a:any) => {
                 const type:number = getTypeDrop(beforeDrop);
 
-                a.totals[type]--;
+                if (type >= 0) a.totals[type]--;
                 // update days structure
-                a.days = decDayType(a.days, beforeDay, type)
+                a.days = (type >= 0) ? decDayType(a.days, beforeDay, type) : a.days;
                 // update tag structure
                 beforeDrop.tags.map( (tag:string) => {
-                    a.tags = decTagType(a.tags, tag, type)
+                    a.tags = (type >= 0) ? decTagType(a.tags, tag, type) : a.tags;
                 });
                 admin.firestore().doc("analytics/"+beforeYear+"-"+beforeMonth).set(a);
             });
             getAnalytics(afterMonth,afterYear).then( (a:any) => {
                 const type:number = getTypeDrop(afterDrop);
 
-                a.totals[type]++;
+                if (type >= 0) a.totals[type]++;
                 // update days structure
-                a.days = incDayType(a.days, afterDay, type)
+                a.days = (type >= 0) ? incDayType(a.days, afterDay, type) : a.days;
                 // update tag structure
                 afterDrop.tags.map( (tag:string) => {
-                    a.tags = incTagType(a.tags, tag, type)
+                    a.tags = (type >= 0) ? incTagType(a.tags, tag, type) : a.tags;
                 });
                 admin.firestore().doc("analytics/"+afterYear+"-"+afterMonth).set(a);
             });
@@ -185,15 +185,15 @@ export const statsUpdate = functions.firestore
 
                 if (beforeDay != afterDay) {
                     // update days structure
-                    a.days = decDayType(a.days, beforeDay, type)
-                    a.days = incDayType(a.days, afterDay, type)
+                    a.days = (type >= 0) ? decDayType(a.days, beforeDay, type) : a.days;
+                    a.days = (type >= 0) ? incDayType(a.days, afterDay, type) : a.days;
                 }
 
                 let decTags =  beforeDrop.tags.filter( (bt:string) => afterDrop.tags.every( (at:string) => at !== bt ) );
                 let incTags =  afterDrop.tags.filter( (at:string) => beforeDrop.tags.every( (bt:string) => bt !== at ) );
 
-                incTags.map( (tag:string) => { a.tags = incTagType(a.tags, tag, type)  });
-                decTags.map( (tag:string) => { a.tags = decTagType(a.tags, tag, type)  });
+                incTags.map( (tag:string) => { a.tags = (type >= 0) ? incTagType(a.tags, tag, type) : a.tags  });
+                decTags.map( (tag:string) => { a.tags = (type >= 0) ? decTagType(a.tags, tag, type) : a.tags  });
 
                 admin.firestore().doc("analytics/"+afterYear+"-"+afterMonth).set(a);
             });

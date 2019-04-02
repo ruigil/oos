@@ -22,7 +22,7 @@
 
         <ion-item-sliding #slidingItemNote *ngIf="isNote(drop)">
             <!-- Note -->
-            <ion-item >
+            <ion-item color="{{drop.color}}">
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
                 <ion-icon slot="start" color="warning" name="document" ></ion-icon>
                 <ion-label><ion-text color="dark">{{drop.text}}</ion-text></ion-label>
@@ -43,7 +43,7 @@
 
         <ion-item-sliding #slidingItemTrx *ngIf="isTransaction(drop)">
             <!-- Transaction -->
-            <ion-item >
+            <ion-item color="{{drop.color}}">
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="secondary" name="cash" ></ion-icon>
                 <ion-chip color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
@@ -67,7 +67,7 @@
 
         <ion-item-sliding #slidingItemTask *ngIf="isTask(drop)">
             <!-- Task -->
-            <ion-item >
+            <ion-item color="{{drop.color}}">
                 <ion-checkbox mode="ios" checked="{{drop.task.completed}}" color="success" (click)="complete(drop)"></ion-checkbox>
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>

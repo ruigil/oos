@@ -23,12 +23,14 @@ import {
 })
 export class HomePage implements OnInit {
   dropsObs: Observable<Drop[]>;
+  day: number;
 
   constructor(private dropsService: FireService, private tagFilterService: TagFilterService, private router: Router) {
+      this.day = new Date().getDate();
   }
 
   ngOnInit(): void {
-      this.dropsObs = this.tagFilterService.drops();
+      this.dropsObs = this.tagFilterService.drops().pipe( map(drops => drops.map( d => ({...d, color: d.date.toDate().getDate() == this.day ? 'light' : ''}) ) ));
   }
 
   isNote(drop:Drop) {
