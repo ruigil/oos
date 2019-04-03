@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { format } from 'date-fns';
+import { format, subDays, addDays, addWeeks, addMonths } from 'date-fns';
 
 admin.initializeApp(functions.config().firebase);
 
@@ -22,39 +22,39 @@ async function getAnalytics(month:number,year:number) {
     else return Promise.resolve({ month: month, year: year, totals: [0,0,0], days: [  ], tags: [ ] } );
 }
 
-const incType = function(totals: Array<number>, t:number) { return totals.map((v,i) =>  i === t ? ++v : v) }
-const decType = function(totals: Array<number>, t:number) { return totals.map((v,i) =>  i === t ? --v : v) }
+const incType = function(totals: Array<number>, t:number, val:number) { return totals.map((v,i) =>  i === t ? v+val : v) }
+const decType = function(totals: Array<number>, t:number, val:number) { return totals.map((v,i) =>  i === t ? v-val : v) }
 
-const incDayType = function(days:Array<Days>, day:number, type:number) {
+const incDayType = function(days:Array<Days>, day:number, type:number, value:number) {
     var dayExist:boolean  = days.filter( (d:Days) => d.day == day).length != 0;
 
     if (dayExist) {
-        days = days.map( (d:Days) => d.day == day ? { day: day, totals: incType(d.totals,type) } : d )
+        days = days.map( (d:Days) => d.day == day ? { day: day, totals: incType(d.totals,type,value) } : d )
     } else 
-        days.push( { day: day, totals: incType([0,0,0],type)});
+        days.push( { day: day, totals: incType([0,0,0],type,value)});
     
     return days;
 }
 
-const incTagType = function(tags:Array<Tags>, tag:string, type:number) {
+const incTagType = function(tags:Array<Tags>, tag:string, type:number, value:number) {
     var tagExist:boolean = tags.filter( (t:Tags) => t.tag === tag ).length != 0;
 
     if (tagExist) {
-        tags = tags.map( (t:Tags) => t.tag === tag ? { tag: tag, totals: incType(t.totals,type) } : t )
+        tags = tags.map( (t:Tags) => t.tag === tag ? { tag: tag, totals: incType(t.totals,type,value) } : t )
     } else 
-        tags.push( { tag: tag, totals: incType([0,0,0],type) } );
+        tags.push( { tag: tag, totals: incType([0,0,0],type,value) } );
     
     return tags;
 }
 
-const decDayType = function(days:Array<Days>, day:number, type:number) {
-    days = days.map( (d:Days) => d.day == day ? { day: day, totals: decType(d.totals,type) } : d );
+const decDayType = function(days:Array<Days>, day:number, type:number, value:number) {
+    days = days.map( (d:Days) => d.day == day ? { day: day, totals: decType(d.totals,type,value) } : d );
     days = days.filter( (d:Days) => !d.totals.every( v => v == 0) );
     return days;
 }
 
-const decTagType = function(tags:Array<Tags>, tag:string, type:number) {
-    tags = tags.map( (t:Tags) => t.tag == tag ? { tag: tag, totals: decType(t.totals,type) } : t );
+const decTagType = function(tags:Array<Tags>, tag:string, type:number, value:number) {
+    tags = tags.map( (t:Tags) => t.tag == tag ? { tag: tag, totals: decType(t.totals,type,value) } : t );
     tags = tags.filter( (t:Tags) => !t.totals.every( v => v == 0) );
     return tags;
 }
@@ -68,6 +68,8 @@ const getTypeDrop = function(drop:Drop):number {
     }
     return type;
 }
+
+const getValueDrop = (drop:any) => drop.type == "TRX" ? drop.transaction.value : 1;
 
 export const statsCreate = functions.firestore
     .document('drops/{dropID}')
@@ -85,13 +87,14 @@ export const statsCreate = functions.firestore
         getAnalytics(month,year).then( (a:any) => {
 
             const type:number = getTypeDrop(drop);
+            const value: number = getValueDrop(drop);
 
-            if (type >= 0) a.totals[type]++;
+            if (type >= 0) a.totals[type] += value;
             // update days structure
-            a.days = (type >= 0) ? incDayType(a.days, day, type) : a.days;
+            a.days = (type >= 0) ? incDayType(a.days, day, type, 1) : a.days;
             // update tag structure
             drop.tags.map( (tag:string) => {
-                a.tags = (type >= 0) ? incTagType(a.tags, tag, type) : a.tags;
+                a.tags = (type >= 0) ? incTagType(a.tags, tag, type, value) : a.tags;
             });
             admin.firestore().doc("analytics/"+year+"-"+month).set(a);
         });
@@ -113,13 +116,14 @@ export const statsDelete = functions.firestore
 
         getAnalytics(month,year).then( (a:any) => {
             const type:number = getTypeDrop(drop);
+            const value:number = getValueDrop(drop);
 
-            if (type >= 0) a.totals[type]--;
+            if (type >= 0) a.totals[type] -= value;
             // update days structure
-            a.days = (type >= 0) ? decDayType(a.days, day, type) : a.days;
+            a.days = (type >= 0) ? decDayType(a.days, day, type, 1) : a.days;
             // update tag structure
             drop.tags.map( (tag:string) => {
-                a.tags = (type >= 0) ? decTagType(a.tags, tag, type) : a.tags;
+                a.tags = (type >= 0) ? decTagType(a.tags, tag, type, value) : a.tags;
             });
             admin.firestore().doc("analytics/"+year+"-"+month).set(a);
         });
@@ -157,43 +161,52 @@ export const statsUpdate = functions.firestore
         if (beforeMonth != afterMonth) {
             getAnalytics(beforeMonth,beforeYear).then( (a:any) => {
                 const type:number = getTypeDrop(beforeDrop);
+                const value: number = getValueDrop(beforeDrop);
 
-                if (type >= 0) a.totals[type]--;
+                if (type >= 0) a.totals[type] -= value;
                 // update days structure
-                a.days = (type >= 0) ? decDayType(a.days, beforeDay, type) : a.days;
+                a.days = (type >= 0) ? decDayType(a.days, beforeDay, type, 1) : a.days;
                 // update tag structure
                 beforeDrop.tags.map( (tag:string) => {
-                    a.tags = (type >= 0) ? decTagType(a.tags, tag, type) : a.tags;
+                    a.tags = (type >= 0) ? decTagType(a.tags, tag, type, value) : a.tags;
                 });
                 admin.firestore().doc("analytics/"+beforeYear+"-"+beforeMonth).set(a);
             });
             getAnalytics(afterMonth,afterYear).then( (a:any) => {
                 const type:number = getTypeDrop(afterDrop);
+                const value: number = getValueDrop(afterDrop);
 
-                if (type >= 0) a.totals[type]++;
+                if (type >= 0) a.totals[type] += value;
                 // update days structure
-                a.days = (type >= 0) ? incDayType(a.days, afterDay, type) : a.days;
+                a.days = (type >= 0) ? incDayType(a.days, afterDay, type, 1) : a.days;
                 // update tag structure
                 afterDrop.tags.map( (tag:string) => {
-                    a.tags = (type >= 0) ? incTagType(a.tags, tag, type) : a.tags;
+                    a.tags = (type >= 0) ? incTagType(a.tags, tag, type, value) : a.tags;
                 });
                 admin.firestore().doc("analytics/"+afterYear+"-"+afterMonth).set(a);
             });
         } else {
             getAnalytics(afterMonth,afterYear).then( (a:any) => {
                 const type:number = getTypeDrop(afterDrop);
+                const value: number = getValueDrop(afterDrop);
+
+                // if it is a transaction, the value may have changed
+                if (type == 2) {
+                    a.totals[type] -= getValueDrop(beforeDrop);
+                    a.totals[type] += value;
+                }
 
                 if (beforeDay != afterDay) {
                     // update days structure
-                    a.days = (type >= 0) ? decDayType(a.days, beforeDay, type) : a.days;
-                    a.days = (type >= 0) ? incDayType(a.days, afterDay, type) : a.days;
+                    a.days = (type >= 0) ? decDayType(a.days, beforeDay, type, 1) : a.days;
+                    a.days = (type >= 0) ? incDayType(a.days, afterDay, type, 1) : a.days;
                 }
 
                 let decTags =  beforeDrop.tags.filter( (bt:string) => afterDrop.tags.every( (at:string) => at !== bt ) );
                 let incTags =  afterDrop.tags.filter( (at:string) => beforeDrop.tags.every( (bt:string) => bt !== at ) );
 
-                incTags.map( (tag:string) => { a.tags = (type >= 0) ? incTagType(a.tags, tag, type) : a.tags  });
-                decTags.map( (tag:string) => { a.tags = (type >= 0) ? decTagType(a.tags, tag, type) : a.tags  });
+                incTags.map( (tag:string) => { a.tags = (type >= 0) ? incTagType(a.tags, tag, type, value) : a.tags  });
+                decTags.map( (tag:string) => { a.tags = (type >= 0) ? decTagType(a.tags, tag, type, value) : a.tags  });
 
                 admin.firestore().doc("analytics/"+afterYear+"-"+afterMonth).set(a);
             });
@@ -205,8 +218,32 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async me
     console.log(Buffer.from(message.data,'base64').toString());
 
     const currentDate = new Date();
-    const currentTS:any = admin.firestore.Timestamp.fromDate(currentDate);
+    const previousDate = subDays(currentDate, 1);
+
+    const currentTS = admin.firestore.Timestamp.fromDate(currentDate);
+    const previousTS = admin.firestore.Timestamp.fromDate(previousDate);
     const dateStr = format(currentDate,"dddd, D MMMM YYYY" );
+    
+    console.log(dateStr);
+    admin.firestore().collection("drops").where("date",">=",previousTS).where("date","<=",currentTS)
+    .get()
+    .then( qs => {
+        var drops:any = [];
+        qs.forEach( d => drops.push(d.data()));
+        drops.filter( (d:any) => d.recurrence != "none").map( (d:any) => {
+            if (d.type=="TASK") d.task.completed = false;
+            switch(d.recurrence) {
+                case "day": d.date = admin.firestore.Timestamp.fromDate(addDays(d.date.toDate(),1)); break;
+                case "week": d.date = admin.firestore.Timestamp.fromDate(addWeeks(d.date.toDate(),1)); break;
+                case "month": d.date = admin.firestore.Timestamp.fromDate(addMonths(d.date.toDate(),1)); break;
+            }
+            admin.firestore().collection("drops").add({...d, updatedAt: currentTS, createdAt: currentTS });
+        });
+    });
+
+    // ad system drop, current day
+    // if this is recurrent, who creates the first one ?
+    // 
     return admin.firestore().collection("drops").add(
         {
             text: dateStr,

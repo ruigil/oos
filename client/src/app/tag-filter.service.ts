@@ -35,6 +35,10 @@ export class TagFilterService {
     this.selectedTags$.next(tags);
   }
 
+  selectTimeFrame( value: string) {
+      console.log(value);
+  }
+
   tags():Observable<Tag[]> {
     return combineLatest(this.tags$,this.drops$).pipe( map( ([tags,drops]) => {
       // filter the tags that are contained in a least one those drops.

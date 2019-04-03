@@ -5,6 +5,7 @@ import { TagFilterService } from '../tag-filter.service';
 import { Observable } from 'rxjs';
 import { tap,map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { isSameDay, isFuture } from 'date-fns';
 
 import { 
     AngularFirestore, 
@@ -23,14 +24,14 @@ import {
 })
 export class HomePage implements OnInit {
   dropsObs: Observable<Drop[]>;
-  day: number;
+  date: any;
 
   constructor(private dropsService: FireService, private tagFilterService: TagFilterService, private router: Router) {
-      this.day = new Date().getDate();
+      this.date = new Date();
   }
 
   ngOnInit(): void {
-      this.dropsObs = this.tagFilterService.drops().pipe( map(drops => drops.map( d => ({...d, color: d.date.toDate().getDate() == this.day ? 'light' : ''}) ) ));
+      this.dropsObs = this.tagFilterService.drops();
   }
 
   isNote(drop:Drop) {
@@ -71,13 +72,25 @@ export class HomePage implements OnInit {
       return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.router.navigate(['/task/edit',drop.id]);
   }
 
+  isToday(drop:Drop) {
+      return isSameDay(drop.date.toDate(),this.date);
+  }
+  
+  isFuture(drop:Drop):boolean {
+      return isFuture(drop.date.toDate());
+  }
+
+  timeFrame(event) {
+      this.tagFilterService.selectTimeFrame(event.detail.value);
+  }
+
   complete(drop:Drop) {
         drop.task.completed = !drop.task.completed;
         let id = drop.id;
         drop.task.date = this.dropsService.date2ts(new Date());
         if (delete drop.id)
             this.dropsService.update("drops/"+ id, drop ).then( 
-                (value) => { this.router.navigate(["home"]) },
+                (value) => { console.log("success") },
                 (error) => { console.log("error") }
             );
     console.log("complete");

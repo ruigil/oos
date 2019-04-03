@@ -11,7 +11,20 @@
   </ion-header>
   
   <ion-content>
-    <!-- System -->
+    <ion-segment (ionChange)="timeFrame($event)" color="medium" value="day">
+        <ion-segment-button value="day">
+            <ion-label>Day</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="week">
+            <ion-label>Week</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="month">
+            <ion-label>Month</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="year">
+            <ion-label>Year</ion-label>
+        </ion-segment-button>
+    </ion-segment>
     <ion-list>
         <div *ngFor="let drop of dropsObs | async; let i = index;" >
 
@@ -20,30 +33,30 @@
             <ion-label>{{drop.text}}</ion-label>
         </ion-item>
 
-        <ion-item-sliding #slidingItemNote *ngIf="isNote(drop)">
+        <ion-item-sliding #slidingItem *ngIf="isNote(drop)">
             <!-- Note -->
-            <ion-item color="{{drop.color}}">
+            <ion-item color="{{isToday(drop) ? 'light' : ''}}">
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
                 <ion-icon slot="start" color="warning" name="document" ></ion-icon>
                 <ion-label><ion-text color="dark">{{drop.text}}</ion-text></ion-label>
                 <!-- Common -->
-                <ion-chip slot="end" color="light">
-                    <ion-icon name="time"></ion-icon>               
+                <ion-chip slot="end" color="{{ isToday(drop) ? 'medium' : isFuture(drop) ? 'warning' : 'light' }}">
+                    <ion-icon name="time"></ion-icon>
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
                 </ion-chip>
-                <ion-item-options side="start">
-                    <ion-item-option (click)="edit(slidingItemNote,drop)"><ion-icon name="eye"></ion-icon></ion-item-option>
-                </ion-item-options>
-
-                <ion-item-options side="end">
-                    <ion-item-option color="danger" (click)="delete(slidingItemNote,drop)"><ion-icon name="trash"></ion-icon></ion-item-option>
-                </ion-item-options>
             </ion-item>
+            <ion-item-options side="start">
+                <ion-item-option (click)="edit(slidingItem,drop)"><ion-icon name="create"></ion-icon></ion-item-option>
+            </ion-item-options>
+
+            <ion-item-options side="end">
+                <ion-item-option color="danger" (click)="delete(slidingItem,drop)"><ion-icon name="trash"></ion-icon></ion-item-option>
+            </ion-item-options>
         </ion-item-sliding>
 
-        <ion-item-sliding #slidingItemTrx *ngIf="isTransaction(drop)">
+        <ion-item-sliding #slidingItem *ngIf="isTransaction(drop)">
             <!-- Transaction -->
-            <ion-item color="{{drop.color}}">
+            <ion-item color="{{isToday(drop) ? 'light' : ''}}">
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="secondary" name="cash" ></ion-icon>
                 <ion-chip color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
@@ -51,23 +64,23 @@
                 </ion-chip>
                 <ion-chip color="light">{{drop.text}}</ion-chip>
                 <!-- Common -->
-                <ion-chip slot="end" color="light">
+                <ion-chip slot="end" color="{{ isToday(drop) ? 'medium' : isFuture(drop) ? 'warning' : 'light' }}">
                     <ion-icon name="time"></ion-icon>               
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
                 </ion-chip>
             </ion-item>
             <ion-item-options side="start">
-                <ion-item-option (click)="edit(slidingItemTrx,drop)"><ion-icon name="create"></ion-icon></ion-item-option>
+                <ion-item-option (click)="edit(slidingItem,drop)"><ion-icon name="create"></ion-icon></ion-item-option>
             </ion-item-options>
 
             <ion-item-options side="end">
-                <ion-item-option color="danger" (click)="delete(slidingItemTrx,drop)"><ion-icon name="trash"></ion-icon></ion-item-option>
+                <ion-item-option color="danger" (click)="delete(slidingItem,drop)"><ion-icon name="trash"></ion-icon></ion-item-option>
             </ion-item-options>
         </ion-item-sliding>
 
-        <ion-item-sliding #slidingItemTask *ngIf="isTask(drop)">
+        <ion-item-sliding #slidingItem *ngIf="isTask(drop)">
             <!-- Task -->
-            <ion-item color="{{drop.color}}">
+            <ion-item color="{{isToday(drop) ? 'light' : ''}}">
                 <ion-checkbox mode="ios" checked="{{drop.task.completed}}" color="success" (click)="complete(drop)"></ion-checkbox>
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>
@@ -75,24 +88,23 @@
                     <ion-label>{{drop.task.title}}</ion-label>
                 </ion-chip>
                 <!-- Common -->
-                <ion-chip slot="end" color="light">
+                <ion-chip slot="end" color="{{ isToday(drop) ? 'medium' : isFuture(drop) ? 'warning' : 'light' }}">
                     <ion-icon name="time"></ion-icon>               
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
                 </ion-chip>
             </ion-item>
 
             <ion-item-options side="start">
-                <ion-item-option (click)="edit(slidingItemTask,drop)"><ion-icon name="create"></ion-icon></ion-item-option>
+                <ion-item-option (click)="edit(slidingItem,drop)"><ion-icon name="create"></ion-icon></ion-item-option>
             </ion-item-options>
 
             <ion-item-options side="end">
-                <ion-item-option color="danger" (click)="delete(slidingItemTask,drop)"><ion-icon name="trash"></ion-icon></ion-item-option>
+                <ion-item-option color="danger" (click)="delete(slidingItem,drop)"><ion-icon name="trash"></ion-icon></ion-item-option>
             </ion-item-options>
         </ion-item-sliding>
         </div>
 
     </ion-list>
-
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
         <ion-fab-button>
             <ion-icon name="add"></ion-icon>

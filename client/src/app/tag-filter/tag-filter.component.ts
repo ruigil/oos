@@ -29,6 +29,8 @@ export class TagFilterComponent implements OnInit {
     this.tagFilterService.selectTag(this.selectedTags);
   }
 
+
+
   filterTags(event){
     this.searchTerm.next(event.detail.value);
   }
