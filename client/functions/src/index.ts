@@ -215,16 +215,13 @@ export const statsUpdate = functions.firestore
     });
 
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async message => {
-    console.log(Buffer.from(message.data,'base64').toString());
-
     const currentDate = new Date();
     const previousDate = subDays(currentDate, 1);
 
     const currentTS = admin.firestore.Timestamp.fromDate(currentDate);
     const previousTS = admin.firestore.Timestamp.fromDate(previousDate);
-    const dateStr = format(currentDate,"dddd, D MMMM YYYY" );
+    const dateStr = format(currentTS.toDate(),"dddd, D MMMM YYYY" );
     
-    console.log(dateStr);
     admin.firestore().collection("drops").where("date",">=",previousTS).where("date","<=",currentTS)
     .get()
     .then( qs => {
