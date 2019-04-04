@@ -5,7 +5,8 @@ import { TagFilterService } from '../tag-filter.service';
 import { Observable } from 'rxjs';
 import { tap,map } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { isSameDay, isFuture } from 'date-fns';
+import { isToday, isFuture } from 'date-fns';
+import { SettingsService } from '../settings.service';
 
 import { 
     AngularFirestore, 
@@ -24,10 +25,13 @@ import {
 })
 export class HomePage implements OnInit {
   dropsObs: Observable<Drop[]>;
-  date: any;
+  timeFrameValue: string = "day";
 
-  constructor(private dropsService: FireService, private tagFilterService: TagFilterService, private router: Router) {
-      this.date = new Date();
+  constructor(private dropsService: FireService, private tagFilterService: TagFilterService, private router: Router, private settings: SettingsService) {
+      settings.getSettings().subscribe( s => {
+          this.timeFrameValue = s.home.preview;
+          this.tagFilterService.selectTimeFrame(this.timeFrameValue);
+      });
   }
 
   ngOnInit(): void {
@@ -73,7 +77,7 @@ export class HomePage implements OnInit {
   }
 
   isToday(drop:Drop) {
-      return isSameDay(drop.date.toDate(),this.date);
+      return isToday(drop.date.toDate());
   }
   
   isFuture(drop:Drop):boolean {

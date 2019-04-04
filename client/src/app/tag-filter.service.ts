@@ -4,31 +4,28 @@ import { map, flatMap, filter } from 'rxjs/operators';
 import { Drop } from "./drop";
 import { Tag } from "./tag";
 import { FireService } from './fire.service';
+import { addDays, addWeeks, addMonths, addYears, endOfToday } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TagFilterService {
 
-  //dropsObservable = new Subject<Drop[]>();
-  //tagsObservable = new Subject<Tag[]>();
   drops$: Observable<Drop[]>;
   tags$: Observable<Tag[]>;
-  //allTags:Tag[];
   selectedTags$: BehaviorSubject<string[]> = new BehaviorSubject([]);
+  timeFrame$: BehaviorSubject<any> = new BehaviorSubject(this.fireService.date2ts(endOfToday()));
 
   constructor(private fireService: FireService) {
-    this.drops$ = this.selectedTags$.pipe( flatMap( tags => {
-        console.log("selecting drops with tags: "+tags)
+    this.drops$ = combineLatest(this.selectedTags$,this.timeFrame$).pipe( flatMap( ([tags,ts]) => {
         const dropsObs = tags.length > 0 ? 
-            this.fireService.colWithIds$("drops", ref => ref.where("tags","array-contains",tags[0]).orderBy("date","desc")) :
-            this.fireService.colWithIds$("drops", ref => ref.orderBy("date","desc"));
+            this.fireService.colWithIds$("drops", ref => ref.where("date","<=",ts).where("tags","array-contains",tags[0]).orderBy("date","desc")) :
+            this.fireService.colWithIds$("drops", ref => ref.where("date","<=",ts).orderBy("date","desc"));
         // local filter by the selected tags.
         return dropsObs.pipe ( map( drops => drops.filter( d => tags.every(t => d.tags.includes(t),this) )));
     }));
 
     this.tags$ = this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc'));
-
 }
 
   selectTag(tags: string[]) {
@@ -36,7 +33,10 @@ export class TagFilterService {
   }
 
   selectTimeFrame( value: string) {
-      console.log(value);
+    const ts =  value == "week" ? this.fireService.date2ts(addWeeks(endOfToday(),1)) :
+                value == "month" ? this.fireService.date2ts(addMonths(endOfToday(),1)) :
+                value == "year" ? this.fireService.date2ts(addYears(endOfToday(),1)) : /* today */this.fireService.date2ts(endOfToday());
+    this.timeFrame$.next(ts);
   }
 
   tags():Observable<Tag[]> {

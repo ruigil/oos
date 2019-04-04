@@ -20,7 +20,7 @@ export class AnalyticsComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.dropsService.col$("analytics").subscribe( a => this.analytics = a);
+        this.dropsService.col$("analytics", ref => ref.orderBy("month","desc")).subscribe( a => this.analytics = a);
     }
 
 }

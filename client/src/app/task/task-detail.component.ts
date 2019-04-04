@@ -37,7 +37,7 @@ export class TaskDetailComponent implements OnInit {
                         completed: false
                     } })) : this.dropsService.docWithId$("drops/"+id);
             })
-        ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm")})
+        ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm:ssZ")})
     }
 
     addTask() {
@@ -50,7 +50,10 @@ export class TaskDetailComponent implements OnInit {
     updateTask() {
         let id = this.drop.id;
         if (delete this.drop.id)
+            console.log(this.dropDate);
+            console.log(parse(this.dropDate));
             this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
+            console.log(this.drop.date.toDate());
             this.dropsService.update("drops/"+ id, this.drop ).then( 
                 (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }

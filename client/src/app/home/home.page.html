@@ -11,7 +11,7 @@
   </ion-header>
   
   <ion-content>
-    <ion-segment (ionChange)="timeFrame($event)" color="medium" value="day">
+    <ion-segment (ionChange)="timeFrame($event)" color="medium" value="{{timeFrameValue}}">
         <ion-segment-button value="day">
             <ion-label>Day</ion-label>
         </ion-segment-button>

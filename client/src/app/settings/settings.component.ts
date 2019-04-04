@@ -10,7 +10,7 @@ import { ToastController } from '@ionic/angular';
 })
 export class SettingsComponent implements OnInit {
 
-  private settings: Settings = new Settings({ transaction: { currency: ""}});
+  private settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day"} });
 
   constructor(private settingsService: SettingsService,public toastController: ToastController) { 
       settingsService.getSettings().subscribe( set => { this.settings = set; console.log("settings...") });
