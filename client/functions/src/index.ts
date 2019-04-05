@@ -216,6 +216,8 @@ export const statsUpdate = functions.firestore
 
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async message => {
     const currentDate = new Date();
+
+    // there is a difference between the cloud scheduler time, and the timestamp in the function
     console.log("currentDate["+currentDate.toString()+"]")
     const previousDate = subDays(currentDate, 1);
 
