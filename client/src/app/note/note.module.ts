@@ -8,7 +8,7 @@ import { HomePageModule } from '../home/home.module';
 
 import { NoteComponent } from './note.component';
 import { NoteDetailComponent } from './note-detail.component';
-import { NewLinePipe } from './new-line.pipe';
+import { ShowdownPipe } from '../pipes/showdown.pipe';
 
 @NgModule({
   imports: [
@@ -26,8 +26,9 @@ import { NewLinePipe } from './new-line.pipe';
         path: 'edit/:id',
         component: NoteDetailComponent
       }
+      
     ])
   ],
-  declarations: [NoteComponent, NoteDetailComponent,NewLinePipe]
+  declarations: [NoteComponent, NoteDetailComponent, ShowdownPipe]
 })
 export class NoteModule {}

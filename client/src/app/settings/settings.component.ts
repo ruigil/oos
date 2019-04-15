@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { SettingsService } from '../settings.service';
-import { Settings } from '../settings';
+import { SettingsService } from '../services/settings.service';
+import { Settings } from '../model/settings';
 import { ToastController } from '@ionic/angular';
 
 @Component({
@@ -10,10 +10,13 @@ import { ToastController } from '@ionic/angular';
 })
 export class SettingsComponent implements OnInit {
 
-  private settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day"} });
+  settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day"} });
 
-  constructor(private settingsService: SettingsService,public toastController: ToastController) { 
-      settingsService.getSettings().subscribe( set => { this.settings = set; console.log("settings...") });
+  constructor(
+      private settingsService: SettingsService,
+      public toastController: ToastController) { 
+      
+      settingsService.getSettings().subscribe( set => this.settings = set );
   }
 
   saveSettings() {

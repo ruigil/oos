@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
-import { FormatDatePipe } from '../format-date.pipe';
 
-import { HomePage } from './home.page';
+import { FormatDatePipe } from '../pipes/format-date.pipe';
+import { HomeComponent } from './home.component';
 
 @NgModule({
   imports: [
@@ -15,11 +15,11 @@ import { HomePage } from './home.page';
     RouterModule.forChild([
       {
         path: '',
-        component: HomePage
+        component: HomeComponent
       }
     ])
   ],
-  declarations: [HomePage, FormatDatePipe],
+  declarations: [HomeComponent, FormatDatePipe],
   exports: [FormatDatePipe]
 })
 export class HomePageModule {}

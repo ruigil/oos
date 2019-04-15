@@ -8,14 +8,14 @@ import {
     DocumentSnapshotDoesNotExist,
     DocumentSnapshotExists    
  } from '@angular/fire/firestore';
-import { Drop } from './drop';
+
+import * as firebase from 'firebase/app';
+
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import * as firebase from 'firebase/app';
 
 type CollectionPredicate<T> = string | AngularFirestoreCollection<T>;
 type DocPredicate<T> = string | AngularFirestoreDocument<T>;
-
 
 @Injectable({
   providedIn: 'root'

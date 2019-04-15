@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 import { TagsModule } from '../tags/tags.module';
 import { HomePageModule } from '../home/home.module';
 
-import { TaskComponent } from './task.component';
 import { TaskDetailComponent } from './task-detail.component';
 
 @NgModule({
@@ -18,17 +17,12 @@ import { TaskDetailComponent } from './task-detail.component';
     HomePageModule,
     RouterModule.forChild([
       {
-        path: ':id', 
-        component: TaskComponent
-      },
-      {
         path: 'edit/:id',
         component: TaskDetailComponent
       }
     ])
   ],
   declarations: [
-      TaskComponent, 
       TaskDetailComponent
   ]
 })

@@ -7,7 +7,7 @@ import { format, parse, isToday } from 'date-fns';
 export class FormatDatePipe implements PipeTransform {
 
   transform(value: any, args?: any): String {
-    return isToday(value) ? format(value,'HH:mm') : format(value, "ddd DD/MM HH:mm");
+    return isToday(value) ? format(value,'HH:mm') : format(value, "ddd DD/MM");
   }
 
 }

@@ -12,17 +12,17 @@ import { environment } from '../environments/environment';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { FormsModule } from '@angular/forms';
 
-import { AppRoutingModule } from './app-routing.module';
+import { OOSRoutingModule } from './oos-routing.module';
 
-import { AppComponent } from './app.component';
+import { OOSComponent } from './oos.component';
 import { TagFilterComponent } from './tag-filter/tag-filter.component';
-import { SearchTagPipe } from './tag-filter/search-tag.pipe';
-import { SortTagPipe } from './tag-filter/sort-tag.pipe';
 
+import { SearchTagPipe } from './pipes/search-tag.pipe';
+import { SortTagPipe } from './pipes/sort-tag.pipe';
 
 @NgModule({
   declarations: [
-    AppComponent,
+    OOSComponent,
     TagFilterComponent,
     SearchTagPipe,
     SortTagPipe
@@ -31,7 +31,7 @@ import { SortTagPipe } from './tag-filter/sort-tag.pipe';
     BrowserModule,
     BrowserAnimationsModule,
     IonicModule.forRoot(),
-    AppRoutingModule,
+    OOSRoutingModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule.enablePersistence(),
@@ -42,7 +42,7 @@ import { SortTagPipe } from './tag-filter/sort-tag.pipe';
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [OOSComponent],
   schemas: [ ]
 })
-export class AppModule { }
+export class OOSModule { }

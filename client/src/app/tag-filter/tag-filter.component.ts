@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { Tag } from '../tag';
-import { TagFilterService } from '../tag-filter.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { Tag } from '../model/tag';
+import { TagFilterService } from '../services/tag-filter.service';
 
 @Component({
   selector: 'oos-tag-filter',
@@ -28,8 +29,6 @@ export class TagFilterComponent implements OnInit {
     else this.selectedTags.splice(this.selectedTags.indexOf(id),1);
     this.tagFilterService.selectTag(this.selectedTags);
   }
-
-
 
   filterTags(event){
     this.searchTerm.next(event.detail.value);

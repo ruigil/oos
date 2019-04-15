@@ -2,14 +2,14 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of,  combineLatest } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-
-import { FireService } from '../fire.service';
-import { Drop } from '../drop';
-import { Tag } from '../tag';
 import { format, parse } from 'date-fns';
 
+import { FireService } from '../services/fire.service';
+import { Drop } from '../model/drop';
+import { Tag } from '../model/tag';
+
 @Component({
-  selector: 'analytics-page',
+  selector: 'oos-analytics-tags',
   templateUrl: './tags-stats.component.html',
   styleUrls: ['./tags-stats.component.scss']
 })
@@ -38,10 +38,14 @@ export class TagsStatsComponent implements OnInit {
     analytics: any;
     data: Array<any> = [];
 
-    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
+    constructor(
+        private dropsService: FireService, 
+        private route: ActivatedRoute, 
+        private router: Router) { 
+
             this.analytics = { tags: [] }
-            for (let i=1; i<31; i++) this.data.push(
-                {
+            // TODO: this must be calculated to the correct days in the month
+            for (let i=1; i<31; i++) this.data.push( {
                     "name": "" + i,
                     "series": [
                     {

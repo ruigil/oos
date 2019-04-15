@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { FireService } from '../fire.service';
-import { Tag } from '../tag';
+import { FireService } from '../services/fire.service';
+import { Tag } from '../model/tag';
 
 @Component({
   selector: 'oos-tags',

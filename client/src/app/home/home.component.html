@@ -35,7 +35,7 @@
 
         <ion-item-sliding #slidingItem *ngIf="isNote(drop)">
             <!-- Note -->
-            <ion-item color="{{isToday(drop) ? 'light' : ''}}">
+            <ion-item color="{{isToday(drop) ? 'light' : ''}}" routerLink="/note/{{drop.id}}">
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
                 <ion-icon slot="start" color="warning" name="document" ></ion-icon>
                 <ion-label><ion-text color="dark">{{drop.text}}</ion-text></ion-label>

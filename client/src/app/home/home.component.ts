@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FireService } from '../fire.service';
-import { Drop } from '../drop';
-import { TagFilterService } from '../tag-filter.service';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { tap,map } from 'rxjs/operators';
-import { Router } from '@angular/router';
 import { isToday, isFuture } from 'date-fns';
-import { SettingsService } from '../settings.service';
+
+import { TagFilterService } from '../services/tag-filter.service';
+import { SettingsService } from '../services/settings.service';
+import { FireService } from '../services/fire.service';
+
+import { Drop } from '../model/drop';
 
 import { 
     AngularFirestore, 
@@ -19,15 +21,20 @@ import {
  } from '@angular/fire/firestore';
 
 @Component({
-  selector: 'home-page',
-  templateUrl: 'home.page.html',
-  styleUrls: ['home.page.scss'],
+  selector: 'oos-home',
+  templateUrl: 'home.component.html',
+  styleUrls: ['home.component.scss'],
 })
-export class HomePage implements OnInit {
+export class HomeComponent implements OnInit {
   dropsObs: Observable<Drop[]>;
   timeFrameValue: string = "day";
 
-  constructor(private dropsService: FireService, private tagFilterService: TagFilterService, private router: Router, private settings: SettingsService) {
+  constructor(
+      private dropsService: FireService, 
+      private tagFilterService: TagFilterService, 
+      private router: Router, 
+      private settings: SettingsService) {
+
       settings.getSettings().subscribe( s => {
           this.timeFrameValue = s.home.preview;
           this.tagFilterService.selectTimeFrame(this.timeFrameValue);
@@ -97,7 +104,6 @@ export class HomePage implements OnInit {
                 (value) => { console.log("success") },
                 (error) => { console.log("error") }
             );
-    console.log("complete");
   }
 
 }

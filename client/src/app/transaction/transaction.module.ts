@@ -6,9 +6,7 @@ import { RouterModule } from '@angular/router';
 import { TagsModule } from '../tags/tags.module';
 import { HomePageModule } from '../home/home.module';
 
-import { TransactionComponent } from './transaction.component';
 import { TransactionDetailComponent } from './transaction-detail.component';
-import { Iso8601Pipe } from '../iso8601.pipe';
 
 @NgModule({
   imports: [
@@ -19,19 +17,13 @@ import { Iso8601Pipe } from '../iso8601.pipe';
     HomePageModule,
     RouterModule.forChild([
       {
-        path: ':id', 
-        component: TransactionComponent
-      },
-      {
         path: 'edit/:id',
         component: TransactionDetailComponent
       }
     ])
   ],
   declarations: [
-      TransactionComponent, 
-      TransactionDetailComponent,
-      Iso8601Pipe
+      TransactionDetailComponent
   ]
 })
 export class TransactionModule {}

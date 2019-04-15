@@ -1,13 +1,13 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: 'oos-root',
+  templateUrl: './oos.component.html',
+  styleUrls: ['./oos.component.css']
 })
-export class AppComponent {
+export class OOSComponent {
 
-  public appPages = [
+  public pages = [
     {
       title: 'Home',
       url: '/home',
@@ -30,7 +30,6 @@ export class AppComponent {
     }
   ];
 
-  constructor() {
-  }
+  constructor() { }
 
 }

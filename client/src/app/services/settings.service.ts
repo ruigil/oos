@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
-import { FireService } from './fire.service';
-import { Settings } from './settings'
+
+import { FireService } from '../services/fire.service';
+import { Settings } from '../model/settings'
 
 @Injectable({
   providedIn: 'root'

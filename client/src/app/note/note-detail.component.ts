@@ -3,12 +3,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { FireService } from '../fire.service';
-import { Drop } from '../drop';
 import { format, parse } from 'date-fns';
 
+import { FireService } from '../services/fire.service';
+import { Drop } from '../model/drop';
+
 @Component({
-  selector: 'app-note-detail',
+  selector: 'oos-note-detail',
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.css']
 })

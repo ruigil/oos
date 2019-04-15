@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, flatMap, filter } from 'rxjs/operators';
-import { Drop } from "./drop";
-import { Tag } from "./tag";
-import { FireService } from './fire.service';
 import { addDays, addWeeks, addMonths, addYears, endOfToday } from 'date-fns';
+
+import { FireService } from '../services/fire.service';
+import { Drop } from "../model/drop";
+import { Tag } from "../model/tag";
 
 @Injectable({
   providedIn: 'root'

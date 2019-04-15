@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { MonthNamesPipe } from '../month-names.pipe';
 
 import { AnalyticsComponent } from './analytics.component';
 import { TagsStatsComponent } from './tags-stats.component';
+import { MonthNamesPipe } from '../pipes/month-names.pipe';
 
 @NgModule({
   imports: [

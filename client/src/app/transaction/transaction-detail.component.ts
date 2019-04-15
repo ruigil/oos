@@ -3,14 +3,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { format, parse } from 'date-fns';
-import { Settings } from '../settings';
-import { SettingsService } from '../settings.service';
 
-import { FireService } from '../fire.service';
-import { Drop } from '../drop';
+import { SettingsService } from '../services/settings.service';
+import { FireService } from '../services/fire.service';
+import { Drop } from '../model/drop';
+import { Settings } from '../model/settings';
 
 @Component({
-  selector: 'app-transaction-detail',
+  selector: 'oos-transaction-detail',
   templateUrl: './transaction-detail.component.html',
   styleUrls: ['./transaction-detail.component.css']
 })
@@ -20,7 +20,12 @@ export class TransactionDetailComponent implements OnInit {
     settings: Settings = new Settings();
     dropDate: string = "";
 
-    constructor(private dropsService: FireService, private settingsService: SettingsService, private route: ActivatedRoute, private router: Router) { 
+    constructor(
+        private dropsService: FireService, 
+        private settingsService: SettingsService, 
+        private route: ActivatedRoute, 
+        private router: Router) { 
+
         this.drop = new Drop({ transaction: {value: 0.0, type: 'expense', currency: ''}, recurrence: 'none' });
         settingsService.getSettings().subscribe( s => this.settings = s);
     }
