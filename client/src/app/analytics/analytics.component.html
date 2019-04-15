@@ -8,29 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <!-- Tab bar -->
-<ion-tabs>
-  <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="contact">
-      <ion-icon name="calendar"></ion-icon>
-      <ion-label>Week</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="account">
-      <ion-icon name="calendar"></ion-icon>
-      <ion-label>Month</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="contact">
-      <ion-icon name="calendar"></ion-icon>
-      <ion-label>Year</ion-label>
-    </ion-tab-button>
-    <ion-tab-button tab="contact">
-      <ion-icon name="calendar"></ion-icon>
-      <ion-label>All</ion-label>
-    </ion-tab-button>
-  </ion-tab-bar>
-</ion-tabs>    
-
-    <ion-card *ngFor="let item of analytics">
+ <ion-card *ngFor="let item of analytics | async">
   <ion-card-header>
     <ion-card-title>{{item.month | monthNames}}, {{item.year}}</ion-card-title>
     <ion-card-subtitle>Totals per type</ion-card-subtitle>

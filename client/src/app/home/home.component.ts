@@ -95,6 +95,10 @@ export class HomeComponent implements OnInit {
       this.tagFilterService.selectTimeFrame(event.detail.value);
   }
 
+  dropIdentity( index, drop) {
+      return drop.id;
+  }
+
   complete(drop:Drop) {
         drop.task.completed = !drop.task.completed;
         let id = drop.id;

@@ -14,12 +14,14 @@ import { Drop } from '../model/drop';
 })
 export class AnalyticsComponent implements OnInit {
 
-    analytics: any[];
+    analytics: any;
 
-    constructor(private dropsService: FireService ) {  }
+    constructor(private dropsService: FireService ) {  
+    }
 
     ngOnInit() {
-        this.dropsService.col$("analytics", ref => ref.orderBy("month","desc")).subscribe( a => this.analytics = a);
+        console.log("on init");
+        this.analytics = this.dropsService.col$("analytics", ref => ref.orderBy("month","desc"));
     }
 
 }
