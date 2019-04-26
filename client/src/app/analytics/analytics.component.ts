@@ -20,7 +20,6 @@ export class AnalyticsComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log("on init");
         this.analytics = this.dropsService.col$("analytics", ref => ref.orderBy("month","desc"));
     }
 

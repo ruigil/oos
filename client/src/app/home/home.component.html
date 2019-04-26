@@ -4,14 +4,16 @@
       <ion-buttons slot="start">
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
-      <ion-title>
-        List
-      </ion-title>
+      <ion-title>Stream</ion-title>
     </ion-toolbar>
   </ion-header>
   
-  <ion-content>
-    <ion-segment (ionChange)="timeFrame($event)" color="medium" value="{{timeFrameValue}}">
+  <ion-content #content >
+      <!--
+          [scrollEvents]="true" (ionScroll)="onScroll($event)" (ionScrollEnd)="scrollEnd($event)"
+          -->
+
+    <ion-segment color="medium" value="{{timeFrameValue}}">
         <ion-segment-button value="day">
             <ion-label>Day</ion-label>
         </ion-segment-button>
@@ -26,6 +28,7 @@
         </ion-segment-button>
     </ion-segment>
     <ion-list>
+
         <div *ngFor="let drop of dropsObs | async; let i = index; trackBy:dropIdentity" >
 
         <ion-item color="light" *ngIf="isSystem(drop)">
@@ -103,6 +106,10 @@
             </ion-item-options>
         </ion-item-sliding>
         </div>
+        <ion-list-header>
+            <ion-label><ion-icon name="code-working"></ion-icon> Loading Items</ion-label>            
+        </ion-list-header>        
+
 
     </ion-list>
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
