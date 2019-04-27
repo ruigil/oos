@@ -13,7 +13,7 @@
           [scrollEvents]="true" (ionScroll)="onScroll($event)" (ionScrollEnd)="scrollEnd($event)"
           -->
 
-    <ion-segment color="medium" value="{{timeFrameValue}}">
+    <ion-segment (ionChange)="futurePreview($event)" color="medium" value="{{timeFrameValue}}">
         <ion-segment-button value="day">
             <ion-label>Day</ion-label>
         </ion-segment-button>

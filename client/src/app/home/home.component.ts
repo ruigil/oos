@@ -54,14 +54,20 @@ export class HomeComponent implements OnInit {
       private settings: SettingsService) {
 
       settings.getSettings().subscribe( s => {
+          console.log(s);
           this.timeFrameValue = s.home.preview;
           //this.tagFilterService.selectTimeFrame(this.timeFrameValue);
-        const ts =  this.timeFrameValue == "week" ? this.fireService.date2ts(addWeeks(endOfToday(),1)) :
-                this.timeFrameValue == "month" ? this.fireService.date2ts(addMonths(endOfToday(),1)) :
-                this.timeFrameValue == "year" ? this.fireService.date2ts(addYears(endOfToday(),1)) : /* today */this.fireService.date2ts(endOfToday());
+          const ts = this.getTimestamp(s.home.preview);
           this.start = ts;
           this.tagFilterService.selectStartAt(ts);
       });
+
+  }
+
+  getTimestamp(time: string): any {
+      return time == "week" ? this.fireService.date2ts(addWeeks(endOfToday(),1)) :
+            time == "month" ? this.fireService.date2ts(addMonths(endOfToday(),1)) :
+            time == "year" ? this.fireService.date2ts(addYears(endOfToday(),1)) : /* today */this.fireService.date2ts(endOfToday());
 
   }
 
@@ -147,6 +153,10 @@ export class HomeComponent implements OnInit {
                 (value) => { console.log("success") },
                 (error) => { console.log("error") }
             );
+  }
+
+  futurePreview(event) {
+      this.tagFilterService.selectStartAt(this.getTimestamp(event.detail.value));
   }
 
 
