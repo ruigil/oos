@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { format, subDays, addDays, addWeeks, addMonths } from 'date-fns';
+import { format, subDays, addDays, addWeeks, addMonths, startOfTomorrow } from 'date-fns';
 
 admin.initializeApp(functions.config().firebase);
 
@@ -215,7 +215,7 @@ export const statsUpdate = functions.firestore
     });
 
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async message => {
-    const currentDate = new Date();
+    const currentDate = startOfTomorrow();
 
     // there is a difference between the cloud scheduler time, and the timestamp in the function
     console.log("currentDate["+currentDate.toString()+"]")

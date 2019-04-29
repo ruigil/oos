@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, fromEvent, from, combineLatest } from 'rxjs';
 import { tap,map,flatMap,pairwise,exhaustMap, filter, take, first, debounceTime, scan, withLatestFrom, distinctUntilChanged } from 'rxjs/operators';
-import { isToday, isFuture, addWeeks, addMonths, endOfToday, addYears } from 'date-fns';
+import { isToday, isFuture, addWeeks, addMonths, endOfToday, addYears, format } from 'date-fns';
 
 import { TagFilterService } from '../services/tag-filter.service';
 import { SettingsService } from '../services/settings.service';
@@ -29,23 +29,27 @@ interface Position {
   sH: number;
 };
 
+interface Page {
+    startAt: any;
+    size: number;
+}
+
 @Component({
   selector: 'oos-home',
   templateUrl: 'home.component.html',
   styleUrls: ['home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+  @ViewChild("content") content: IonContent;
   dropsObs: Observable<Drop[]>;
-  timeFrameValue: string = "day";
+  scrollEvents$ : Observable<any>;
 
   finished: boolean = true;
-  scrollEvents$ : Observable<any>;
-  userScrolledDown$: Observable<any>;
-  @ViewChild("content") content: IonContent;
 
-  start: any = this.fireService.date2ts(endOfToday());
+  page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
+  startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
 
-  scrollPercent: number =90;
+  scrollPercent: number = 80;
 
   constructor(
       private fireService: FireService, 
@@ -55,42 +59,44 @@ export class HomeComponent implements OnInit {
 
       settings.getSettings().subscribe( s => {
           console.log(s);
-          this.timeFrameValue = s.home.preview;
-          //this.tagFilterService.selectTimeFrame(this.timeFrameValue);
-          const ts = this.getTimestamp(s.home.preview);
-          this.start = ts;
-          this.tagFilterService.selectStartAt(ts);
+          this.page.startAt = this.getTimestamp(s.home.preview);
+          this.tagFilterService.selectPage(this.page);
       });
 
   }
 
   getTimestamp(time: string): any {
       return time == "week" ? this.fireService.date2ts(addWeeks(endOfToday(),1)) :
-            time == "month" ? this.fireService.date2ts(addMonths(endOfToday(),1)) :
-            time == "year" ? this.fireService.date2ts(addYears(endOfToday(),1)) : /* today */this.fireService.date2ts(endOfToday());
-
+        time == "month" ? this.fireService.date2ts(addMonths(endOfToday(),1)) :
+        time == "year" ? this.fireService.date2ts(addYears(endOfToday(),1)) : /* today */this.fireService.date2ts(endOfToday());
   }
 
   ngOnInit(): void {
         this.dropsObs = this.tagFilterService.drops();
         
-        // implements a infinite scrolling sliding window
+        // implements a infinite scrolling page sliding window
+        // take the client 
+        // calculate the size of the page, and the number of elements visible
+        // multiply by 4 to get the page size
+        // when scrolltop + clientHeight /2 > 75%
+        // startat new drop to put the scroll at 50%
         from( this.content.getScrollElement() )
         .pipe( flatMap( element => fromEvent(element,'scroll')) )
         .pipe( 
             map((e: any): Position => ({ 
                 top: e.target.scrollTop, 
                 cH: e.target.clientHeight,
-                sH: e.target.scrollHeight                
+                sH: e.target.scrollHeight
             })),
             pairwise(),
             map( (p:any) => ({ up: p[0].top > p[1].top, percent: p[0].top > p[1].top ? p[1].top / p[1].sH : (p[1].top + p[1].cH)/p[1].sH }) ),
             filter(p => ( !p.up && p.percent > (this.scrollPercent / 100)) || (p.up && p.percent < ((100-this.scrollPercent) / 100))),
             debounceTime(500),
+            tap( p => console.log(p)),
             withLatestFrom(this.dropsObs),
-            scan( (acc,[s,d]) => s.up ? (acc.length != 1 ? acc.slice(0,acc.length-1) : acc) : (d[10].date ? acc.concat( [d[10].date] ) : acc) , [this.start] ),
-            distinctUntilChanged((prev, curr) => prev.length === curr.length)
-        ).subscribe( acc => {console.log(acc);this.tagFilterService.selectStartAt(acc[acc.length-1])})
+            scan( (acc,[s,d]) => s.up ? (acc.length != 1 ? acc.slice(0,acc.length-1) : acc) : (d[10].date ? acc.concat( [d[10].date] ) : acc) , [this.page.startAt] ),
+            distinctUntilChanged((prev, curr) => prev.length == curr.length),
+        ).subscribe( acc => {console.log(acc);this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60} ) } );
 
   }
 
@@ -156,7 +162,7 @@ export class HomeComponent implements OnInit {
   }
 
   futurePreview(event) {
-      this.tagFilterService.selectStartAt(this.getTimestamp(event.detail.value));
+      this.tagFilterService.selectPage({ startAt: this.getTimestamp(event.detail.value), size: 60 } );
   }
 
 

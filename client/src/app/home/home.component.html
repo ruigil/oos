@@ -5,14 +5,11 @@
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
       <ion-title>Stream</ion-title>
+      <ion-button shape="round" fill="outline" color="medium" slot="end"><ion-datetime display-format="DD MMM YYYY" [(ngModel)]="startAt"></ion-datetime></ion-button>
     </ion-toolbar>
   </ion-header>
   
   <ion-content #content >
-      <!--
-          [scrollEvents]="true" (ionScroll)="onScroll($event)" (ionScrollEnd)="scrollEnd($event)"
-          -->
-
     <ion-segment (ionChange)="futurePreview($event)" color="medium" value="{{timeFrameValue}}">
         <ion-segment-button value="day">
             <ion-label>Day</ion-label>
