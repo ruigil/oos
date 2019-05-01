@@ -10,13 +10,15 @@ import { ToastController } from '@ionic/angular';
 })
 export class SettingsComponent implements OnInit {
 
-  settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day"} });
+  settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day", timezone: new Date().getTimezoneOffset()/60 } });
 
   constructor(
       private settingsService: SettingsService,
       public toastController: ToastController) { 
       
-      settingsService.getSettings().subscribe( set => this.settings = set );
+      settingsService.getSettings().subscribe( set => { 
+          this.settings = set;
+      } );
   }
 
   saveSettings() {

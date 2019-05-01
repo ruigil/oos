@@ -27,12 +27,4 @@ export class NoteComponent implements OnInit {
 
   }
 
-    deleteNote() {
-        this.dropsService.delete("drops/"+ this.drop.id).then( 
-            (value) => { this.router.navigate(["home"]) },
-            (error) => { console.log("error") }
-        );
-    }
-
-
 }

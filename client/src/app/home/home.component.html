@@ -5,12 +5,12 @@
         <ion-menu-button></ion-menu-button>
       </ion-buttons>
       <ion-title>Stream</ion-title>
-      <ion-button shape="round" fill="outline" color="medium" slot="end"><ion-datetime display-format="DD MMM YYYY" [(ngModel)]="startAt"></ion-datetime></ion-button>
+      <ion-button shape="round" fill="outline" color="medium" slot="end"><ion-datetime display-format="DD MMM YYYY" value="{{startAt}}" (ionChange)="changeStartAt($event)"></ion-datetime></ion-button>
     </ion-toolbar>
   </ion-header>
   
   <ion-content #content >
-    <ion-segment (ionChange)="futurePreview($event)" color="medium" value="{{timeFrameValue}}">
+    <ion-segment (ionChange)="futurePreview($event)" color="medium" value="{{futurePreviewOption}}">
         <ion-segment-button value="day">
             <ion-label>Day</ion-label>
         </ion-segment-button>
@@ -36,11 +36,11 @@
         <ion-item-sliding #slidingItem *ngIf="isNote(drop)">
             <!-- Note -->
             <ion-item color="{{isToday(drop) ? 'light' : ''}}" routerLink="/note/{{drop.id}}">
-                <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
                 <ion-icon slot="start" color="warning" name="document" ></ion-icon>
+                <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
                 <ion-label><ion-text color="dark">{{drop.text}}</ion-text></ion-label>
                 <!-- Common -->
-                <ion-chip slot="end" color="{{ isToday(drop) ? 'medium' : isFuture(drop) ? 'warning' : 'light' }}">
+                <ion-chip slot="end" color="{{ dropTimeColor(drop) }}">
                     <ion-icon name="time"></ion-icon>
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
                 </ion-chip>
@@ -57,14 +57,14 @@
         <ion-item-sliding #slidingItem *ngIf="isTransaction(drop)">
             <!-- Transaction -->
             <ion-item color="{{isToday(drop) ? 'light' : ''}}">
-                <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-icon slot="start" color="secondary" name="cash" ></ion-icon>
+                <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
                 <ion-chip color="{{drop.transaction.type === 'expense' ? 'danger' : 'success'}}">
                     <ion-label>{{drop.transaction.value}} {{drop.transaction.currency}}</ion-label>
                 </ion-chip>
                 <ion-chip color="light">{{drop.text}}</ion-chip>
                 <!-- Common -->
-                <ion-chip slot="end" color="{{ isToday(drop) ? 'medium' : isFuture(drop) ? 'warning' : 'light' }}">
+                <ion-chip slot="end" color="{{ dropTimeColor(drop) }}">
                     <ion-icon name="time"></ion-icon>               
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
                 </ion-chip>
@@ -81,14 +81,14 @@
         <ion-item-sliding #slidingItem *ngIf="isTask(drop)">
             <!-- Task -->
             <ion-item color="{{isToday(drop) ? 'light' : ''}}">
+                <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>
                 <ion-checkbox mode="ios" checked="{{drop.task.completed}}" color="success" (click)="complete(drop)"></ion-checkbox>
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
-                <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>
                 <ion-chip color="{{drop.task.completed ? 'success' : 'dark' }}">
                     <ion-label>{{drop.task.title}}</ion-label>
                 </ion-chip>
                 <!-- Common -->
-                <ion-chip slot="end" color="{{ isToday(drop) ? 'medium' : isFuture(drop) ? 'warning' : 'light' }}">
+                <ion-chip slot="end" color="{{ dropTimeColor(drop) }}">
                     <ion-icon name="time"></ion-icon>               
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
                 </ion-chip>
@@ -103,8 +103,8 @@
             </ion-item-options>
         </ion-item-sliding>
         </div>
-        <ion-list-header>
-            <ion-label><ion-icon name="code-working"></ion-icon> Loading Items</ion-label>            
+        <ion-list-header *ngIf="!finished"> 
+            <ion-label><ion-spinner></ion-spinner>  Loading Items</ion-label>
         </ion-list-header>        
 
 

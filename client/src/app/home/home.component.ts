@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, fromEvent, from, combineLatest } from 'rxjs';
 import { tap,map,flatMap,pairwise,exhaustMap, filter, take, first, debounceTime, scan, withLatestFrom, distinctUntilChanged } from 'rxjs/operators';
-import { isToday, isFuture, addWeeks, addMonths, endOfToday, addYears, format } from 'date-fns';
+import { isToday, isFuture, addWeeks, addMonths, endOfToday, addYears, format, isThisWeek, isThisMonth } from 'date-fns';
 
 import { TagFilterService } from '../services/tag-filter.service';
 import { SettingsService } from '../services/settings.service';
@@ -43,11 +43,11 @@ export class HomeComponent implements OnInit {
   @ViewChild("content") content: IonContent;
   dropsObs: Observable<Drop[]>;
   scrollEvents$ : Observable<any>;
-
-  finished: boolean = true;
+  futurePreviewOption: string = "day";
 
   page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
   startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
+  finished:boolean = false;
 
   scrollPercent: number = 80;
 
@@ -58,9 +58,10 @@ export class HomeComponent implements OnInit {
       private settings: SettingsService) {
 
       settings.getSettings().subscribe( s => {
-          console.log(s);
+          this.futurePreviewOption = s.home.preview;
           this.page.startAt = this.getTimestamp(s.home.preview);
           this.tagFilterService.selectPage(this.page);
+          this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
       });
 
   }
@@ -92,12 +93,22 @@ export class HomeComponent implements OnInit {
             map( (p:any) => ({ up: p[0].top > p[1].top, percent: p[0].top > p[1].top ? p[1].top / p[1].sH : (p[1].top + p[1].cH)/p[1].sH }) ),
             filter(p => ( !p.up && p.percent > (this.scrollPercent / 100)) || (p.up && p.percent < ((100-this.scrollPercent) / 100))),
             debounceTime(500),
-            tap( p => console.log(p)),
+            //tap( p => console.log(p)),
             withLatestFrom(this.dropsObs),
-            scan( (acc,[s,d]) => s.up ? (acc.length != 1 ? acc.slice(0,acc.length-1) : acc) : (d[10].date ? acc.concat( [d[10].date] ) : acc) , [this.page.startAt] ),
+            tap( ([s,d]) => this.finished = d.length < 60),
+            scan( (acc,[s,d]) => d.length == 60 ? s.up ? (acc.length != 1 ? acc.slice(0,acc.length-1) : acc) : (d[10].date ? acc.concat( [d[10].date] ) : acc) : acc , [this.page.startAt] ),
             distinctUntilChanged((prev, curr) => prev.length == curr.length),
-        ).subscribe( acc => {console.log(acc);this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60} ) } );
+            map( (acc:Array<any>) => {
+                acc[0] = this.page.startAt; 
+                this.startAt = format(acc[acc.length-1].toDate(),"YYYY-MM-DDTHH:mm:ss");                
+                return acc;
+            }),
+        ).subscribe( (acc:Array<any>) => this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60} ));
 
+  }
+
+  changeStartAt(event) {
+      console.log(event);
   }
 
   isNote(drop:Drop) {
@@ -138,12 +149,13 @@ export class HomeComponent implements OnInit {
       return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.router.navigate(['/task/edit',drop.id]);
   }
 
-  isToday(drop:Drop) {
+  isToday(drop) {
       return isToday(drop.date.toDate());
   }
-  
-  isFuture(drop:Drop):boolean {
-      return isFuture(drop.date.toDate());
+
+  dropTimeColor(drop): string {
+      let d = drop.date.toDate();
+      return isToday(d) ? 'medium' : isFuture(d) ? (isThisWeek(d) ? 'warning' : isThisMonth(d) ? 'primary' : 'dark') : 'light';
   }
 
   dropIdentity( index, drop) {
@@ -162,7 +174,10 @@ export class HomeComponent implements OnInit {
   }
 
   futurePreview(event) {
-      this.tagFilterService.selectPage({ startAt: this.getTimestamp(event.detail.value), size: 60 } );
+      this.futurePreviewOption = event.detail.value;
+      this.page.startAt = this.getTimestamp(this.futurePreviewOption);
+      this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
+      this.tagFilterService.selectPage(this.page);
   }
 
 

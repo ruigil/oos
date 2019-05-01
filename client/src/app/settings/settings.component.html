@@ -33,6 +33,10 @@
                 <ion-select-option value="year">Year</ion-select-option>
             </ion-select>
         </ion-item>
+        <ion-item>
+            <ion-label>Timezone</ion-label>
+            <ion-input [(ngModel)]="settings.home.timezone"></ion-input>
+        </ion-item>
     </ion-list>    
     
     <ion-button (click)="saveSettings()" shape="round" fill="outline">

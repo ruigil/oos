@@ -41,17 +41,19 @@ export class NoteDetailComponent implements OnInit {
         this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
         if (delete this.drop.id)
             this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { this.router.navigate(["home"]) },
+                (value) => { console.log("OK") },
                 (error) => { console.log("error") }
             );
+        this.router.navigate(["home"]);
     }
 
     addNote() {
         this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
         this.dropsService.add("drops",this.drop).then(
-            (value) => { this.router.navigate(["home"]) },
+            (value) => { console.log("OK") },
             (error) => { console.log("error") }
         );
+        this.router.navigate(["home"]);
     }
 
     selectedTags(tags: Array<string>) {

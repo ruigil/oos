@@ -34,20 +34,17 @@ export class TagFilterService {
 }
 
   selectTag(tags: string[]) {
-    console.log("select tag")
     this.selectedTags$.next(tags);
   }
 
   selectPage(page: any) {
-      console.log("page");
-      console.log(page);
       this.startPage$.next(page);
   }
 
   tags():Observable<Tag[]> {
-    return combineLatest(this.tags$,this.drops$).pipe( map( ([tags,drops]) => {
+    return combineLatest(this.tags$,this.drops$, this.selectedTags$).pipe( map( ([tags,drops, select]) => {
       // filter the tags that are contained in a least one those drops.
-      return tags.filter( t => drops.some( d => d.tags.includes(t.name)) );
+      return select.length == 0 ? tags : tags.filter( t => drops.some( d => d.tags.includes(t.name)) );
     }) );
   }
 
