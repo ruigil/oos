@@ -19,13 +19,15 @@ import { TagFilterComponent } from './tag-filter/tag-filter.component';
 
 import { SearchTagPipe } from './pipes/search-tag.pipe';
 import { SortTagPipe } from './pipes/sort-tag.pipe';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     OOSComponent,
     TagFilterComponent,
     SearchTagPipe,
-    SortTagPipe
+    SortTagPipe,
+    LoginComponent
   ],
   imports: [
     BrowserModule,

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'oos-root',
@@ -27,9 +28,14 @@ export class OOSComponent {
       title: 'Settings',
       url: '/settings',
       icon: 'settings'
+    },
+    {
+      title: 'Account',
+      url: '/login',
+      icon: 'person'
     }
   ];
 
-  constructor() { }
+  constructor( public auth: AuthService) { }
 
 }
