@@ -1,20 +1,7 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      Login
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-    <div *ngIf="auth.user$ | async as user; else login ">
-        <ion-button (click)="auth.signOut()" shape="round" fill="outline">
-            <ion-icon name="logo-google" slot="start"></ion-icon>Sign Out
-        </ion-button>
-    </div>
-    <ng-template #login>
-        <ion-button (click)="auth.googleSignin()" shape="round" fill="outline">
-            <ion-icon name="logo-google" slot="start"></ion-icon>Login with Google
-        </ion-button>
-    </ng-template>
-</ion-content>
+<div *ngIf="user$ | async as user; then userInfo; else login"></div>
+<ng-template #login>
+    <ngx-auth-firebaseui (success)="loggedIn($event)" (error)="authError()"> </ngx-auth-firebaseui>
+</ng-template>
+<ng-template #userInfo>
+    <ngx-auth-firebaseui-user (printUser)="printUser()" (printError)="printError()"></ngx-auth-firebaseui-user>
+</ng-template>

@@ -7,7 +7,7 @@ import { AuthService } from './services/auth.service';
   styleUrls: ['./oos.component.css']
 })
 export class OOSComponent {
-
+opened: boolean;
   public pages = [
     {
       title: 'Home',
@@ -17,12 +17,12 @@ export class OOSComponent {
     {
       title: 'Analytics',
       url: '/analytics',
-      icon: 'list'
+      icon: 'assessment'
     },
     {
       title: 'Tags',
       url: '/tags/edit',
-      icon: 'pricetags'
+      icon: 'bookmarks'
     },
     {
       title: 'Settings',

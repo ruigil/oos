@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit {
   page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
   startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
   finished:boolean = false;
+  preview: string = "day";
 
   scrollPercent: number = 80;
 
@@ -174,8 +175,8 @@ export class HomeComponent implements OnInit {
   }
 
   futurePreview(event) {
-      this.futurePreviewOption = event.detail.value;
-      this.page.startAt = this.getTimestamp(this.futurePreviewOption);
+      console.log(event);
+      this.page.startAt = this.getTimestamp(this.preview);
       this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
       this.tagFilterService.selectPage(this.page);
   }

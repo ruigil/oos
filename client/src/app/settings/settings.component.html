@@ -1,12 +1,32 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
-    </ion-buttons>
-    <ion-title>Settings</ion-title>
-  </ion-toolbar>
-</ion-header>
-
+<mat-list>
+  <mat-list-item>Transaction</mat-list-item>
+    <mat-form-field class="full-width">
+        <mat-label>Currency</mat-label>
+        <mat-select [(ngModel)]="settings.transaction.currency">
+            <mat-option *ngFor="let currency of currencies" [value]="currency.value">
+            {{currency.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+  <mat-list-item>Home</mat-list-item>
+    <mat-form-field class="full-width">
+        <mat-label>Default Preview</mat-label>
+        <mat-select [(ngModel)]="settings.home.preview">
+            <mat-option *ngFor="let preview of previews" [value]="preview.value">
+            {{preview.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+  <mat-form-field class="full-width">
+    <mat-label>Timezone</mat-label>
+    <input matInput [(ngModel)]="settings.home.timezone"/>
+  </mat-form-field>
+  </mat-list>
+  <button mat-flat-button color="primary" (click)="saveSettings()">
+      <mat-icon>save</mat-icon>
+      Save Settings
+    </button>
+<!--
 <ion-content>
     <ion-list>
         <ion-list-header>
@@ -43,3 +63,4 @@
         <ion-icon name="document" slot="start"></ion-icon>Save
     </ion-button>
 </ion-content>
+-->

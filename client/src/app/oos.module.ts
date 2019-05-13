@@ -20,6 +20,15 @@ import { TagFilterComponent } from './tag-filter/tag-filter.component';
 import { SearchTagPipe } from './pipes/search-tag.pipe';
 import { SortTagPipe } from './pipes/sort-tag.pipe';
 import { LoginComponent } from './login/login.component';
+import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
+import { MatInputModule } from '@angular/material/input';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @NgModule({
   declarations: [
@@ -30,6 +39,14 @@ import { LoginComponent } from './login/login.component';
     LoginComponent
   ],
   imports: [
+      MatSidenavModule,
+      MatToolbarModule,
+      MatButtonModule,
+      MatIconModule,
+      MatListModule,
+      MatInputModule,
+      MatChipsModule,
+      MatBadgeModule,
     BrowserModule,
     BrowserAnimationsModule,
     IonicModule.forRoot(),
@@ -39,7 +56,8 @@ import { LoginComponent } from './login/login.component';
     AngularFirestoreModule.enablePersistence(),
     AngularFireStorageModule,
     AngularFireAuthModule,
-    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
+    ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+    NgxAuthFirebaseUIModule.forRoot(environment.firebase)
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 import { Settings } from '../model/settings';
 import { ToastController } from '@ionic/angular';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'oos-settings',
@@ -10,11 +11,24 @@ import { ToastController } from '@ionic/angular';
 })
 export class SettingsComponent implements OnInit {
 
+    public currencies:Array<any> = [ 
+        {name: "Swiss Franc", value:"CHF"},
+        {name: "Euro", value:"EUR"},
+        {name: "Dollar", value:"USD"},
+        {name: "Pound", value:"GBP"}
+    ];
+    public previews:Array<any> = [ 
+        {name: "Day", value:"day"},
+        {name: "Week", value:"week"},
+        {name: "Month", value:"month"},
+        {name: "Year", value:"year"}
+    ];
+
   settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day", timezone: new Date().getTimezoneOffset()/60 } });
 
   constructor(
       private settingsService: SettingsService,
-      public toastController: ToastController) { 
+      public snackBar: MatSnackBar ) { 
       
       settingsService.getSettings().subscribe( set => { 
           this.settings = set;
@@ -23,17 +37,9 @@ export class SettingsComponent implements OnInit {
 
   saveSettings() {
       this.settingsService.saveSettings(this.settings).then(
-          (value) => this.presentToast(),
+          (value) => this.snackBar.open("Settings saved", '', { duration: 5000 }),
           (error) => console.log("error")
       );
-  }
-
-  async presentToast() {
-    const toast = await this.toastController.create({
-      message: 'Your settings have been saved.',
-      duration: 2000
-    });
-    toast.present();
   }
 
   ngOnInit() {

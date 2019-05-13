@@ -8,7 +8,7 @@ import { TagFilterService } from '../services/tag-filter.service';
 @Component({
   selector: 'oos-tag-filter',
   templateUrl: './tag-filter.component.html',
-  styleUrls: ['./tag-filter.component.css']
+  styleUrls: ['./tag-filter.component.scss']
 })
 export class TagFilterComponent implements OnInit {
   tagCount: number = 0;

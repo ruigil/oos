@@ -1,19 +1,15 @@
-<ion-item-group>
-    <!--
-  <ion-item-divider>
-    <ion-label>Filters: <ion-badge color="primary">{{dropCount}}</ion-badge> drops with <ion-badge color="success">{{tagCount}}</ion-badge> tags selected.</ion-label>
-  </ion-item-divider>
-  -->
 
-  <ion-item color="light">
-    <ion-searchbar (ionChange)="filterTags($event)"></ion-searchbar>
-  </ion-item>
-  <!---->
-  <ion-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index; trackBy:tagIdentity;" (click)="selectTag(tag.name)" color="{{tag.selected ? 'medium' : 'light'}}">
-      <ion-chip color="{{tag.color}}">
-        <ion-icon name="pricetag"></ion-icon>
-        <ion-label>{{tag.name}}</ion-label> 
-      </ion-chip>
-      <ion-badge color="light" slot="end">{{tag.count}}</ion-badge>
-  </ion-item>
-</ion-item-group>
+<mat-list>
+    <mat-form-field class="full-width">
+        <mat-icon matPrefix>search</mat-icon>
+        <input type="search" matInput placeholder="Search">
+    </mat-form-field>
+    <mat-list-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index; trackBy:tagIdentity;" (click)="selectTag(tag.name)">
+        <mat-chip-list matBadge="{{tag.count}}">
+        <mat-chip color="{{tag.selected ? 'primary' : 'accent'}}" selected>
+            <mat-icon matPrefix>bookmark</mat-icon>
+            {{tag.name}}
+        </mat-chip>
+        </mat-chip-list>
+    </mat-list-item>
+</mat-list>

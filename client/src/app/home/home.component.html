@@ -1,29 +1,17 @@
-  
-<ion-header>
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Stream</ion-title>
-      <ion-button shape="round" fill="outline" color="medium" slot="end"><ion-datetime display-format="DD MMM YYYY" value="{{startAt}}" (ionChange)="changeStartAt($event)"></ion-datetime></ion-button>
-    </ion-toolbar>
-  </ion-header>
-  
+<div>
+      <button mat-button><ion-datetime display-format="DD MMM YYYY" value="{{startAt}}" (ionChange)="changeStartAt($event)"></ion-datetime></button>
+        <button mdc-button raised>My Button</button>
+  <!-- This fills the remaining space of the current row -->
+  <span class="fill-remaining-space"></span>
+
+  <mat-button-toggle-group name="fontStyle" aria-label="Font Style" [(ngModel)]="preview" (change)="futurePreview($event)">
+    <mat-button-toggle value="day">Day</mat-button-toggle>
+    <mat-button-toggle value="week">Week</mat-button-toggle>
+    <mat-button-toggle value="month">Month</mat-button-toggle>
+    <mat-button-toggle value="year">Year</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
   <ion-content #content >
-    <ion-segment (ionChange)="futurePreview($event)" color="medium" value="{{futurePreviewOption}}">
-        <ion-segment-button value="day">
-            <ion-label>Day</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="week">
-            <ion-label>Week</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="month">
-            <ion-label>Month</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="year">
-            <ion-label>Year</ion-label>
-        </ion-segment-button>
-    </ion-segment>
     <ion-list>
 
         <div *ngFor="let drop of dropsObs | async; let i = index; trackBy:dropIdentity" >

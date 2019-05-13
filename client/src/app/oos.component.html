@@ -1,3 +1,26 @@
+
+<mat-toolbar>
+  <button mat-icon-button (click)="sidenav.toggle()">
+    <mat-icon aria-label="Example icon-button with a heart icon">menu</mat-icon>
+  </button>
+  <span>OceanOS</span>
+</mat-toolbar>
+<mat-sidenav-container>
+  <mat-sidenav #sidenav [mode]="'side'">
+    <mat-list>
+    <mat-list-item *ngFor="let p of pages" routerLink="{{p.url}}">
+        <mat-icon matListIcon>{{p.icon}}</mat-icon>
+        <span> {{p.title}} </span>
+    </mat-list-item>
+    </mat-list>      
+    <oos-tag-filter></oos-tag-filter>
+  </mat-sidenav>
+  <mat-sidenav-content>
+      <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<!--
 <ion-app>
   <ion-split-pane>
     <ion-menu>
@@ -35,3 +58,4 @@
     <ion-router-outlet main></ion-router-outlet>
   </ion-split-pane>
 </ion-app>
+-->
