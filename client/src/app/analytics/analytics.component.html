@@ -1,39 +1,36 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
-    </ion-buttons>
-    <ion-title>Analytics</ion-title>
-  </ion-toolbar>
-</ion-header>
+<mat-card class="analytics-card" *ngFor="let item of analytics | async">
+  <mat-card-header>
+    <mat-card-title>{{item.month | monthNames}}, {{item.year}}</mat-card-title>
+    <mat-card-subtitle>Totals per type</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+        <mat-list>
+        <mat-list-item>
+            <mat-icon mat-list-icon>note</mat-icon>
+            <h4 mat-line>Notes</h4> 
+                <mat-chip-list>
+                    <mat-chip>{{item.totals[0]}}</mat-chip>
+                </mat-chip-list>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>
+            <mat-icon mat-list-icon>monetization_on</mat-icon>
+            <h4 mat-line>Transactions</h4>
+                <mat-chip-list>
+                    <mat-chip>{{item.totals[2]}}&nbsp;CHF</mat-chip>
+                </mat-chip-list>
+        </mat-list-item>
+        <mat-list-item>
+            <mat-icon mat-list-icon>folder</mat-icon>
+            <h4 mat-line>Tasks</h4>
+                <mat-chip-list>
+                    <mat-chip>{{item.totals[1]}}</mat-chip>
+                </mat-chip-list>
+        </mat-list-item>
+        </mat-list>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button routerLink="{{item.month}}/{{item.year}}">Details</button>
+  </mat-card-actions>
+</mat-card>
 
-<ion-content>
- <ion-card *ngFor="let item of analytics | async">
-  <ion-card-header>
-    <ion-card-title>{{item.month | monthNames}}, {{item.year}}</ion-card-title>
-    <ion-card-subtitle>Totals per type</ion-card-subtitle>
-  </ion-card-header>
-
-    <ion-card-content>
-    <ion-list lines="none">
-        <ion-item>
-            <ion-icon slot="start" color="warning" name="document"></ion-icon>
-            <ion-label>Notes</ion-label>
-            <ion-badge color="warning" slot="end">{{item.totals[0]}}</ion-badge>
-        </ion-item>
-        <ion-item>
-            <ion-icon slot="start" color="tertiary" name="folder"></ion-icon>
-            <ion-label>Tasks</ion-label>
-            <ion-badge color="tertiary" slot="end">{{item.totals[1]}}</ion-badge>
-        </ion-item>
-        <ion-item>
-            <ion-icon slot="start" color="secondary" name="cash"></ion-icon>
-            <ion-label>Transactions</ion-label>
-            <ion-badge color="secondary" slot="end">{{item.totals[2]}} CHF</ion-badge>
-        </ion-item>
-    </ion-list>
-    <ion-button fill="outline" routerLink="{{item.month}}/{{item.year}}">Details</ion-button>
-    </ion-card-content>
-    </ion-card>
-
-</ion-content>

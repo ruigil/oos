@@ -20,6 +20,13 @@ export class TransactionDetailComponent implements OnInit {
     settings: Settings = new Settings();
     dropDate: string = "";
 
+    recurrences: Array<{ value: string, text: string }> = [ 
+        { value: "day", text: "Daily"}, 
+        { value: "week", text: "Weekly"}, 
+        { value: "month", text: "Monthly"}, 
+        { value: "year", text: "Yearly"}
+    ]
+
     constructor(
         private dropsService: FireService, 
         private settingsService: SettingsService, 

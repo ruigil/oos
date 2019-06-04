@@ -1,6 +1,5 @@
 <div>
-      <button mat-button><ion-datetime display-format="DD MMM YYYY" value="{{startAt}}" (ionChange)="changeStartAt($event)"></ion-datetime></button>
-        <button mdc-button raised>My Button</button>
+      <button mat-button>Date</button>
   <!-- This fills the remaining space of the current row -->
   <span class="fill-remaining-space"></span>
 
@@ -11,6 +10,64 @@
     <mat-button-toggle value="year">Year</mat-button-toggle>
   </mat-button-toggle-group>
 </div>
+<mat-accordion>
+  <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index; trackBy:dropIdentity"> 
+        <mat-expansion-panel-header [ngClass]="{ 'today': isToday(drop) }">
+            <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> <div [innerHTML]="drop.text.substring(0,40)"></div></mat-panel-title>
+            <mat-panel-title *ngIf="isTransaction(drop)"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
+            <mat-chip-list>
+                <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip>{{drop.text}}
+            </mat-chip-list>
+            </mat-panel-title>
+            <mat-panel-title *ngIf="isTask(drop)"><mat-icon class="task">folder</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
+                
+                <mat-chip-list [selectable]="true" >
+                    <mat-chip [ngClass]="{'taskbg' : drop.task.completed }" (click)="complete(drop)"><mat-icon >{{drop.task.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>&nbsp;{{drop.task.title}}</mat-chip>
+                </mat-chip-list>
+            </mat-panel-title>
+            <mat-panel-title *ngIf="isSystem(drop)"><mat-icon>brightness_7</mat-icon><h4>{{drop.text}}</h4></mat-panel-title>
+
+            <mat-panel-description class="align-right">
+                <mat-chip-list>
+                    <mat-chip><mat-icon>access_time</mat-icon>&nbsp;{{ drop.date?.toDate() | formatDate }}</mat-chip>
+                </mat-chip-list>
+            </mat-panel-description>
+        </mat-expansion-panel-header> 
+
+
+        <div>
+            <p *ngIf="isTransaction(drop)">{{drop.text}}</p>
+            <p *ngIf="isNote(drop)" [innerHTML]="drop.text | showdown "></p>
+            <mat-chip-list>
+                <mat-chip *ngFor="let t of drop.tags"><mat-icon>bookmark</mat-icon> {{t}}</mat-chip>
+            </mat-chip-list>
+        </div>
+        
+        <mat-action-row class="actions">
+            <button mat-stroked-button color="primary" (click)="edit(drop)">Edit</button>
+            <div class="grow"></div>
+            <button mat-stroked-button color="warn" (click)="delete(drop)">Delete</button>
+        </mat-action-row>
+
+   </mat-expansion-panel>
+</mat-accordion>
+<button class="fab" mat-fab aria-label="Add drop" (click)="toggleFab()">
+    <mat-icon>add</mat-icon>
+</button>
+<div [ngClass]="{'fab-buttons-on': fabButtons, 'fab-buttons-off': !fabButtons }">
+    <button color="primary" mat-mini-fab aria-label="Note" class="note-fab" routerLink="/note/edit/new">
+        <mat-icon>note</mat-icon>
+    </button>
+    <button mat-mini-fab aria-label="Transaction" class="trans-fab" routerLink="/transaction/edit/new">
+        <mat-icon>monetization_on</mat-icon>
+    </button>
+    <button mat-mini-fab aria-label="Task" class="task-fab" routerLink="/task/edit/new">
+        <mat-icon>folder</mat-icon>
+    </button>
+<div>
+   
+    
+<!--
   <ion-content #content >
     <ion-list>
 
@@ -22,12 +79,12 @@
         </ion-item>
 
         <ion-item-sliding #slidingItem *ngIf="isNote(drop)">
-            <!-- Note -->
+            <!-- Note 
             <ion-item color="{{isToday(drop) ? 'light' : ''}}" routerLink="/note/{{drop.id}}">
                 <ion-icon slot="start" color="warning" name="document" ></ion-icon>
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon> 
                 <ion-label><ion-text color="dark">{{drop.text}}</ion-text></ion-label>
-                <!-- Common -->
+                <!-- Common 
                 <ion-chip slot="end" color="{{ dropTimeColor(drop) }}">
                     <ion-icon name="time"></ion-icon>
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
@@ -43,7 +100,7 @@
         </ion-item-sliding>
 
         <ion-item-sliding #slidingItem *ngIf="isTransaction(drop)">
-            <!-- Transaction -->
+            <!-- Transaction 
             <ion-item color="{{isToday(drop) ? 'light' : ''}}">
                 <ion-icon slot="start" color="secondary" name="cash" ></ion-icon>
                 <ion-icon *ngIf="isRecurrent(drop)" name="sync"></ion-icon>
@@ -51,7 +108,7 @@
                     <ion-label>{{drop.transaction.value}} {{drop.transaction.currency}}</ion-label>
                 </ion-chip>
                 <ion-chip color="light">{{drop.text}}</ion-chip>
-                <!-- Common -->
+                <!-- Common 
                 <ion-chip slot="end" color="{{ dropTimeColor(drop) }}">
                     <ion-icon name="time"></ion-icon>               
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
@@ -67,7 +124,7 @@
         </ion-item-sliding>
 
         <ion-item-sliding #slidingItem *ngIf="isTask(drop)">
-            <!-- Task -->
+            <!-- Task
             <ion-item color="{{isToday(drop) ? 'light' : ''}}">
                 <ion-icon slot="start" color="tertiary" name="folder" ></ion-icon>
                 <ion-checkbox mode="ios" checked="{{drop.task.completed}}" color="success" (click)="complete(drop)"></ion-checkbox>
@@ -75,7 +132,7 @@
                 <ion-chip color="{{drop.task.completed ? 'success' : 'dark' }}">
                     <ion-label>{{drop.task.title}}</ion-label>
                 </ion-chip>
-                <!-- Common -->
+                <!-- Common 
                 <ion-chip slot="end" color="{{ dropTimeColor(drop) }}">
                     <ion-icon name="time"></ion-icon>               
                     <ion-label>{{ drop.date?.toDate() | formatDate }}</ion-label>
@@ -108,4 +165,4 @@
         </ion-fab-list>
     </ion-fab>    
   </ion-content>
-  
+  -->

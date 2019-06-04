@@ -17,6 +17,12 @@ export class NoteDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     dropDate: string;
+    recurrences: Array<{ value: string, text: string }> = [ 
+        { value: "day", text: "Daily"}, 
+        { value: "week", text: "Weekly"}, 
+        { value: "month", text: "Monthly"}, 
+        { value: "year", text: "Yearly"}
+    ]
 
     constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { }
 

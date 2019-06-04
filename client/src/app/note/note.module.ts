@@ -1,22 +1,42 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { TagsModule } from '../tags/tags.module';
 import { HomePageModule } from '../home/home.module';
 
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatButtonModule } from '@angular/material/button';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
+import { MatSelectModule } from '@angular/material/select';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+
 import { NoteComponent } from './note.component';
 import { NoteDetailComponent } from './note-detail.component';
-import { ShowdownPipe } from '../pipes/showdown.pipe';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule,
     TagsModule,
     HomePageModule,
+    MatButtonModule,
+    MatExpansionModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    MatChipsModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    NgxMaterialTimepickerModule,
+    MatSelectModule,
     RouterModule.forChild([
       {
         path: ':id', 
@@ -29,6 +49,6 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
       
     ])
   ],
-  declarations: [NoteComponent, NoteDetailComponent, ShowdownPipe]
+  declarations: [NoteComponent, NoteDetailComponent]
 })
 export class NoteModule {}

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 import { Settings } from '../model/settings';
-import { ToastController } from '@ionic/angular';
 import { MatSnackBar } from '@angular/material';
 
 @Component({

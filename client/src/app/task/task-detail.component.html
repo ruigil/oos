@@ -1,38 +1,31 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
-    </ion-buttons>
-    <ion-title>Edit Task</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-    <ion-item>
-        <ion-input type="text" placeHolder="Title..." [(ngModel)]="drop.task.title"></ion-input>
-    </ion-item>
-    <ion-item>
-        <ion-label>Due Date</ion-label>
-        <ion-datetime display-format="DD MMM YYYY, HH:mm" [(ngModel)]="dropDate"></ion-datetime>
-    </ion-item>
-    <ion-item>
-        <ion-label>Recurrent</ion-label>
-        <ion-select [(ngModel)]="drop.recurrence" okText="Okay" cancelText="Dismiss">
-        <ion-select-option value="none">No</ion-select-option>
-        <ion-select-option value="month">Montly</ion-select-option>
-        <ion-select-option value="week">Weekly</ion-select-option>
-        <ion-select-option value="day">Daily</ion-select-option>
-        </ion-select>
-    </ion-item>
-    <ion-item>
-        <ion-textarea placeHolder="Enter you text here..." rows="4" [(ngModel)]="drop.text"></ion-textarea>
-    </ion-item>
-
-    <ion-button (click)="addTask()" shape="round" fill="outline" *ngIf="!drop.id">
-        <ion-icon name="document" slot="start"></ion-icon>Add Task
-    </ion-button>
-    <ion-button (click)="updateTask()" shape="round" fill="outline" *ngIf="drop.id">
-        <ion-icon name="document" slot="start"></ion-icon>Update Task
-    </ion-button>
-    <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
-</ion-content>
+<div class="form-elements">
+    <mat-form-field>
+        <input matInput [(ngModel)]="drop.task.title" placeholder="Title...">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDate" >
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field >
+        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" value="00:00">
+        <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
+        <ngx-material-timepicker #timepicker></ngx-material-timepicker>
+    </mat-form-field>
+<mat-form-field>
+  <mat-label>Recurrence</mat-label>
+  <mat-select [(ngModel)]="drop.recurrence">
+    <mat-option *ngFor="let rec of recurrences" [value]="rec.value">{{rec.text}}</mat-option>
+  </mat-select>
+</mat-form-field>
+  <mat-form-field>
+    <textarea matInput placeHolder="Enter you text here..." rows="7" [(ngModel)]="drop.text"></textarea>
+  </mat-form-field>
+  <button mat-flat-button color="primary" (click)="addTask()" *ngIf="!drop.id">
+      <mat-icon>add</mat-icon>  Add Task
+  </button>
+  <button mat-flat-button color="primary" (click)="updateTask()" *ngIf="drop.id">
+      <mat-icon>add</mat-icon>  Update Task
+  </button>
+  <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
+</div>  

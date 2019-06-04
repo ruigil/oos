@@ -1,71 +1,30 @@
-<ion-header *ngIf="mode">
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>
-        Tags
-      </ion-title>
-    </ion-toolbar>
-</ion-header>
-  
-<ion-content>
-    <ion-chip *ngFor="let tag of tagsSelected()" (click)="unselectTag(tag.name)" color="{{tag.color}}">
-        <ion-icon name="pricetag"></ion-icon>
-        <ion-label>{{tag.name}}</ion-label>
-    </ion-chip>
-    <ion-item-divider>
-        <ion-label>Tags</ion-label>
-    </ion-item-divider>
-    <ion-item>
-        <ion-input slot="start" [(ngModel)]="tagName" placeholder="Enter tag name..."></ion-input>
-        <ion-button (click)="addTag()" shape="round" fill="outline" slot="end">
-            <ion-icon name="add" slot="start"></ion-icon>Add
-        </ion-button>    
-    </ion-item>
-    <ion-segment (ionChange)="colorChoice($event)" color="dark" scrollable value="{{tagColor}}">
-        <ion-segment-button value="dark">
-            <ion-chip color="dark">{{tagName}}</ion-chip>
-        </ion-segment-button>
-        <ion-segment-button value="primary">
-            <ion-chip color="primary">{{tagName}}</ion-chip>
-        </ion-segment-button>
-        <ion-segment-button value="secondary">
-            <ion-chip color="secondary">{{tagName}}</ion-chip>
-        </ion-segment-button>
-        <ion-segment-button value="tertiary">
-            <ion-chip color="tertiary">{{tagName}}</ion-chip>
-        </ion-segment-button>
-        <ion-segment-button value="warning">
-            <ion-chip color="warning">{{tagName}}</ion-chip>
-        </ion-segment-button>
-        <ion-segment-button value="success">
-            <ion-chip color="success">{{tagName}}</ion-chip>
-        </ion-segment-button>
-        <ion-segment-button value="danger">
-            <ion-chip color="danger">{{tagName}}</ion-chip>
-        </ion-segment-button>
-    </ion-segment>
-    <ion-item-divider>
-        <ion-label>Available Tags</ion-label>
-    </ion-item-divider>
-    <ion-list *ngIf="mode; else blockTags">
-        <ion-item *ngFor="let tag of tags">
-            <ion-chip color="{{tag.color ? tag.color: 'dark'}}">
-                <ion-icon name="pricetag"></ion-icon>
-                <ion-label>{{tag.name}}</ion-label>
-            </ion-chip>
-            <ion-button slot="end" (click)="deleteTag(tag.id)" color="danger" fill="clear">
-                <ion-icon name="trash"></ion-icon>
-            </ion-button>    
-        </ion-item>
-    </ion-list>
-    <ng-template #blockTags>
-        <span *ngFor="let tag of tagsAvailable()" (click)="selectTag(tag.name)"> 
-            <ion-chip color="{{tag.color}}">
-                    <ion-icon name="pricetag"></ion-icon>
-                    <ion-label>{{tag.name}}</ion-label>
-            </ion-chip>
-        </span>
-    </ng-template>
-</ion-content>
+<h3>Tags</h3>
+<mat-chip-list>
+    <mat-chip color="accent" *ngFor="let tag of tagsSelected()" (click)="unselectTag(tag.name)"><mat-icon>bookmark</mat-icon>{{tag.name}}</mat-chip>
+</mat-chip-list>
+<mat-divider class="divider"></mat-divider>
+<div class="addtag">
+  <button mat-flat-button color="primary" (click)="addTag()">
+      <mat-icon>add</mat-icon>  Add Tag
+  </button>
+    <mat-form-field >
+        <input matInput [(ngModel)]="tagName" placeholder="Enter tag name...">
+    </mat-form-field>
+</div>
+<mat-button-toggle-group name="tagColor" aria-label="Tag Color" class="full-width">
+  <mat-button-toggle value="red">{{tagName}}</mat-button-toggle>
+  <mat-button-toggle value="blue">{{tagName}}</mat-button-toggle>
+  <mat-button-toggle value="green">{{tagName}}</mat-button-toggle>
+  <mat-button-toggle value="yellow">{{tagName}}</mat-button-toggle>
+  <mat-button-toggle value="purple">{{tagName}}</mat-button-toggle>
+</mat-button-toggle-group>
+<h3>Available Tags</h3>
+<mat-divider class="divider"></mat-divider>
+<mat-chip-list *ngIf="mode; else blockTags">
+  <mat-chip color="primary" *ngFor="let tag of tags" [removable]="true" (removed)="deleteTag(tag.id)"><mat-icon>bookmark</mat-icon>{{tag.name}}<mat-icon matChipRemove *ngIf="true">cancel</mat-icon></mat-chip>
+</mat-chip-list>
+<ng-template #blockTags>
+    <mat-chip-list>
+        <mat-chip color="primary" *ngFor="let tag of tagsAvailable()" (click)="selectTag(tag.name)" ><mat-icon>bookmark</mat-icon>{{tag.name}}<mat-icon matChipRemove *ngIf="true">cancel</mat-icon></mat-chip>
+    </mat-chip-list>
+</ng-template>

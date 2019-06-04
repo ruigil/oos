@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { format, parse } from 'date-fns';
-import { ToastController } from '@ionic/angular';
 
 import { FireService } from '../services/fire.service';
 import { Drop } from '../model/drop';
@@ -17,12 +16,17 @@ export class TaskDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     dropDate: string = "";
+    recurrences: Array<{ value: string, text: string }> = [ 
+        { value: "day", text: "Daily"}, 
+        { value: "week", text: "Weekly"}, 
+        { value: "month", text: "Monthly"}, 
+        { value: "year", text: "Yearly"}
+    ]
 
     constructor(
         private dropsService: FireService, 
         private route: ActivatedRoute, 
-        private router: Router, 
-        private toastController:ToastController) { 
+        private router: Router) { 
         
         this.drop = new Drop({ task: {title: "", date: null, completed: false}, recurrence: 'none'});
     }
@@ -49,7 +53,7 @@ export class TaskDetailComponent implements OnInit {
     addTask() {
         this.dropsService.add("drops",{...this.drop, date: this.dropsService.date2ts(parse(this.dropDate))}).then(
             (value) => { this.router.navigate(["home"]) },
-            (error) => { this.presentToast(error); this.router.navigate(["home"]); }
+            (error) => { /*this.presentToast(error);*/ this.router.navigate(["home"]); }
         );
     }
     
@@ -66,13 +70,6 @@ export class TaskDetailComponent implements OnInit {
             );
     }
 
-    async presentToast(error) {
-        const toast = await this.toastController.create({
-            message: 'There was an error connecting to the server ['+error+']. Task saved locally.',
-            duration: 2000
-        });
-        toast.present();
-    }
 
     selectedTags(tags: Array<string>) {
         this.drop.tags = tags;

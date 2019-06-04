@@ -1,3 +1,41 @@
+<mat-card class="analytics-card">
+  <mat-card-header>
+    <mat-card-title>{{analytics.month | monthNames}} {{analytics.year}}</mat-card-title>
+    <mat-card-subtitle>Drops Total per day</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+<ngx-charts-bar-vertical-stacked
+  [view]="view"
+  [scheme]="colorScheme"
+  [results]="data"
+  [gradient]="gradient"
+  [xAxis]="showXAxis"
+  [yAxis]="showYAxis"
+  [legend]="showLegend"
+  [showXAxisLabel]="showXAxisLabel"
+  [showYAxisLabel]="showYAxisLabel"
+  [xAxisLabel]="xAxisLabel"
+  [yAxisLabel]="yAxisLabel"
+  (select)="onSelect($event)">
+</ngx-charts-bar-vertical-stacked>
+  </mat-card-content>
+</mat-card>
+<mat-divider></mat-divider>
+        <mat-list>
+        <mat-list-item *ngFor="let tag of analytics.tags">
+                <mat-chip-list>
+                    <mat-chip><mat-icon>bookmark</mat-icon>{{tag.tag}}</mat-chip>
+                    <mat-chip *ngIf="tag.totals[0] != 0"><mat-icon>note</mat-icon>{{tag.totals[0]}}</mat-chip>
+                    <mat-chip *ngIf="tag.totals[1] != 0"><mat-icon>folder</mat-icon>{{tag.totals[1]}}</mat-chip>
+                    <mat-chip *ngIf="tag.totals[2] != 0"><mat-icon>monetization_on</mat-icon>{{tag.totals[2]}}</mat-chip>
+                </mat-chip-list>
+        </mat-list-item>
+      </mat-list>
+
+
+
+
+<!--
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -57,3 +95,4 @@
         </ion-item>
     </ion-list>
 </ion-content>
+-->

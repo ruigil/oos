@@ -1,3 +1,43 @@
+<div class="form-elements">
+    <mat-form-field>
+        <mat-label>{{settings.transaction?.currency}}</mat-label>
+    <input matInput type="number" value="0.00" [(ngModel)]="drop.transaction.value" placeholder="Amount...">
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Transaction Type</mat-label>
+        <mat-select [(ngModel)]="drop.transaction.type">
+            <mat-option [value]="expense">Expense</mat-option>
+            <mat-option [value]="income">Income</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDate" >
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field >
+        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time">
+        <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
+        <ngx-material-timepicker #timepicker></ngx-material-timepicker>
+    </mat-form-field>
+    <mat-form-field>
+    <mat-label>Recurrence</mat-label>
+    <mat-select [(ngModel)]="drop.recurrence">
+        <mat-option *ngFor="let rec of recurrences" [value]="rec.value">{{rec.text}}</mat-option>
+    </mat-select>
+    </mat-form-field>
+  <mat-form-field>
+    <textarea matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.text"></textarea>
+  </mat-form-field>
+    <button mat-flat-button color="primary" (click)="addTransaction()" *ngIf="!drop.id">
+        <mat-icon>add</mat-icon>  Add Transaction
+    </button>
+    <button mat-flat-button color="primary" (click)="updateTransaction()" *ngIf="drop.id">
+        <mat-icon>add</mat-icon>  Update Transaction
+    </button>
+    <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
+</div>
+<!--
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
@@ -49,3 +89,4 @@
     </ion-button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </ion-content>
+-->

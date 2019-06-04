@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+//import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { RouteReuseStrategy } from '@angular/router';
 
 import { AngularFireModule } from '@angular/fire';
@@ -29,6 +29,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -47,9 +48,10 @@ import { MatBadgeModule } from '@angular/material/badge';
       MatInputModule,
       MatChipsModule,
       MatBadgeModule,
+      MatDividerModule,
     BrowserModule,
     BrowserAnimationsModule,
-    IonicModule.forRoot(),
+    //IonicModule.forRoot(),
     OOSRoutingModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
@@ -60,7 +62,6 @@ import { MatBadgeModule } from '@angular/material/badge';
     NgxAuthFirebaseUIModule.forRoot(environment.firebase)
   ],
   providers: [
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [OOSComponent],
   schemas: [ ]

@@ -13,3 +13,75 @@
   flex: 1 1 auto;
 }
 
+.align-right {
+    flex-grow: 0;
+}
+
+.today {
+    background-color: #eeeeee;
+}
+
+.task {
+    color: #339900;
+}
+.taskbg {
+    background-color: #66aa00;
+}
+
+.expense {
+    background-color: #ff6666
+}
+
+.income {
+    background-color: #66ff66
+}
+
+.title-text {
+    height:32px;
+    vertical-align:center;
+}
+
+.transaction {
+    color: #ffcc66;
+}
+
+.actions {
+    justify-content: flex-start;
+}
+
+.grow {
+    flex-grow: 1;
+}
+
+.fab {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+}
+
+.fab-buttons-on {
+    position: fixed;
+    bottom: 100px;
+    right: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.fab-buttons-off {
+    display: none;
+}
+
+.note-fab {
+    margin-bottom: 10px;
+}
+
+.trans-fab {
+    margin-bottom: 10px;
+    background-color: #ffcc66;
+}
+
+.task-fab {
+    background-color: #339900;
+    margin-bottom: 10px;
+}

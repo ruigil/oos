@@ -7,7 +7,6 @@ import { isToday, isFuture, addWeeks, addMonths, endOfToday, addYears, format, i
 import { TagFilterService } from '../services/tag-filter.service';
 import { SettingsService } from '../services/settings.service';
 import { FireService } from '../services/fire.service';
-import { IonContent } from '@ionic/angular';
 
 
 import { Drop } from '../model/drop';
@@ -40,10 +39,11 @@ interface Page {
   styleUrls: ['home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  @ViewChild("content") content: IonContent;
+//  @ViewChild("content") content: IonContent;
   dropsObs: Observable<Drop[]>;
   scrollEvents$ : Observable<any>;
   futurePreviewOption: string = "day";
+  fabButtons: boolean = true;
 
   page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
   startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
@@ -82,6 +82,8 @@ export class HomeComponent implements OnInit {
         // multiply by 4 to get the page size
         // when scrolltop + clientHeight /2 > 75%
         // startat new drop to put the scroll at 50%
+
+        /*
         from( this.content.getScrollElement() )
         .pipe( flatMap( element => fromEvent(element,'scroll')) )
         .pipe( 
@@ -105,7 +107,12 @@ export class HomeComponent implements OnInit {
                 return acc;
             }),
         ).subscribe( (acc:Array<any>) => this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60} ));
+        */
 
+  }
+
+  toggleFab() {
+      this.fabButtons = !this.fabButtons;
   }
 
   changeStartAt(event) {
@@ -136,8 +143,7 @@ export class HomeComponent implements OnInit {
       return this.isNote(drop) ? ['/note',drop.id] : this.isTransaction(drop) ? ['/transaction',drop.id] : ['/task',drop.id];
   }
 
-  delete(slidingItem,drop:Drop) {
-        slidingItem.close(); // important 
+  delete(drop:Drop) {
         let id = drop.id;
         this.fireService.delete("drops/"+drop.id).then(
             (value) => { console.log(" deleted item") },
@@ -145,8 +151,7 @@ export class HomeComponent implements OnInit {
         );
   }
 
-  edit(slidingItem, drop:Drop) {
-      slidingItem.close(); // important 
+  edit(drop:Drop) {
       return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.router.navigate(['/task/edit',drop.id]);
   }
 
@@ -164,7 +169,9 @@ export class HomeComponent implements OnInit {
   }
 
   complete(drop:Drop) {
+        console.log("complete:");
         drop.task.completed = !drop.task.completed;
+        console.log(drop.task.completed);
         let id = drop.id;
         drop.task.date = this.fireService.date2ts(new Date());
         if (delete drop.id)
@@ -172,6 +179,10 @@ export class HomeComponent implements OnInit {
                 (value) => { console.log("success") },
                 (error) => { console.log("error") }
             );
+  }
+
+  event(evt) {
+      console.log(evt);
   }
 
   futurePreview(event) {
