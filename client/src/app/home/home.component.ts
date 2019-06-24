@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
   dropsObs: Observable<Drop[]>;
   scrollEvents$ : Observable<any>;
   futurePreviewOption: string = "day";
-  fabButtons: boolean = true;
+  fabButtons: boolean = false;
 
   page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
   startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");

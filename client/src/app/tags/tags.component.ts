@@ -15,6 +15,15 @@ export class TagsComponent implements OnInit {
     tags: Array<{ name: string, color: string, count: number, available: boolean}> = [];
     @Input() selected: Array<string> = [];
     available: Array<string> = [];
+    public colors:Array<any> = [ 
+        {name: "Dark", value:"dark"},
+        {name: "Red", value:"red"},
+        {name: "Blue", value:"blue"},
+        {name: "Green", value:"green"},
+        {name: "Yellow", value:"yellow"}
+    ];
+
+    
 
     constructor(private fireService: FireService) {
     }
