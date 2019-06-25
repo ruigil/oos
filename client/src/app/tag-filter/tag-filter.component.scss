@@ -2,9 +2,26 @@
   width: 100%;
 }
 
-.form-elements {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0 40px 0 40px;
+.mat-chip.mat-standard-chip.blue {
+    background-color: #6666ff
 }
+
+.mat-chip.mat-standard-chip.red {
+    background-color: #ff6666
+}
+
+.mat-chip.mat-standard-chip.green {
+    background-color: #66ff66
+}
+
+.mat-chip.mat-standard-chip.yellow {
+    background-color: #ffee33
+}
+
+.mat-chip.mat-standard-chip.dark {
+    background-color: #e0e0e0 
+}
+ 
+.selected {
+    background-color: #a9cce3;
+ }

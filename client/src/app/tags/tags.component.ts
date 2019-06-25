@@ -12,7 +12,7 @@ export class TagsComponent implements OnInit {
     @Output() onSelectTag = new EventEmitter<string[]>();
     tagName: string = "";
     tagColor: string = "dark";
-    tags: Array<{ name: string, color: string, count: number, available: boolean}> = [];
+    tags: Array<{ id: string, name: string, color: string, count: number, available: boolean}> = [];
     @Input() selected: Array<string> = [];
     available: Array<string> = [];
     public colors:Array<any> = [ 
@@ -30,7 +30,7 @@ export class TagsComponent implements OnInit {
 
     ngOnInit() {
       this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc')).subscribe( (tags:Tag[]) => {
-          this.tags = tags.map( t => ({ name: t.name, color: t.color, count: t.count, available: !this.selected.includes(t.name)}) );
+          this.tags = tags.map( t => ({ id: t.id, name: t.name, color: t.color, count: t.count, available: !this.selected.includes(t.name)}) );
       });
     }
 

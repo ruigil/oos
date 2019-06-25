@@ -19,6 +19,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 
@@ -45,7 +46,8 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatListModule,
     MatCardModule,
     MatDividerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatRadioModule
   ],
   declarations: [
     FormatDatePipe, 
@@ -72,7 +74,8 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatListModule,
     MatCardModule,
     MatDividerModule,
-    MatSnackBarModule
-  ]
+    MatSnackBarModule,
+    MatRadioModule
+  ] 
 })
 export class OOSCommonModule { }

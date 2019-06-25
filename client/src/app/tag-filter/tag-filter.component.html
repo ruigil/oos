@@ -4,9 +4,9 @@
         <mat-icon matPrefix>search</mat-icon>
         <input type="search" matInput placeholder="Search">
     </mat-form-field>
-    <mat-list-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index; trackBy:tagIdentity;" (click)="selectTag(tag.name)">
-        <mat-chip-list matBadge="{{tag.count}}">
-        <mat-chip color="{{tag.selected ? 'primary' : 'accent'}}" selected>
+    <mat-list-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index; trackBy:tagIdentity;" (click)="selectTag(tag.name)" [ngClass]="{ selected: tag.selected }">
+        <mat-chip-list matBadge="{{tag.count}}" >
+        <mat-chip [ngClass]="tag.color">
             <mat-icon matPrefix>bookmark</mat-icon>
             {{tag.name}}
         </mat-chip>
