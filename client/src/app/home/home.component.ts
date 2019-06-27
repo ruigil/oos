@@ -42,13 +42,18 @@ export class HomeComponent implements OnInit {
 //  @ViewChild("content") content: IonContent;
   dropsObs: Observable<Drop[]>;
   scrollEvents$ : Observable<any>;
-  futurePreviewOption: string = "day";
   fabButtons: boolean = false;
 
-  page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
+  page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 40 }
   startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
   finished:boolean = false;
   preview: string = "day";
+  times: Array<{ name: string, value: string}> = [ 
+      { name: 'Day', value: 'day'},
+      { name: 'Week', value: 'week'},
+      { name: 'Month', value: 'month'},
+      { name: 'Year', value: 'year'}
+  ];
 
   scrollPercent: number = 80;
 
@@ -59,7 +64,7 @@ export class HomeComponent implements OnInit {
       private settings: SettingsService) {
 
       settings.getSettings().subscribe( s => {
-          this.futurePreviewOption = s.home.preview;
+          this.preview = s.home.preview; 
           this.page.startAt = this.getTimestamp(s.home.preview);
           this.tagFilterService.selectPage(this.page);
           this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
@@ -186,7 +191,8 @@ export class HomeComponent implements OnInit {
   }
 
   futurePreview(event) {
-      console.log(event);
+      //console.log(event);
+      //console.log(this.preview);
       this.page.startAt = this.getTimestamp(this.preview);
       this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
       this.tagFilterService.selectPage(this.page);

@@ -7,16 +7,58 @@
   height: 100%;
 }
 
-.fill-remaining-space {
-  /* This fills the remaining space, by using flexbox. 
-     Every toolbar row uses a flexbox row layout. */
-  flex: 1 1 auto;
+.accordion {
+    position:relative;
+    top: 66px;
+}
+
+.time-options {
+    display: flex;
+    justify-content: flex-start;    
+    position: fixed;
+    z-index: 1000;
+}
+
+.time-start {
+    margin-left: 20px;
+    flex:0;
+}
+
+.time-date {
+    margin-left: 20px;
+    margin-right: 20px;
+    align-self: center;
 }
 
 .align-right {
     flex-grow: 0;
 }
+.drop-summary {
+    display: flex;
+    justify-content: flex-start;
+}
+.note {
+    margin-top: -5px;
+    margin-bottom:5px;
+    margin-left: 10px;
+    height: 24px;
+}
 
+div > p {
+    display: inline;
+}
+
+.text {
+    margin-top: 5px;
+    margin-bottom:5px;
+    margin-left: 20px;
+    height: 24px;
+    vertical-align: center;
+    font-weight: bold;
+}
+p {
+    display: inline;
+}
 .today {
     background-color: #eeeeee;
 }
