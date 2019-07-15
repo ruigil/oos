@@ -1,38 +1,31 @@
-.welcome-card ion-img {
-  max-height: 35vh;
-  overflow: hidden;
-}
-
-.searchresults {
-  height: 100%;
-}
-
-.accordion {
-    position:relative;
-    top: 66px;
-}
-
-.time-options {
-    display: flex;
-    justify-content: flex-start;    
+.toolbar {
     position: fixed;
     z-index: 1000;
+    display:flex;
 }
 
-.time-start {
-    margin-left: 20px;
-    flex:0;
+.space { 
+    min-height: 64px;
 }
 
-.time-date {
-    margin-left: 20px;
-    margin-right: 20px;
-    align-self: center;
+.tooltitle {
+    flex: 1;
 }
+.cdk-virtual-scroll-viewport {
+    height:100%;
+}
+.date-preview {
+    display: flex;
+    align-items:center;
+    justify-content: space-around;
+    width: 450px;
+}
+
 
 .align-right {
     flex-grow: 0;
 }
+
 .drop-summary {
     display: flex;
     justify-content: flex-start;

@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { Observable, Subject, fromEvent, from, combineLatest } from 'rxjs';
 import { tap,map,flatMap,pairwise,exhaustMap, filter, take, first, debounceTime, scan, withLatestFrom, distinctUntilChanged } from 'rxjs/operators';
 import { isToday, isFuture, addWeeks, addMonths, endOfToday, addYears, format, isThisWeek, isThisMonth } from 'date-fns';
+import { ScrollDispatcher } from '@angular/cdk/overlay';
 
 import { TagFilterService } from '../services/tag-filter.service';
 import { SettingsService } from '../services/settings.service';
 import { FireService } from '../services/fire.service';
-
+import { MenuService } from '../services/menu.service';
 
 import { Drop } from '../model/drop';
 
@@ -40,7 +41,8 @@ interface Page {
 })
 export class HomeComponent implements OnInit {
 //  @ViewChild("content") content: IonContent;
-  dropsObs: Observable<Drop[]>;
+  dropsObs: Observable<Drop[]>; 
+  //dropsObs: Drop[];
   scrollEvents$ : Observable<any>;
   fabButtons: boolean = false;
 
@@ -56,12 +58,15 @@ export class HomeComponent implements OnInit {
   ];
 
   scrollPercent: number = 80;
+   dropsA: Drop[];
 
   constructor(
       private fireService: FireService, 
       private tagFilterService: TagFilterService, 
       private router: Router, 
-      private settings: SettingsService) {
+      private settings: SettingsService,
+      private menu: MenuService,
+      private scroll: ScrollDispatcher) {
 
       settings.getSettings().subscribe( s => {
           this.preview = s.home.preview; 
@@ -72,6 +77,10 @@ export class HomeComponent implements OnInit {
 
   }
 
+  menuToggle() {
+      this.menu.toggle();
+  }
+
   getTimestamp(time: string): any {
       return time == "week" ? this.fireService.date2ts(addWeeks(endOfToday(),1)) :
         time == "month" ? this.fireService.date2ts(addMonths(endOfToday(),1)) :
@@ -80,6 +89,8 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
         this.dropsObs = this.tagFilterService.drops();
+        this.scroll.scrolled(200).subscribe( (s:any) => console.log(s.measureScrollOffset("bottom"))); 
+        //this.tagFilterService.drops().subscribe( drops => {this.dropsObs = drops; console.log("this items"); }) ;  
         
         // implements a infinite scrolling page sliding window
         // take the client 

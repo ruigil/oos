@@ -1,15 +1,26 @@
-<mat-toolbar class="time-options">
-    <mat-chip-list class="time-date">
-        <mat-chip><mat-icon>access_time</mat-icon>&nbsp;{{ startAt | formatDate }}</mat-chip>
-    </mat-chip-list>
-    <mat-form-field class="time-start">
+
+<mat-toolbar class="toolbar">
+    <div class="tooltitle">
+  <button mat-icon-button (click)="menuToggle()">
+    <mat-icon aria-label="Menu">menu</mat-icon>
+  </button>
+  <span>OceanOS</span>
+  </div>
+  <div class="date-preview align-right">
+    <mat-form-field>
     <mat-select [(ngModel)]="preview" (selectionChange)="futurePreview($event)">
         <mat-option *ngFor="let time of times" [value]="time.value">{{time.name}}</mat-option>
     </mat-select>
     </mat-form-field>
+    <span>Until</span>
+    <mat-chip-list>
+        <mat-chip><mat-icon>access_time</mat-icon>&nbsp;{{ startAt | formatDate }}</mat-chip>
+    </mat-chip-list>
+    </div>
 </mat-toolbar>
-<mat-accordion class="accordion">
-  <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index; trackBy:dropIdentity" [disabled]="isSystem(drop)"> 
+<div class="space"></div>
+<mat-accordion cdkScrollable>
+  <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index;  trackBy: dropIdentity" [disabled]="isSystem(drop)"> 
         <mat-expansion-panel-header [ngClass]="{ 'today': isToday(drop) }" >
             <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> <div class="note" [innerHTML]="drop.text.substring(0,40).concat('...') | showdown"></div></mat-panel-title>
             <mat-panel-title *ngIf="isTransaction(drop)"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
