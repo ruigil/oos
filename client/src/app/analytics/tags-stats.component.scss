@@ -1,4 +1,41 @@
 .analytics-card {
     margin: 20px;
-    min-height: 500px;
+    min-height: 640px;
+}
+.ngx-charts {
+    margin-left: -10px; 
+}
+.mat-chip.mat-standard-chip.blue {
+    background-color: #6666ff
+}
+
+.mat-chip.mat-standard-chip.red {
+    background-color: #ff6666
+}
+
+.mat-chip.mat-standard-chip.green {
+    background-color: #66ff66
+}
+
+.mat-chip.mat-standard-chip.yellow {
+    background-color: #ffee33
+}
+
+.mat-chip.mat-standard-chip.dark {
+    background-color: #e0e0e0 
+}
+.task {
+    color: #339900;
+}
+
+.expense {
+    background-color: #ff6666
+}
+
+.income {
+    background-color: #66ff66
+}
+
+.transaction {
+    color: #ffcc66;
 }

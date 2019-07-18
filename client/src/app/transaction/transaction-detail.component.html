@@ -1,3 +1,9 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Transaction</span>
+</mat-toolbar>
 <div class="form-elements">
     <mat-form-field>
         <mat-label>{{settings.transaction?.currency}}</mat-label>
@@ -6,8 +12,8 @@
     <mat-form-field>
         <mat-label>Transaction Type</mat-label>
         <mat-select [(ngModel)]="drop.transaction.type">
-            <mat-option [value]="expense">Expense</mat-option>
-            <mat-option [value]="income">Income</mat-option>
+            <mat-option [value]="'expense'">Expense</mat-option>
+            <mat-option [value]="'income'">Income</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field>
@@ -16,7 +22,7 @@
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field >
-        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time">
+        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropTime">
         <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
         <ngx-material-timepicker #timepicker></ngx-material-timepicker>
     </mat-form-field>

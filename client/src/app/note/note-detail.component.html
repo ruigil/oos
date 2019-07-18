@@ -1,3 +1,9 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Note</span>
+</mat-toolbar>
 <div class="form-elements">
   <mat-form-field>
     <textarea matInput placeholder="Enter you text here..." rows="15" [(ngModel)]="drop.text"></textarea>

@@ -1,3 +1,9 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Analytics</span>
+</mat-toolbar>
 <mat-card class="analytics-card" *ngFor="let item of analytics | async">
   <mat-card-header>
     <mat-card-title>{{item.month | monthNames}}, {{item.year}}</mat-card-title>
@@ -6,7 +12,7 @@
   <mat-card-content>
         <mat-list>
         <mat-list-item>
-            <mat-icon mat-list-icon>note</mat-icon>
+            <mat-icon color="primary" mat-list-icon>note</mat-icon>
             <h4 mat-line>Notes</h4> 
                 <mat-chip-list>
                     <mat-chip>{{item.totals[0]}}</mat-chip>
@@ -14,14 +20,14 @@
         </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-            <mat-icon mat-list-icon>monetization_on</mat-icon>
+            <mat-icon mat-list-icon class="transaction">monetization_on</mat-icon>
             <h4 mat-line>Transactions</h4>
                 <mat-chip-list>
-                    <mat-chip>{{item.totals[2]}}&nbsp;CHF</mat-chip>
+                    <mat-chip>{{item.totals[2].toFixed(2)}}&nbsp;CHF</mat-chip>
                 </mat-chip-list>
         </mat-list-item>
         <mat-list-item>
-            <mat-icon mat-list-icon>folder</mat-icon>
+            <mat-icon mat-list-icon class="task">folder</mat-icon>
             <h4 mat-line>Tasks</h4>
                 <mat-chip-list>
                     <mat-chip>{{item.totals[1]}}</mat-chip>

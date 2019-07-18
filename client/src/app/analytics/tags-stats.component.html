@@ -1,10 +1,16 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Analytics</span>
+</mat-toolbar>
 <mat-card class="analytics-card">
   <mat-card-header>
     <mat-card-title>{{analytics.month | monthNames}} {{analytics.year}}</mat-card-title>
     <mat-card-subtitle>Drops Total per day</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-<ngx-charts-bar-vertical-stacked
+<ngx-charts-bar-horizontal-stacked
   [view]="view"
   [scheme]="colorScheme"
   [results]="data"
@@ -17,17 +23,17 @@
   [xAxisLabel]="xAxisLabel"
   [yAxisLabel]="yAxisLabel"
   (select)="onSelect($event)">
-</ngx-charts-bar-vertical-stacked>
+</ngx-charts-bar-horizontal-stacked>
   </mat-card-content>
 </mat-card>
 <mat-divider></mat-divider>
         <mat-list>
         <mat-list-item *ngFor="let tag of analytics.tags">
                 <mat-chip-list>
-                    <mat-chip><mat-icon>bookmark</mat-icon>{{tag.tag}}</mat-chip>
-                    <mat-chip *ngIf="tag.totals[0] != 0"><mat-icon>note</mat-icon>{{tag.totals[0]}}</mat-chip>
-                    <mat-chip *ngIf="tag.totals[1] != 0"><mat-icon>folder</mat-icon>{{tag.totals[1]}}</mat-chip>
-                    <mat-chip *ngIf="tag.totals[2] != 0"><mat-icon>monetization_on</mat-icon>{{tag.totals[2]}}</mat-chip>
+                    <mat-chip [ngClass]="tag.color"><mat-icon>bookmark</mat-icon>{{tag.tag}}</mat-chip>
+                    <mat-chip *ngIf="tag.totals[0] != 0"><mat-icon color="primary">note</mat-icon>{{tag.totals[0]}}</mat-chip>
+                    <mat-chip *ngIf="tag.totals[1] != 0"><mat-icon class="task">folder</mat-icon>{{tag.totals[1]}}</mat-chip>
+                    <mat-chip *ngIf="tag.totals[2] != 0"><mat-icon class="transaction">monetization_on</mat-icon>{{tag.totals[2]}}</mat-chip>
                 </mat-chip-list>
         </mat-list-item>
       </mat-list>

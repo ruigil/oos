@@ -1,28 +1,35 @@
 
-<mat-toolbar class="toolbar">
+<mat-toolbar class="toolbar" color="primary">
     <div class="tooltitle">
   <button mat-icon-button (click)="menuToggle()">
     <mat-icon aria-label="Menu">menu</mat-icon>
   </button>
+  <!--
   <span>OceanOS</span>
+  -->
   </div>
-  <div class="date-preview align-right">
+  <div class="date-preview">
+      <!--
+    <span>Preview</span>
+    -->
     <mat-form-field>
     <mat-select [(ngModel)]="preview" (selectionChange)="futurePreview($event)">
         <mat-option *ngFor="let time of times" [value]="time.value">{{time.name}}</mat-option>
     </mat-select>
     </mat-form-field>
+    <!--
     <span>Until</span>
+    -->
     <mat-chip-list>
-        <mat-chip><mat-icon>access_time</mat-icon>&nbsp;{{ startAt | formatDate }}</mat-chip>
+        <mat-chip color="accent" selected><mat-icon>access_time</mat-icon>&nbsp;{{ startAt | formatDate }}</mat-chip>
     </mat-chip-list>
     </div>
 </mat-toolbar>
 <div class="space"></div>
 <mat-accordion cdkScrollable>
   <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index;  trackBy: dropIdentity" [disabled]="isSystem(drop)"> 
-        <mat-expansion-panel-header [ngClass]="{ 'today': isToday(drop) }" >
-            <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> <div class="note" [innerHTML]="drop.text.substring(0,40).concat('...') | showdown"></div></mat-panel-title>
+        <mat-expansion-panel-header [ngClass]="{ 'month': isMonth(drop), 'week': isWeek(drop), 'today': isToday(drop), 'past': isPast(drop)  }" >
+            <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> <div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div></mat-panel-title>
             <mat-panel-title *ngIf="isTransaction(drop)"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
             <mat-chip-list>
                 <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip>{{drop.text}}
@@ -36,17 +43,20 @@
             </mat-panel-title>
             <mat-panel-title *ngIf="isSystem(drop)" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
 
-            <mat-panel-description class="align-right">
+            <mat-panel-description *ngIf="!isSystem(drop)" class="align-right"> 
+
+                {{ drop.date?.toDate() | formatDate }}
+                <!--
                 <mat-chip-list>
-                    <mat-chip><mat-icon>access_time</mat-icon>&nbsp;{{ drop.date?.toDate() | formatDate }}</mat-chip>
+                    <mat-chip class="chipdate"><mat-icon>access_time</mat-icon>&nbsp;{{ drop.date?.toDate() | formatDate }}</mat-chip>
                 </mat-chip-list>
+                -->
             </mat-panel-description>
         </mat-expansion-panel-header> 
 
 
         <div>
-            <p *ngIf="isTransaction(drop)">{{drop.text}}</p>
-            <p *ngIf="isNote(drop)" [innerHTML]="drop.text | showdown "></p>
+            <p [innerHTML]="drop.text | showdown "></p>
             <mat-chip-list>
                 <mat-chip *ngFor="let t of drop.tags"><mat-icon>bookmark</mat-icon> {{t}}</mat-chip>
             </mat-chip-list>

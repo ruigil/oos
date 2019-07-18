@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, fromEvent, from, combineLatest } from 'rxjs';
 import { tap,map,flatMap,pairwise,exhaustMap, filter, take, first, debounceTime, scan, withLatestFrom, distinctUntilChanged } from 'rxjs/operators';
-import { isToday, isFuture, addWeeks, addMonths, endOfToday, addYears, format, isThisWeek, isThisMonth } from 'date-fns';
+import { isToday, isBefore, isFuture, isPast, addWeeks, addMonths, endOfToday, addYears, format, isThisWeek, isThisMonth } from 'date-fns';
 import { ScrollDispatcher } from '@angular/cdk/overlay';
 
 import { TagFilterService } from '../services/tag-filter.service';
@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
   scrollEvents$ : Observable<any>;
   fabButtons: boolean = false;
 
-  page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 40 }
+  page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
   startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
   finished:boolean = false;
   preview: string = "day";
@@ -57,7 +57,6 @@ export class HomeComponent implements OnInit {
       { name: 'Year', value: 'year'}
   ];
 
-  scrollPercent: number = 80;
    dropsA: Drop[];
 
   constructor(
@@ -89,10 +88,17 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
         this.dropsObs = this.tagFilterService.drops();
-        this.scroll.scrolled(200).subscribe( (s:any) => console.log(s.measureScrollOffset("bottom"))); 
+        this.scroll.scrolled(200)
+            .pipe( 
+                map((s:any) => { let p = s.measureScrollOffset("top") / (s.measureScrollOffset("top")+s.measureScrollOffset("bottom")); return p < 0.33 ? -1 : p > 0.66 ? 1 : 0 }),
+                distinctUntilChanged(),   
+                withLatestFrom(this.dropsObs), 
+                scan( (acc, [dir,drops]) => dir == -1 ? (acc.length != 1 ? acc.slice(0,acc.length-1) : [this.page.startAt] ) : (dir == 1 ? acc.concat([drops[15].date]) : acc) , [this.page.startAt]),
+                distinctUntilChanged((prev,curr) => prev.length === curr.length),    
+            ).subscribe( (acc:any) => {this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60}); console.log(acc) });
         //this.tagFilterService.drops().subscribe( drops => {this.dropsObs = drops; console.log("this items"); }) ;  
         
-        // implements a infinite scrolling page sliding window
+        // implements a infinite scrolling page sliding window 
         // take the client 
         // calculate the size of the page, and the number of elements visible
         // multiply by 4 to get the page size
@@ -173,6 +179,18 @@ export class HomeComponent implements OnInit {
 
   isToday(drop) {
       return isToday(drop.date.toDate());
+  }
+  
+  isWeek(drop) {
+      return isBefore(drop.date.toDate(),addWeeks(endOfToday(),1)) && !isToday(drop.date.toDate());
+  }
+  
+  isMonth(drop) {
+      return isBefore(drop.date.toDate(),addMonths(endOfToday(),1)) && !this.isWeek(drop) && !isToday(drop.date.toDate()); 
+  }
+
+  isPast(drop) {
+      return isPast(drop.date.toDate()) && !isToday(drop.date.toDate()); 
   }
 
   dropTimeColor(drop): string {

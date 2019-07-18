@@ -15,17 +15,17 @@ import { Tag } from '../model/tag';
 })
 export class TagsStatsComponent implements OnInit {
 
-  view: any[] = [850, 400];
+  view: any[] = [340, 600];
 
   // options
   showXAxis = true;
   showYAxis = true;
   gradient = true;
-  showLegend = true;
+  showLegend = false;
   showXAxisLabel = true;
-  xAxisLabel = 'Day';
-  showYAxisLabel = true;
-  yAxisLabel = 'Total Drops';
+  xAxisLabel = 'Total';
+  showYAxisLabel = false;
+  yAxisLabel = 'Day';
 
   colorScheme = {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']

@@ -1,3 +1,9 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Task</span>
+</mat-toolbar>
 <div class="form-elements">
     <mat-form-field>
         <input matInput [(ngModel)]="drop.task.title" placeholder="Title...">

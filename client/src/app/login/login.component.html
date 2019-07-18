@@ -1,3 +1,9 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Account</span> 
+</mat-toolbar>
 <div *ngIf="user$ | async as user; then userInfo; else login"></div>
 <ng-template #login>
     <ngx-auth-firebaseui (success)="loggedIn($event)" (error)="authError()"> </ngx-auth-firebaseui>
