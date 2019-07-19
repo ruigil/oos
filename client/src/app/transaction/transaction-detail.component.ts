@@ -18,8 +18,7 @@ export class TransactionDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     settings: Settings = new Settings();
-    dropDate: Date;
-    dropTime: string = "";
+    dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
 
     recurrences: Array<{ value: string, text: string }> = [ 
         { value: "day", text: "Daily"}, 
@@ -54,14 +53,21 @@ export class TransactionDetailComponent implements OnInit {
                         currency: ''
                     } })) : this.dropsService.docWithId$("drops/"+id);
             })
-        ).subscribe( d => {this.drop = d; this.dropDate = d.date.toDate(); this.dropTime = d.date.toDate().getHours() + ":" + d.date.toDate().getMinutes()})
+        ).subscribe( d => {
+            this.drop = d; 
+            this.dropDateTime = { date:d.date.toDate(), time:d.date.toDate().getHours()+":"+d.date.toDate().getMinutes()}; 
+        });
+    }
+
+    private getDate() {
+        var time = parse("1970-01-01T"+this.dropDateTime.time); 
+        this.dropDateTime.date = setHours(this.dropDateTime.date,time.getHours());
+        this.dropDateTime.date = setMinutes(this.dropDateTime.date,time.getMinutes());
+        return this.dropDateTime.date;
     }
 
     addTransaction() {
-            var time = parse("1970-01-01T"+this.dropTime); 
-            this.dropDate = setHours(this.dropDate,time.getHours());
-            this.dropDate = setMinutes(this.dropDate,time.getMinutes());
-            this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
+            this.drop.date = this.dropsService.date2ts(parse(this.getDate()));
             this.drop.transaction.value = this.drop.transaction.type === "expense" ? -Math.abs(this.drop.transaction.value) : Math.abs(this.drop.transaction.value);
             this.drop.transaction.currency = this.settings.transaction.currency;
             this.dropsService.add("drops",this.drop).then(
@@ -73,16 +79,13 @@ export class TransactionDetailComponent implements OnInit {
     updateTransaction() {
         let id = this.drop.id;
         if (delete this.drop.id)
-            var time = parse("1970-01-01T"+this.dropTime); 
-            this.dropDate = setHours(this.dropDate,time.getHours());
-            this.dropDate = setMinutes(this.dropDate,time.getMinutes());
-            this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
+            this.drop.date = this.dropsService.date2ts(parse(this.getDate()));
             this.drop.transaction.value = this.drop.transaction.type === "expense" ? -Math.abs(this.drop.transaction.value) : Math.abs(this.drop.transaction.value);
             this.drop.transaction.currency = this.settings.transaction.currency;
             this.dropsService.update("drops/"+ id, this.drop ).then( 
                 (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }
-            );
+            ); 
     }
 
     selectedTags(tags: Array<string>) {

@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { format, parse } from 'date-fns';
+import { format, parse, setHours, setMinutes } from 'date-fns';
 
 import { FireService } from '../services/fire.service';
 import { Drop } from '../model/drop';
@@ -16,7 +16,7 @@ import { Drop } from '../model/drop';
 export class NoteDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
-    dropDate: string;
+    dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
     recurrences: Array<{ value: string, text: string }> = [ 
         { value: "day", text: "Daily"}, 
         { value: "week", text: "Weekly"}, 
@@ -24,7 +24,8 @@ export class NoteDetailComponent implements OnInit {
         { value: "year", text: "Yearly"}
     ]
 
-    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { }
+    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router) { 
+    }
 
     ngOnInit() {
         this.route.paramMap.pipe(
@@ -39,12 +40,22 @@ export class NoteDetailComponent implements OnInit {
                         date: this.dropsService.date2ts(new Date())
                     }) ) : this.dropsService.docWithId$("drops/"+id);
             })
-        ).subscribe( d => {this.drop = d; this.dropDate =  format(d.date.toDate(),"YYYY-MM-DDTHH:mm:ss")} );
+        ).subscribe( d => {
+            this.drop = d; 
+            this.dropDateTime = { date:d.date.toDate(), time:d.date.toDate().getHours()+":"+d.date.toDate().getMinutes() }; 
+        });
+    }
+
+    private getDate() {
+        var time = parse("1970-01-01T"+this.dropDateTime.time); 
+        this.dropDateTime.date = setHours(this.dropDateTime.date,time.getHours());
+        this.dropDateTime.date = setMinutes(this.dropDateTime.date,time.getMinutes());
+        return this.dropDateTime.date;
     }
 
     updateNote() {
         let id = this.drop.id;
-        this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
+        this.drop.date = this.dropsService.date2ts(parse(this.getDate()));
         if (delete this.drop.id)
             this.dropsService.update("drops/"+ id, this.drop ).then( 
                 (value) => { console.log("OK") },
@@ -54,7 +65,7 @@ export class NoteDetailComponent implements OnInit {
     }
 
     addNote() {
-        this.drop.date = this.dropsService.date2ts(parse(this.dropDate));
+        this.drop.date = this.dropsService.date2ts(parse(this.getDate()));
         this.dropsService.add("drops",this.drop).then(
             (value) => { console.log("OK") },
             (error) => { console.log("error") }

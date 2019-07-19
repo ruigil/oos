@@ -1,7 +1,8 @@
-.full-width {
-  width: 100%;
+.tagcomponent {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 }
-
 .divider {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -30,13 +31,6 @@
 .tag-color {
   display: flex;
   justify-content: space-around;
-}
-
-.form-elements {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 20px;
 }
 
 .title {

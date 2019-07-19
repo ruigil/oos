@@ -1,38 +1,32 @@
-<mat-toolbar class="toolbar" color="primary">
-    <button mat-icon-button routerLink="/home">
-        <mat-icon aria-label="Back">arrow_back</mat-icon>
-    </button>
-  <span>Tags</span>
-</mat-toolbar>
-<div class="form-elements">
-    <div class="title">Tags</div>
-    <mat-divider class="divider"></mat-divider>
+<div class="tagcomponent">
+<div class="title">Tags</div>
+<mat-divider class="divider"></mat-divider>
+<mat-chip-list>
+    <mat-chip [ngClass]="tag.color" *ngFor="let tag of tagsSelected()" (click)="unselectTag(tag.name)"><mat-icon>bookmark</mat-icon>{{tag.name}}</mat-chip>
+</mat-chip-list>
+<mat-form-field >
+    <mat-label>New Tag</mat-label>
+    <input matInput [(ngModel)]="tagName" placeholder="Enter tag name...">
+</mat-form-field>
+<mat-form-field>
+    <mat-label>Tag Color</mat-label>
+    <mat-radio-group aria-labelledby="example-radio-group-label" class="tag-color" [(ngModel)]="tagColor">
+    <mat-radio-button *ngFor="let color of colors" [value]="color.value">
+        <mat-chip-list><mat-chip [ngClass]="color.value"><mat-icon>bookmark</mat-icon>{{tagName | uppercase }}</mat-chip></mat-chip-list>
+    </mat-radio-button>
+    </mat-radio-group>
+</mat-form-field>
+<button mat-flat-button color="primary" (click)="addTag()">
+    <mat-icon>add</mat-icon>  Add Tag
+</button>
+<div class="title">Available Tags</div>
+<mat-divider class="divider"></mat-divider>
+<mat-chip-list *ngIf="mode; else blockTags">
+    <mat-chip [ngClass]="tag.color" *ngFor="let tag of tags" [removable]="true" (removed)="deleteTag(tag.id)"><mat-icon>bookmark</mat-icon>{{tag.name}}<mat-icon matChipRemove>cancel</mat-icon></mat-chip>
+</mat-chip-list>
+<ng-template #blockTags>
     <mat-chip-list>
-        <mat-chip [ngClass]="tag.color" *ngFor="let tag of tagsSelected()" (click)="unselectTag(tag.name)"><mat-icon>bookmark</mat-icon>{{tag.name}}</mat-chip>
+        <mat-chip [ngClass]="tag.color" *ngFor="let tag of tagsAvailable()" (click)="selectTag(tag.name)" ><mat-icon>bookmark</mat-icon>{{tag.name}}</mat-chip>
     </mat-chip-list>
-    <mat-form-field >
-        <mat-label>New Tag</mat-label>
-        <input matInput [(ngModel)]="tagName" placeholder="Enter tag name...">
-    </mat-form-field>
-    <mat-form-field>
-        <mat-label>Tag Color</mat-label>
-        <mat-radio-group aria-labelledby="example-radio-group-label" class="tag-color" [(ngModel)]="tagColor">
-        <mat-radio-button *ngFor="let color of colors" [value]="color.value">
-            <mat-chip-list><mat-chip [ngClass]="color.value"><mat-icon>bookmark</mat-icon>{{tagName | uppercase }}</mat-chip></mat-chip-list>
-        </mat-radio-button>
-        </mat-radio-group>
-    </mat-form-field>
-    <button mat-flat-button color="primary" (click)="addTag()">
-        <mat-icon>add</mat-icon>  Add Tag
-    </button>
-    <div class="title">Available Tags</div>
-    <mat-divider class="divider"></mat-divider>
-    <mat-chip-list *ngIf="mode; else blockTags">
-        <mat-chip [ngClass]="tag.color" *ngFor="let tag of tags" [removable]="true" (removed)="deleteTag(tag.id)"><mat-icon>bookmark</mat-icon>{{tag.name}}<mat-icon matChipRemove>cancel</mat-icon></mat-chip>
-    </mat-chip-list>
-    <ng-template #blockTags>
-        <mat-chip-list>
-            <mat-chip [ngClass]="tag.color" *ngFor="let tag of tagsAvailable()" (click)="selectTag(tag.name)" ><mat-icon>bookmark</mat-icon>{{tag.name}}</mat-chip>
-        </mat-chip-list>
-    </ng-template>
+</ng-template>
 </div>

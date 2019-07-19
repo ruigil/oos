@@ -96,41 +96,6 @@ export class HomeComponent implements OnInit {
                 scan( (acc, [dir,drops]) => dir == -1 ? (acc.length != 1 ? acc.slice(0,acc.length-1) : [this.page.startAt] ) : (dir == 1 ? acc.concat([drops[15].date]) : acc) , [this.page.startAt]),
                 distinctUntilChanged((prev,curr) => prev.length === curr.length),    
             ).subscribe( (acc:any) => {this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60}); console.log(acc) });
-        //this.tagFilterService.drops().subscribe( drops => {this.dropsObs = drops; console.log("this items"); }) ;  
-        
-        // implements a infinite scrolling page sliding window 
-        // take the client 
-        // calculate the size of the page, and the number of elements visible
-        // multiply by 4 to get the page size
-        // when scrolltop + clientHeight /2 > 75%
-        // startat new drop to put the scroll at 50%
-
-        /*
-        from( this.content.getScrollElement() )
-        .pipe( flatMap( element => fromEvent(element,'scroll')) )
-        .pipe( 
-            map((e: any): Position => ({ 
-                top: e.target.scrollTop, 
-                cH: e.target.clientHeight,
-                sH: e.target.scrollHeight
-            })),
-            pairwise(),
-            map( (p:any) => ({ up: p[0].top > p[1].top, percent: p[0].top > p[1].top ? p[1].top / p[1].sH : (p[1].top + p[1].cH)/p[1].sH }) ),
-            filter(p => ( !p.up && p.percent > (this.scrollPercent / 100)) || (p.up && p.percent < ((100-this.scrollPercent) / 100))),
-            debounceTime(500),
-            //tap( p => console.log(p)),
-            withLatestFrom(this.dropsObs),
-            tap( ([s,d]) => this.finished = d.length < 60),
-            scan( (acc,[s,d]) => d.length == 60 ? s.up ? (acc.length != 1 ? acc.slice(0,acc.length-1) : acc) : (d[10].date ? acc.concat( [d[10].date] ) : acc) : acc , [this.page.startAt] ),
-            distinctUntilChanged((prev, curr) => prev.length == curr.length),
-            map( (acc:Array<any>) => {
-                acc[0] = this.page.startAt; 
-                this.startAt = format(acc[acc.length-1].toDate(),"YYYY-MM-DDTHH:mm:ss");                
-                return acc;
-            }),
-        ).subscribe( (acc:Array<any>) => this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60} ));
-        */
-
   }
 
   toggleFab() {

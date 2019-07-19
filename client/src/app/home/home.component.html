@@ -32,7 +32,7 @@
             <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> <div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div></mat-panel-title>
             <mat-panel-title *ngIf="isTransaction(drop)"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
             <mat-chip-list>
-                <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip>{{drop.text}}
+                <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip>
             </mat-chip-list>
             </mat-panel-title>
             <mat-panel-title *ngIf="isTask(drop)"><mat-icon class="task">folder</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 

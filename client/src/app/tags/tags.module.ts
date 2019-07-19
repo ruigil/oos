@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 
 
 import { TagsComponent } from './tags.component';
+import { TagsPageComponent } from './tags-page.component';
 
 @NgModule({
   imports: [
@@ -14,11 +15,11 @@ import { TagsComponent } from './tags.component';
     RouterModule.forChild([
       {
         path: 'edit',
-        component: TagsComponent
+        component: TagsPageComponent
       }
     ])
   ],
-  declarations: [TagsComponent],
+  declarations: [TagsComponent, TagsPageComponent],
   exports: [ TagsComponent, OOSCommonModule ]
 })
 export class TagsModule {}

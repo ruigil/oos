@@ -31,7 +31,7 @@ export class TagFilterComponent implements OnInit {
   }
 
   filterTags(event){
-    this.searchTerm.next(event.detail.value);
+        this.searchTerm.next(event.target.value);
   }
 
   tagIdentity( index, tag) {

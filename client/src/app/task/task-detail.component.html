@@ -9,12 +9,12 @@
         <input matInput [(ngModel)]="drop.task.title" placeholder="Title...">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDate" >
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDateTime.date" >
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
     <mat-form-field >
-        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" value="00:00">
+        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropDateTime.time">
         <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
         <ngx-material-timepicker #timepicker></ngx-material-timepicker>
     </mat-form-field>
