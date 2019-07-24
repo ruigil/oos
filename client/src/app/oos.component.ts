@@ -17,11 +17,6 @@ export class OOSComponent implements OnInit {
             icon: 'home'
         },
         {
-            title: 'Analytics',
-            url: '/analytics',
-            icon: 'assessment'
-        },
-        {
             title: 'Tags',
             url: '/tags/edit',
             icon: 'bookmarks'

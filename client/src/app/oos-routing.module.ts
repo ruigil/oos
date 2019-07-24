@@ -47,7 +47,12 @@ const routes: Routes = [
     path: 'task',
     canActivate: [ AuthGuard ],
     loadChildren: './task/task.module#TaskModule'
-  }
+  },
+  {
+    path: 'rate',
+    canActivate: [ AuthGuard ],
+    loadChildren: './rate/rate.module#RateModule'
+  },
 ];
 
 @NgModule({

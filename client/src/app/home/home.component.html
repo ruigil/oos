@@ -27,7 +27,7 @@
 </mat-toolbar>
 <div class="space"></div>
 <mat-accordion cdkScrollable>
-  <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index;  trackBy: dropIdentity" [disabled]="isSystem(drop)"> 
+  <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index;  trackBy: dropIdentity"> 
         <mat-expansion-panel-header [ngClass]="{ 'month': isMonth(drop), 'week': isWeek(drop), 'today': isToday(drop), 'past': isPast(drop)  }" >
             <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> <div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div></mat-panel-title>
             <mat-panel-title *ngIf="isTransaction(drop)"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
@@ -42,27 +42,65 @@
                 </mat-chip-list>
             </mat-panel-title>
             <mat-panel-title *ngIf="isSystem(drop)" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
-
-            <mat-panel-description *ngIf="!isSystem(drop)" class="align-right"> 
-
-                {{ drop.date?.toDate() | formatDate }}
-                <!--
-                <mat-chip-list>
-                    <mat-chip class="chipdate"><mat-icon>access_time</mat-icon>&nbsp;{{ drop.date?.toDate() | formatDate }}</mat-chip>
+            <mat-panel-title *ngIf="isAnalytics(drop)" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
+            <mat-panel-title *ngIf="isRate(drop)" class="drop-summary">
+                <mat-icon class="rate">star_rate</mat-icon>
+                <mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>
+                <mat-chip-list [selectable]="true">
+                    <mat-chip class="rate-bg">
+                        {{drop.rate.text}}
+                        <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate" (click)="rate(drop,key)">{{ key <= drop.rate.value ? 'star_rate' : 'star_border'}}</mat-icon> 
+                    </mat-chip>
                 </mat-chip-list>
-                -->
-            </mat-panel-description>
+            </mat-panel-title>
+
+            <mat-panel-description *ngIf="!isAnalytics(drop) && !isSystem(drop)" class="align-right">{{ drop.date?.toDate() | formatDate }}</mat-panel-description>
         </mat-expansion-panel-header> 
 
 
         <div>
-            <p [innerHTML]="drop.text | showdown "></p>
+            <p *ngIf="!isAnalytics(drop) && !isSystem(drop)" [innerHTML]="drop.text | showdown "></p>
+            <mat-list *ngIf="isAnalytics(drop)">
+                <h4>Summary</h4>
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-icon color="primary" mat-list-icon>note</mat-icon>
+                <h4 mat-line>Notes</h4> 
+                    <mat-chip-list>
+                        <mat-chip>{{drop.analytics.totals[0]}}</mat-chip>
+                    </mat-chip-list>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-icon mat-list-icon class="transaction">monetization_on</mat-icon>
+                <h4 mat-line>Transactions</h4>
+                    <mat-chip-list>
+                        <mat-chip>{{drop.analytics.totals[2].toFixed(2)}}&nbsp;CHF</mat-chip>
+                    </mat-chip-list>
+            </mat-list-item>
+            <mat-list-item>
+                <mat-icon mat-list-icon class="task">folder</mat-icon>
+                <h4 mat-line>Tasks</h4>
+                    <mat-chip-list>
+                        <mat-chip>{{drop.analytics.totals[1]}}</mat-chip>
+                    </mat-chip-list>
+            </mat-list-item>
+            <mat-divider></mat-divider>
+            <mat-list-item *ngFor="let tag of drop.analytics.tags">
+                    <mat-chip-list>
+                        <mat-chip [ngClass]="tag.color"><mat-icon>bookmark</mat-icon>{{tag.tag}}</mat-chip>
+                        <mat-chip *ngIf="tag.totals[0] != 0"><mat-icon color="primary">note</mat-icon>{{tag.totals[0]}}</mat-chip>
+                        <mat-chip *ngIf="tag.totals[1] != 0"><mat-icon class="task">folder</mat-icon>{{tag.totals[1]}}</mat-chip>
+                        <mat-chip *ngIf="tag.totals[2] != 0"><mat-icon class="transaction">monetization_on</mat-icon>{{tag.totals[2]}}</mat-chip>
+                    </mat-chip-list>
+            </mat-list-item>
+        </mat-list>
+
             <mat-chip-list>
                 <mat-chip *ngFor="let t of drop.tags"><mat-icon>bookmark</mat-icon> {{t}}</mat-chip>
             </mat-chip-list>
         </div>
         
-        <mat-action-row class="actions">
+        <mat-action-row class="actions" *ngIf="!isSystem(drop)"> <!-- *ngIf="!isAnalytics(drop)" -->
             <button mat-stroked-button color="primary" (click)="edit(drop)">Edit</button>
             <div class="grow"></div>
             <button mat-stroked-button color="warn" (click)="delete(drop)">Delete</button>
@@ -74,6 +112,9 @@
     <mat-icon>add</mat-icon>
 </button>
 <div [ngClass]="{'fab-buttons-on': fabButtons, 'fab-buttons-off': !fabButtons }">
+    <button color="primary" mat-mini-fab aria-label="Rate" class="rate-fab" routerLink="/rate/edit/new">
+        <mat-icon>star_rate</mat-icon>
+    </button>
     <button color="primary" mat-mini-fab aria-label="Note" class="note-fab" routerLink="/note/edit/new">
         <mat-icon>note</mat-icon>
     </button>

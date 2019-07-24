@@ -4,6 +4,8 @@ export class Drop {
     text: string;
     transaction?: { value: number, type: string, currency: string };
     task?: { title: string, date: any, completed: boolean };
+    analytics?: { totals: Array<number>, tags: Array<{ tag: string, totals: Array<number> }> };
+    rate?: { text: string, value: number };
     recurrence: string;
     tags: Array<string>;
     date: any;

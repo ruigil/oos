@@ -46,7 +46,8 @@ div > p {
 .text {
     margin-top: 5px;
     margin-bottom:5px;
-    margin-left: 20px;
+    margin-left: 10px;
+    margin-right: 20px;
     height: 24px;
     vertical-align: center;
     font-weight: bold;
@@ -58,13 +59,13 @@ p {
     background-color: #ffffff;
 }
 .week {
-    background-color: #cceeff; 
+    background-color: #eeeeee; 
 }
 .month {
-    background-color: #bbddff; 
+    background-color: #dddddd; 
 }
 .past {
-    background-color: #eeeeee;
+    background-color: #cccccc;
 }
 
 .task {
@@ -80,6 +81,13 @@ p {
 
 .income {
     background-color: #66ff66
+}
+
+.rate {
+    color: #ff6633;
+}
+.rate-bg {
+    background-color: #ffeedd;
 }
 
 .title-text {
@@ -120,6 +128,11 @@ p {
 
 .note-fab {
     margin-bottom: 10px;
+}
+
+.rate-fab {
+    margin-bottom: 10px;
+    background-color: #ff6633;
 }
 
 .trans-fab {

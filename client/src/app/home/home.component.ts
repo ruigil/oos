@@ -40,10 +40,7 @@ interface Page {
   styleUrls: ['home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-//  @ViewChild("content") content: IonContent;
   dropsObs: Observable<Drop[]>; 
-  //dropsObs: Drop[];
-  scrollEvents$ : Observable<any>;
   fabButtons: boolean = false;
 
   page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
@@ -118,8 +115,15 @@ export class HomeComponent implements OnInit {
       return drop.type === "TASK";
   }
 
+  isAnalytics(drop:Drop) {
+      return drop.type === "ANLY";
+  }
+
   isSystem(drop:Drop) {
       return drop.type === "SYS";
+  }
+  isRate(drop:Drop) {
+      return drop.type === "RATE";
   }
 
   isRecurrent(drop:Drop) {
@@ -127,10 +131,11 @@ export class HomeComponent implements OnInit {
   }
 
   getRouterLink(drop:Drop) {
-      return this.isNote(drop) ? ['/note',drop.id] : this.isTransaction(drop) ? ['/transaction',drop.id] : ['/task',drop.id];
+      return this.isNote(drop) ? ['/note',drop.id] : this.isTransaction(drop) ? ['/transaction',drop.id] : this.isTask(drop) ? ['/task',drop.id] : ['/rate',drop.id];
   }
 
   delete(drop:Drop) {
+      console.log("delete drop...");
         let id = drop.id;
         this.fireService.delete("drops/"+drop.id).then(
             (value) => { console.log(" deleted item") },
@@ -139,7 +144,7 @@ export class HomeComponent implements OnInit {
   }
 
   edit(drop:Drop) {
-      return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.router.navigate(['/task/edit',drop.id]);
+      return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.isTask(drop) ? this.router.navigate(['/task/edit',drop.id]) : this.router.navigate(['/rate/edit',drop.id]);
   }
 
   isToday(drop) {
@@ -173,6 +178,17 @@ export class HomeComponent implements OnInit {
         console.log(drop.task.completed);
         let id = drop.id;
         drop.task.date = this.fireService.date2ts(new Date());
+        if (delete drop.id)
+            this.fireService.update("drops/"+ id, drop ).then( 
+                (value) => { console.log("success") },
+                (error) => { console.log("error") }
+            );
+  }
+
+  rate(drop,value) {
+        console.log("rate:"+value);
+        drop.rate.value = value;
+        let id = drop.id;
         if (delete drop.id)
             this.fireService.update("drops/"+ id, drop ).then( 
                 (value) => { console.log("success") },
