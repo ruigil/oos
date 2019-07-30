@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, fromEvent, from, combineLatest } from 'rxjs';
 import { tap,map,flatMap,pairwise,exhaustMap, filter, take, first, debounceTime, scan, withLatestFrom, distinctUntilChanged } from 'rxjs/operators';
-import { isToday, isBefore, isFuture, isPast, addWeeks, addMonths, endOfToday, addYears, format, isThisWeek, isThisMonth } from 'date-fns';
+import * as moment from 'moment';
 import { ScrollDispatcher } from '@angular/cdk/overlay';
 
 import { TagFilterService } from '../services/tag-filter.service';
@@ -43,8 +43,9 @@ export class HomeComponent implements OnInit {
   dropsObs: Observable<Drop[]>; 
   fabButtons: boolean = false;
 
-  page: Page = { startAt: this.fireService.date2ts(endOfToday()), size: 60 }
-  startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
+  
+  page: Page = { startAt: this.fireService.date2ts(moment().endOf('day').toDate()), size: 60 }
+  //startAt = format(endOfToday(),"YYYY-MM-DDTHH:mm:ss");
   finished:boolean = false;
   preview: string = "day";
   times: Array<{ name: string, value: string}> = [ 
@@ -68,7 +69,7 @@ export class HomeComponent implements OnInit {
           this.preview = s.home.preview; 
           this.page.startAt = this.getTimestamp(s.home.preview);
           this.tagFilterService.selectPage(this.page);
-          this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
+          //this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
       });
 
   }
@@ -78,9 +79,10 @@ export class HomeComponent implements OnInit {
   }
 
   getTimestamp(time: string): any {
-      return time == "week" ? this.fireService.date2ts(addWeeks(endOfToday(),1)) :
-        time == "month" ? this.fireService.date2ts(addMonths(endOfToday(),1)) :
-        time == "year" ? this.fireService.date2ts(addYears(endOfToday(),1)) : /* today */this.fireService.date2ts(endOfToday());
+      let m = moment().endOf('day');
+      return time == "week" ? this.fireService.date2ts(moment(m).add(1,"weeks").toDate()) :
+        time == "month" ? this.fireService.date2ts(moment(m).add(1,"months").toDate()) :
+        time == "year" ? this.fireService.date2ts(moment(m).add(1,"years").toDate()) : /* today */this.fireService.date2ts(m.toDate());
   }
 
   ngOnInit(): void {
@@ -148,25 +150,27 @@ export class HomeComponent implements OnInit {
   }
 
   isToday(drop) {
-      return isToday(drop.date.toDate());
+      return moment().isSame(drop.date.toDate(),"day");
   }
   
   isWeek(drop) {
-      return isBefore(drop.date.toDate(),addWeeks(endOfToday(),1)) && !isToday(drop.date.toDate());
+      return moment(drop.date.toDate()).isBefore(moment().endOf("day").add(1,"weeks")) && !this.isToday(drop);
   }
   
   isMonth(drop) {
-      return isBefore(drop.date.toDate(),addMonths(endOfToday(),1)) && !this.isWeek(drop) && !isToday(drop.date.toDate()); 
+      return moment(drop.date.toDate()).isBefore(moment().endOf("day").add(1,"months")) && !this.isWeek(drop) && !this.isToday(drop);
   }
 
   isPast(drop) {
-      return isPast(drop.date.toDate()) && !isToday(drop.date.toDate()); 
+      return moment(drop.date.toDate()).isBefore(moment().startOf("day")); 
   }
 
+  /*
   dropTimeColor(drop): string {
       let d = drop.date.toDate();
       return isToday(d) ? 'medium' : isFuture(d) ? (isThisWeek(d) ? 'warning' : isThisMonth(d) ? 'primary' : 'dark') : 'light';
   }
+  */
 
   dropIdentity( index, drop) {
       return drop.id;
@@ -204,7 +208,7 @@ export class HomeComponent implements OnInit {
       //console.log(event);
       //console.log(this.preview);
       this.page.startAt = this.getTimestamp(this.preview);
-      this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
+      //this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
       this.tagFilterService.selectPage(this.page);
   }
 

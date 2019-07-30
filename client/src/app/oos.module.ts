@@ -50,7 +50,6 @@ import { MatDividerModule } from '@angular/material/divider';
       MatDividerModule,
     BrowserModule,
     BrowserAnimationsModule,
-    //IonicModule.forRoot(),
     OOSRoutingModule,
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),

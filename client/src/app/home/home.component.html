@@ -21,7 +21,7 @@
     <span>Until</span>
     -->
     <mat-chip-list>
-        <mat-chip color="accent" selected><mat-icon>access_time</mat-icon>&nbsp;{{ startAt | formatDate }}</mat-chip>
+        <mat-chip color="accent" selected><mat-icon>access_time</mat-icon>&nbsp;{{ page.startAt.toDate() | formatDate }}</mat-chip>
     </mat-chip-list>
     </div>
 </mat-toolbar>
@@ -100,7 +100,7 @@
             </mat-chip-list>
         </div>
         
-        <mat-action-row class="actions" *ngIf="!isSystem(drop)"> <!-- *ngIf="!isAnalytics(drop)" -->
+        <mat-action-row class="actions" > <!-- *ngIf="!isAnalytics(drop)" *ngIf="!isSystem(drop)"-->
             <button mat-stroked-button color="primary" (click)="edit(drop)">Edit</button>
             <div class="grow"></div>
             <button mat-stroked-button color="warn" (click)="delete(drop)">Delete</button>

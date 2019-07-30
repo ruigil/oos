@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { format, parse, setHours, setMinutes } from 'date-fns';
 
 import { FireService } from '../services/fire.service';
+import { DateTimeService } from '../services/date-time.service';
 import { Drop } from '../model/drop';
+import * as moment from "moment";
 
 @Component({
   selector: 'oos-task-detail',
@@ -16,19 +17,16 @@ export class TaskDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
-    recurrences: Array<{ value: string, text: string }> = [ 
-        { value: "day", text: "Daily"}, 
-        { value: "week", text: "Weekly"}, 
-        { value: "month", text: "Monthly"}, 
-        { value: "year", text: "Yearly"}
-    ]
+    recurrences: Array<{ value: string, text: string }>;
 
     constructor(
         private dropsService: FireService, 
         private route: ActivatedRoute, 
-        private router: Router) { 
+        private router: Router,
+        private dtService: DateTimeService) { 
         
         this.drop = new Drop({ task: {title: "", date: null, completed: false}, recurrence: 'none'});
+        this.recurrences = dtService.getRecurrences();
     }
 
     ngOnInit() {
@@ -49,19 +47,12 @@ export class TaskDetailComponent implements OnInit {
             })
         ).subscribe( d => {
             this.drop = d; 
-            this.dropDateTime = { date:d.date.toDate(), time:d.date.toDate().getHours()+":"+d.date.toDate().getMinutes()}; 
+            this.dropDateTime = this.dtService.getDateTime(d.date.toDate()); 
         });
     }
 
-    private getDate() {
-        var time = parse("1970-01-01T"+this.dropDateTime.time); 
-        this.dropDateTime.date = setHours(this.dropDateTime.date,time.getHours());
-        this.dropDateTime.date = setMinutes(this.dropDateTime.date,time.getMinutes());
-        return this.dropDateTime.date;
-    }
-
     addTask() {
-        this.dropsService.add("drops",{...this.drop, date: this.dropsService.date2ts(parse(this.getDate()))}).then(
+        this.dropsService.add("drops",{...this.drop, date: this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime))}).then(
             (value) => { this.router.navigate(["home"]) },
             (error) => { /*this.presentToast(error);*/ this.router.navigate(["home"]); }
         );
@@ -70,7 +61,7 @@ export class TaskDetailComponent implements OnInit {
     updateTask() {
         let id = this.drop.id;
         if (delete this.drop.id)
-            this.drop.date = this.dropsService.date2ts(parse(this.getDate()));
+            this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
             this.dropsService.update("drops/"+ id, this.drop ).then( 
                 (value) => { this.router.navigate(["home"]) },
                 (error) => { console.log("error") }

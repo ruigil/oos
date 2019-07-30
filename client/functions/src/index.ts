@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 //import { format, addDays, addWeeks, addMonths, endOfToday, startOfToday, getMonth, endOfMonth, addYears, isSaturday, isFriday } from 'date-fns';
-import * as moment from 'moment';
-//import * as moment from 'moment-timezone';
+//import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 
 admin.initializeApp({ credential: admin.credential.applicationDefault() });
 
@@ -238,20 +238,21 @@ export const statsUpdate = functions
 
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (message, context) => {
     // there is a difference between the cloud scheduler time, and the timestamp in the function
-    //moment.tz.setDefault("Europe/London");
+    // cloud scheduler fires at 00:00 zurich time, but the execution time is utc.
+    // so it is 22:00 GMT = 00:00 GMT+2
 
-    const current = moment().utcOffset(-60);
-    console.log("current["+ current.toDate().toString() +"]");
+    console.log(moment().startOf("day").tz("Europe/Zurich").toDate());
+    console.log(admin.firestore.Timestamp.fromDate(moment().startOf("day").tz("Europe/Zurich").toDate()));
 
-    const endDate = moment().endOf('day');
-    const startDate = moment().startOf('day');
-
-    console.log("currentDate["+ new Date().toString()+"]")
-    console.log("startDate["+startDate.toDate().toString()+"]")
-    console.log("endDate["+endDate.toDate().toString()+"]")
+    const endDate = moment().endOf('day').subtract(2,'hours');
+    const startDate = moment().startOf('day').subtract(2,'hours');
 
     const startTS = admin.firestore.Timestamp.fromDate(startDate.toDate());
+    console.log(startTS);
     const endTS = admin.firestore.Timestamp.fromDate(endDate.toDate());
+
+    console.log("start["+startDate.toDate()+"]")
+    console.log("end["+endDate.toDate()+"]")
     
     admin.firestore().collection("drops").where("date",">=",startTS).where("date","<=",endTS).get()
     .then( qs => {
@@ -260,6 +261,7 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
         drops.filter( (d:any) => d.recurrence !== "none").map( (d:any) => {
             const calculDate = moment(d.date.toDate());
             if (d.type==="TASK") d.task.completed = false;
+            if (d.type==="RATE") { d.rate.value = 0; d.text = ""; };
             switch(d.recurrence) {
                 case "day": calculDate.add(1,'days'); break;
                 case "week": calculDate.add(1,'weeks'); break;
@@ -268,27 +270,16 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
                 case "weekend": startDate.day() === 6 ? calculDate.add(1,'days'): calculDate.add(6,'days'); break;
                 case "weekdays": startDate.day() === 5 ? calculDate.add(3,'days'): calculDate.add(1,'days'); break;
             }
-            console.log(d.type);
-            console.log(calculDate.toDate());
             d.date = admin.firestore.Timestamp.fromDate(calculDate.toDate());
-            if (d.type==="SYS") d.text = calculDate.format("dddd, D MMMM YYYY" ); 
+            if (d.type==="SYS") d.text = calculDate.tz("Europe/Zurich").format("dddd, D MMMM YYYY" ); 
+            //console.log(d.type);
+            //console.log(d.text);
+            //console.log(d.date.toDate());
             admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
             .catch( (err) => console.log(err));
         });
     })
     .catch( (err) => console.log(err));
-    // stupid timezones...
-    admin.firestore().collection("drops").add(
-        {
-            text: startDate.format("dddd, D MMMM YYYY" ),
-            type: "SYS",
-            tags: [],
-            recurrence: "day",
-            date: startTS,
-            updatedAt: startTS,
-            createdAt: startTS,
-        })
-    .catch( (err) => console.log(err))
 });
 
 
@@ -303,7 +294,7 @@ export const createAnalytics = functions.https.onCall( (data, context) => {
     const currentTS = admin.firestore.Timestamp.fromDate(currentDate.toDate());
     const currentMonthTS = admin.firestore.Timestamp.fromDate(currentMonth.toDate());
 
-    admin.firestore().collection("drops").add(
+    return admin.firestore().collection("drops").add(
         {
             text: currentDate.format("dddd, D MMMM YYYY" ),
             type: "SYS",

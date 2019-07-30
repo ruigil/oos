@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { map, flatMap, filter, tap } from 'rxjs/operators';
-import { addDays, addWeeks, addMonths, addYears, endOfToday } from 'date-fns';
 
 import { FireService } from '../services/fire.service';
 import { Drop } from "../model/drop";
