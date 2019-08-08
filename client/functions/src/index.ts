@@ -22,7 +22,7 @@ type Tags = { tag: string, totals: Array<number> }
 type Drop = { date: Date, tags: Array<string>, type: string }
 
 async function getAnalytics(month:number,year:number) {
-    const doc = await admin.firestore().doc("analytics/"+year+"-"+month).get();
+    const doc = await admin.firestore().doc("drops").get();
     
     if (doc.exists) return doc.data();
     else return Promise.resolve({ month: month, year: year, totals: [0,0,0], days: [  ], tags: [ ] } );
@@ -236,6 +236,8 @@ export const statsUpdate = functions
         return afterDrop;
     });
 
+
+
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (message, context) => {
     // there is a difference between the cloud scheduler time, and the timestamp in the function
     // cloud scheduler fires at 00:00 zurich time, but the execution time is utc.
@@ -248,13 +250,12 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
     const startDate = moment().startOf('day').subtract(2,'hours');
 
     const startTS = admin.firestore.Timestamp.fromDate(startDate.toDate());
-    console.log(startTS);
     const endTS = admin.firestore.Timestamp.fromDate(endDate.toDate());
 
     console.log("start["+startDate.toDate()+"]")
     console.log("end["+endDate.toDate()+"]")
     
-    admin.firestore().collection("drops").where("date",">=",startTS).where("date","<=",endTS).get()
+    return admin.firestore().collection("drops").where("date",">=",startTS).where("date","<=",endTS).get()
     .then( qs => {
         const drops:any = [];
         qs.forEach( d => drops.push(d.data()));
@@ -262,19 +263,24 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
             const calculDate = moment(d.date.toDate());
             if (d.type==="TASK") d.task.completed = false;
             if (d.type==="RATE") { d.rate.value = 0; d.text = ""; };
+            if (d.type==="SYS") d.text = calculDate.tz("Europe/Zurich").format("dddd, D MMMM YYYY" ); 
+            if (d.type==="ANLY") d.text = "Analytics for " + calculDate.tz("Europe/Zurich").format("MMMM YYYY");
             switch(d.recurrence) {
                 case "day": calculDate.add(1,'days'); break;
                 case "week": calculDate.add(1,'weeks'); break;
                 case "month": calculDate.add(1,'months'); break;
                 case "year": calculDate.add(1,'years'); break;
-                case "weekend": startDate.day() === 6 ? calculDate.add(1,'days'): calculDate.add(6,'days'); break;
-                case "weekdays": startDate.day() === 5 ? calculDate.add(3,'days'): calculDate.add(1,'days'); break;
+                case "weekend": startDate.tz("Europe/Zurich").day() === 6 ? calculDate.add(1,'days'): calculDate.add(7,'days'); break;
+                case "weekday": startDate.tz("Europe/Zurich").day() === 5 ? calculDate.add(3,'days'): calculDate.add(1,'days'); break;
             }
+
             d.date = admin.firestore.Timestamp.fromDate(calculDate.toDate());
-            if (d.type==="SYS") d.text = calculDate.tz("Europe/Zurich").format("dddd, D MMMM YYYY" ); 
-            //console.log(d.type);
-            //console.log(d.text);
-            //console.log(d.date.toDate());
+            if (d.recurrence === "weekday") {
+                console.log(d.type);
+                console.log(d.text);
+                console.log(d.date.toDate());
+                console.log(startDate.tz("Europe/Zurich").day());
+            }
             admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
             .catch( (err) => console.log(err));
         });
@@ -283,39 +289,50 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
 });
 
 
-export const createAnalytics = functions.https.onCall( (data, context) => {
-    const currentDate = moment().startOf('day'); //startOfToday();
-    const currentMonth = moment().endOf('month'); //endOfMonth(currentDate);
+export const fillAnalyticsMonth = functions.https.onCall( (data, context) => {
+    const startOfMonth = moment().tz("Europe/Zurich").startOf('month'); //startOfToday();
+    const endOfMonth = moment().tz("Europe/Zurich").endOf('month'); //endOfMonth(currentDate);
 
     // there is a difference between the cloud scheduler time, and the timestamp in the function
-    console.log("CurrentDate["+currentDate.toString()+"]")
-    console.log("CurrentMonth["+currentMonth.toString()+"]")
+    console.log("CurrentDate["+startOfMonth.toString()+"]")
+    console.log("CurrentMonth["+endOfMonth.toString()+"]")
 
-    const currentTS = admin.firestore.Timestamp.fromDate(currentDate.toDate());
-    const currentMonthTS = admin.firestore.Timestamp.fromDate(currentMonth.toDate());
+    const startTS = admin.firestore.Timestamp.fromDate(startOfMonth.toDate());
+    const endTS = admin.firestore.Timestamp.fromDate(endOfMonth.toDate());
 
-    return admin.firestore().collection("drops").add(
-        {
-            text: currentDate.format("dddd, D MMMM YYYY" ),
-            type: "SYS",
-            tags: [],
-            recurrence: "day",
-            date: currentTS,
-            updatedAt: currentTS,
-            createdAt: currentTS,
-        })
-    .catch( (err) => console.log(err))
-    return admin.firestore().collection("drops").add(
-        {
-            text: "Analytics for " + currentDate.format("MMMM YYYY" ),
-            type: "ANLY",
-            tags: ["ANALYTICS"],
-            recurrence: "month",
-            analytics: { month: currentDate.month(), totals: [0,0,0], tags: [ { tag: "OOS", totals: [1,5,-54.32] } ]},
-            date: currentMonthTS,
-            updatedAt: currentMonthTS,
-            createdAt: currentMonthTS,
-        });
+    let analytics = { month: startOfMonth.month(), year: startOfMonth.year(), totals: [0,0,0,0,0,0,0], tags: [] }
+    
+    return admin.firestore().collection("drops").where("date",">=",startTS).where("date","<=",endTS).get()
+    .then( qs => {
+        const drops:any = [];
+        qs.forEach( d => drops.push(d.data()));
+        analytics = drops.reduce( (anly:any, d:any) => {
+            let type = -1;
+            switch(d.type) {
+                case "NOTE": type = 0; break;
+                case "TASK": type = 1; break;
+                case "TRX": type = 2; break;
+            }
+            if (type != -1) anly.totals[type]++
+            return anly;
+        }, analytics );
+        console.log(analytics);
+    })
+    .catch( err => console.log(err));
+
+    //const endOfMonthTS = admin.firestore.Timestamp.fromDate(currentMonth.toDate());
+    //const currentDateTS = admin.firestore.Timestamp.fromDate(currentDate.toDate());
+    /*
+    return {
+        text: "Analytics for " + currentDate.format("MMMM YYYY" ),
+        type: "ANLY",
+        tags: ["ANALYTICS"],
+        recurrence: "month",
+        analytics: { month: currentDate.month(), year: currentDate.year(), totals: [21,12,0,0,4,12], tags: [ { tag: "OOS", totals: [1,5,-54.32,0,0] }, { tag: "SLEEP", totals: [0,0,0,4,18] } ]},
+        date: endOfMonthTS,
+        updatedAt: currentDateTS,
+        createdAt: currentDateTS,
+    };*/
 });
 
 

@@ -6,8 +6,8 @@
 <mat-list>
     <mat-list-item *ngFor="let tag of (tagsObs | sortTag | searchTag:searchTerm | async ); let i = index; trackBy:tagIdentity;" (click)="selectTag(tag.name)" [ngClass]="{ selected: tag.selected }">
         <mat-chip-list matBadge="{{tag.count}}" >
-        <mat-chip [ngClass]="tag.color">
-            <mat-icon matPrefix>bookmark</mat-icon> {{tag.name}} </mat-chip>
+        <mat-chip>
+            <mat-icon [ngClass]="tag.color" matPrefix>bookmark</mat-icon> {{tag.name}} </mat-chip>
         </mat-chip-list>
     </mat-list-item>
 </mat-list>

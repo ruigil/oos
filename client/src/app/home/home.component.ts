@@ -11,6 +11,7 @@ import { FireService } from '../services/fire.service';
 import { MenuService } from '../services/menu.service';
 
 import { Drop } from '../model/drop';
+import { Tag } from '../model/tag';
 
 import { 
     AngularFirestore, 
@@ -42,6 +43,9 @@ interface Page {
 export class HomeComponent implements OnInit {
   dropsObs: Observable<Drop[]>; 
   fabButtons: boolean = false;
+  colors = {};
+
+  alltags: Array<Tag> = [];
 
   
   page: Page = { startAt: this.fireService.date2ts(moment().endOf('day').toDate()), size: 60 }
@@ -69,7 +73,7 @@ export class HomeComponent implements OnInit {
           this.preview = s.home.preview; 
           this.page.startAt = this.getTimestamp(s.home.preview);
           this.tagFilterService.selectPage(this.page);
-          //this.startAt = format(this.page.startAt.toDate(),"YYYY-MM-DDTHH:mm:ss");
+          this.fireService.col$("tags").subscribe( (t:Array<Tag>) => t.map( (t:any) => this.colors[t.name] = t.color ) ); 
       });
 
   }
@@ -212,5 +216,14 @@ export class HomeComponent implements OnInit {
       this.tagFilterService.selectPage(this.page);
   }
 
+  tagColor(tag) {
+        return this.colors[tag]; 
+        /*
+    if (this.alltags.length !== 0) {
+    } else {
+        return tags.map( t => ({ name: t, color: 'dark'}) );
+    }
+    */
+  }
 
 }

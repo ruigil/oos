@@ -21,7 +21,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { ScrollingModule } from '@angular/cdk/scrolling';
-
+import { MatGridListModule } from '@angular/material/grid-list';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 
 import { FormatDatePipe } from '../pipes/format-date.pipe';
@@ -49,6 +49,7 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatDividerModule,
     MatSnackBarModule,
     MatRadioModule,
+    MatGridListModule,
     ScrollingModule
   ],
   declarations: [
@@ -78,6 +79,7 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatDividerModule,
     MatSnackBarModule,
     MatRadioModule,
+    MatGridListModule,
     ScrollingModule
   ] 
 })

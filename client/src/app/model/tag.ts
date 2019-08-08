@@ -5,4 +5,9 @@ export class Tag {
     count: number;
     createdAt: any;
     updatedAt: any;
+
+    public constructor(init?:Partial<Tag>) {
+        Object.assign(this, init);
+    }    
+
 }

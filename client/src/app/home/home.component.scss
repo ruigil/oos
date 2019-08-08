@@ -11,6 +11,23 @@
 .tooltitle {
     flex: 1;
 }
+.iconpad {
+    margin-left: 10px;
+}
+.stats {
+    display: flex;
+    font-size: 12px;
+    font-weight: bold;
+    align-items: center;
+    justify-content: space-between;
+}
+.tag-summary {
+    width: 100%;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    justify-content: space-between;
+}
 
 .date-preview {
     display: flex;

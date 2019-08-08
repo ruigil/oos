@@ -61,6 +61,19 @@
         <div>
             <p *ngIf="!isAnalytics(drop) && !isSystem(drop)" [innerHTML]="drop.text | showdown "></p>
             <mat-list *ngIf="isAnalytics(drop)">
+            <h4>Tags</h4>
+            <mat-divider></mat-divider>
+            <mat-list-item *ngFor="let tag of drop.analytics.tags">
+                <div class="tag-summary">
+                <mat-chip-list>
+                    <mat-chip><mat-icon [ngClass]="tagColor(tag.tag)">bookmark</mat-icon>{{tag.tag}}</mat-chip> 
+                </mat-chip-list>
+                <span class="stats" *ngIf="tag.totals[0] != 0"><mat-icon class="iconpad" color="primary">note</mat-icon>{{tag.totals[0]}}</span>
+                <span class="stats" *ngIf="tag.totals[1] != 0"><mat-icon class="task">folder</mat-icon>{{tag.totals[1]}} of {{tag.totals[0]}} (65%)</span>
+                <span class="stats" *ngIf="tag.totals[2] != 0"><mat-icon class="transaction">monetization_on</mat-icon>{{tag.totals[2]}}</span>
+                <span class="stats" *ngIf="tag.totals[3] != 0"><mat-icon class="rate">star_rate</mat-icon>{{(tag.totals[3]/tag.totals[4]).toFixed(2)}}</span>
+                </div>
+            </mat-list-item>
                 <h4>Summary</h4>
             <mat-divider></mat-divider>
             <mat-list-item>
@@ -84,19 +97,17 @@
                         <mat-chip>{{drop.analytics.totals[1]}}</mat-chip>
                     </mat-chip-list>
             </mat-list-item>
-            <mat-divider></mat-divider>
-            <mat-list-item *ngFor="let tag of drop.analytics.tags">
+            <mat-list-item>
+                <mat-icon mat-list-icon class="rate">star_rate</mat-icon>
+                <h4 mat-line>Rate</h4>
                     <mat-chip-list>
-                        <mat-chip [ngClass]="tag.color"><mat-icon>bookmark</mat-icon>{{tag.tag}}</mat-chip>
-                        <mat-chip *ngIf="tag.totals[0] != 0"><mat-icon color="primary">note</mat-icon>{{tag.totals[0]}}</mat-chip>
-                        <mat-chip *ngIf="tag.totals[1] != 0"><mat-icon class="task">folder</mat-icon>{{tag.totals[1]}}</mat-chip>
-                        <mat-chip *ngIf="tag.totals[2] != 0"><mat-icon class="transaction">monetization_on</mat-icon>{{tag.totals[2]}}</mat-chip>
+                        <mat-chip>{{drop.analytics.totals[4]}}</mat-chip>
                     </mat-chip-list>
             </mat-list-item>
         </mat-list>
 
             <mat-chip-list>
-                <mat-chip *ngFor="let t of drop.tags"><mat-icon>bookmark</mat-icon> {{t}}</mat-chip>
+                <mat-chip *ngFor="let t of drop.tags"><mat-icon [ngClass]="tagColor(t)">bookmark</mat-icon> {{t}}</mat-chip> 
             </mat-chip-list>
         </div>
         
