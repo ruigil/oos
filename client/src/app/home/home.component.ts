@@ -216,6 +216,14 @@ export class HomeComponent implements OnInit {
       this.tagFilterService.selectPage(this.page);
   }
 
+  dropTags(drop) {
+      return Object.keys(drop.analytics.tags);
+  }
+  
+  aTag(drop,tag,type) {
+      return drop.analytics.tags[tag][type];
+  }
+
   tagColor(tag) {
         return this.colors[tag]; 
         /*

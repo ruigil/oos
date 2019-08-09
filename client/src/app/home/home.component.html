@@ -32,7 +32,7 @@
             <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> <div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div></mat-panel-title>
             <mat-panel-title *ngIf="isTransaction(drop)"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
             <mat-chip-list>
-                <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip>
+                <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip> <mat-panel-description>{{drop.text}}</mat-panel-description>
             </mat-chip-list>
             </mat-panel-title>
             <mat-panel-title *ngIf="isTask(drop)"><mat-icon class="task">folder</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
@@ -63,15 +63,15 @@
             <mat-list *ngIf="isAnalytics(drop)">
             <h4>Tags</h4>
             <mat-divider></mat-divider>
-            <mat-list-item *ngFor="let tag of drop.analytics.tags">
+            <mat-list-item *ngFor="let tag of dropTags(drop)">
                 <div class="tag-summary">
                 <mat-chip-list>
-                    <mat-chip><mat-icon [ngClass]="tagColor(tag.tag)">bookmark</mat-icon>{{tag.tag}}</mat-chip> 
+                    <mat-chip><mat-icon [ngClass]="tagColor(tag)">bookmark</mat-icon>{{tag}}</mat-chip> 
                 </mat-chip-list>
-                <span class="stats" *ngIf="tag.totals[0] != 0"><mat-icon class="iconpad" color="primary">note</mat-icon>{{tag.totals[0]}}</span>
-                <span class="stats" *ngIf="tag.totals[1] != 0"><mat-icon class="task">folder</mat-icon>{{tag.totals[1]}} of {{tag.totals[0]}} (65%)</span>
-                <span class="stats" *ngIf="tag.totals[2] != 0"><mat-icon class="transaction">monetization_on</mat-icon>{{tag.totals[2]}}</span>
-                <span class="stats" *ngIf="tag.totals[3] != 0"><mat-icon class="rate">star_rate</mat-icon>{{(tag.totals[3]/tag.totals[4]).toFixed(2)}}</span>
+                <span class="stats" *ngIf="aTag(drop,tag,6) != 0"><mat-icon class="iconpad" color="primary">note</mat-icon>{{aTag(drop,tag,6)}}</span>
+                <span class="stats" *ngIf="aTag(drop,tag,0) != 0"><mat-icon class="task">folder</mat-icon>{{aTag(drop,tag,1)}} of {{aTag(drop,tag,0)}} ({{(aTag(drop,tag,1)/aTag(drop,tag,0)).toFixed(2)*100}}%)</span>
+                <span class="stats" *ngIf="aTag(drop,tag,2) != 0 || aTag(drop,tag,3) != 0"  ><mat-icon class="transaction">monetization_on</mat-icon>{{aTag(drop,tag,2)+aTag(drop,tag,3)}}</span>
+                <span class="stats" *ngIf="aTag(drop,tag,5) != 0"><mat-icon class="rate">star_rate</mat-icon>{{(aTag(drop,tag,5)/aTag(drop,tag,4)).toFixed(2)}}</span>
                 </div>
             </mat-list-item>
                 <h4>Summary</h4>
@@ -80,28 +80,29 @@
                 <mat-icon color="primary" mat-list-icon>note</mat-icon>
                 <h4 mat-line>Notes</h4> 
                     <mat-chip-list>
-                        <mat-chip>{{drop.analytics.totals[0]}}</mat-chip>
+                        <mat-chip>{{drop.analytics.totals[6]}}</mat-chip>
                     </mat-chip-list>
             </mat-list-item>
             <mat-list-item>
                 <mat-icon mat-list-icon class="transaction">monetization_on</mat-icon>
                 <h4 mat-line>Transactions</h4>
                     <mat-chip-list>
-                        <mat-chip>{{drop.analytics.totals[2].toFixed(2)}}&nbsp;CHF</mat-chip>
+                        <mat-chip>{{(drop.analytics.totals[2]+drop.analytics.totals[3]).toFixed(2)}}&nbsp;CHF</mat-chip>
                     </mat-chip-list>
             </mat-list-item>
             <mat-list-item>
                 <mat-icon mat-list-icon class="task">folder</mat-icon>
                 <h4 mat-line>Tasks</h4>
                     <mat-chip-list>
-                        <mat-chip>{{drop.analytics.totals[1]}}</mat-chip>
+                        <mat-chip>{{(drop.analytics.totals[1]/drop.analytics.totals[exit
+                            0]).toFixed(2)*100}}%</mat-chip> 
                     </mat-chip-list>
             </mat-list-item>
             <mat-list-item>
                 <mat-icon mat-list-icon class="rate">star_rate</mat-icon>
                 <h4 mat-line>Rate</h4>
                     <mat-chip-list>
-                        <mat-chip>{{drop.analytics.totals[4]}}</mat-chip>
+                        <mat-chip>{{drop.analytics.totals[5]}}</mat-chip>
                     </mat-chip-list>
             </mat-list-item>
         </mat-list>
