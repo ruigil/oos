@@ -25,96 +25,60 @@ async function getAnalytics(month:number,year:number) {
 }
 
 const incDropType = ( d: any, totals: Array<number>) => { 
+        console.log( " incDropType totals ");
+        console.log( totals );
         
         switch (d.type) {
-            case "NOTE": totals[6]++; break;
-            case "TASK": totals[0]++; totals[1] += d.task.complete ? 1 : 0; break;
+            case "NOTE": totals[6] += 1; break;
+            case "TASK": totals[0] += 1; totals[1] += d.task.complete ? 1 : 0; break;
             case "TRX": totals[d.transaction.type === "expense" ? 2 : 3] += d.transaction.value; break;
-            case "RATE": totals[4]++; totals[5] += d.rate.value; break;
+            case "RATE": totals[4] += 1; totals[5] += d.rate.value; break;
         }
         
         return totals;
 };
 const decDropType = ( d: any, totals: Array<number>) => { 
+        console.log( " incDropType totals ");
+        console.log( totals );
         
         switch (d.type) {
-            case "NOTE": totals[6]--; break;
-            case "TASK": totals[0]--; totals[1] -= d.task.complete ? 1 : 0; break;
+            case "NOTE": totals[6] -= 1; break;
+            case "TASK": totals[0] -= 1; totals[1] -= d.task.complete ? 1 : 0; break;
             case "TRX": totals[d.transaction.type === "expense" ? 2 : 3] -= d.transaction.value; break;
-            case "RATE": totals[4]--; totals[5] -= d.rate.value; break;
+            case "RATE": totals[4] -= 1; totals[5] -= d.rate.value; break;
         }
         
         return totals;
 };
 
-const incAnalyticsDrop:any = (drop:any, analytics:any) => {
-    analytics.totals = incDropType(drop,analytics.totals)
-    drop.tags.forEach( (t:any) => analytics.tags[t] = incDropType(drop, analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+const incAnalyticsDrop:any = (drop:any, dropa:any) => {
+    console.log( " incAnalyticsDrop analytics ");
+    console.log( dropa.analytics );
+    console.log( " drop  ");
+    console.log( drop );
 
-    return analytics;
+    dropa.analytics.totals = incDropType(drop, dropa.analytics.totals)
+    drop.tags.forEach( (t:any) => dropa.analytics.tags[t] = incDropType(drop, dropa.analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+
+    return dropa;
 }
-const decAnalyticsDrop:any = (drop:any, analytics:any) => {
-    analytics.totals = decDropType(drop,analytics.totals)
-    drop.tags.forEach( (t:any) => analytics.tags[t] = decDropType(drop, analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+const decAnalyticsDrop:any = (drop:any, dropa:any) => {
+    console.log( " decAnalyticsDrop analytics ");
+    console.log( dropa.analytics );
+    console.log( " drop  ");
+    console.log( drop );
 
-    return analytics;
+    dropa.analytics.totals = decDropType(drop, dropa.analytics.totals)
+    drop.tags.forEach( (t:any) => dropa.analytics.tags[t] = decDropType(drop, dropa.analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+
+    return dropa;
 }
-
-/*
-const incType = function(totals: Array<number>, t:number, val:number) { return totals.map((v,i) =>  i === t ? v+val : v) }
-const decType = function(totals: Array<number>, t:number, val:number) { return totals.map((v,i) =>  i === t ? v-val : v) }
-
-const incDayType = function(days:Array<Days>, day:number, type:number, value:number) {
-    const dayExist:boolean  = days.filter( (d:Days) => d.day === day).length !== 0;
-
-    if (dayExist) {
-        return days.map( (d:Days) => d.day === day ? { day: day, totals: incType(d.totals,type,value) } : d )
-    } else {
-        days.push( { day: day, totals: incType([0,0,0],type,value)} );
-        return days;
-    }
-    
-}
-
-const incTagType = (tags:Array<Tags>, tag:string, type:number, value:number) => {
-    const tagExist:boolean = tags.filter( (t:Tags) => t.tag === tag ).length !== 0;
-
-    if (tagExist) {
-        return tags.map( (t:Tags) => t.tag === tag ? { tag: tag, totals: incType(t.totals,type,value) } : t )
-    } else {
-        tags.push( { tag: tag, totals: incType([0,0,0],type,value) } );
-        return tags;
-    }
-    
-}
-
-const decDayType = function(days:Array<Days>, day:number, type:number, value:number) {
-    return days.map( (d:Days) => d.day === day ? { day: day, totals: decType(d.totals,type,value) } : d )
-                .filter( (d:Days) => !d.totals.every( v => v === 0) );
-}
-
-const decTagType = function(tags:Array<Tags>, tag:string, type:number, value:number) {
-    return tags.map( (t:Tags) => t.tag === tag ? { tag: tag, totals: decType(t.totals,type,value) } : t )
-                .filter( (t:Tags) => !t.totals.every( v => v === 0) );
-}
-
-const getTypeDrop = function(drop:Drop):number {
-    let type:number = -1;
-    switch(drop.type) {
-        case "NOTE": type = 0; break;
-        case "TASK": type = 1; break;
-        case "TRX": type = 2; break;
-    }
-    return type;
-}
-
-const getValueDrop = (drop:any) => drop.type === "TRX" ? drop.transaction.value : 1;
-*/
 
 export const statsCreate = functions
     .firestore
     .document('drops/{dropID}')
     .onCreate((snap, context) => {
+        console.log("stats create...")
 
         const drop:any = snap.data();
         const dropDate = drop.date.toDate();
@@ -122,14 +86,13 @@ export const statsCreate = functions
         const month:number = dropDate.getMonth();
         const year:number = dropDate.getFullYear();
 
-        getAnalytics(month,year).then( (a:any) => {
-            admin.firestore()
+        return getAnalytics(month,year).then( (a:any) => {
+            return admin.firestore()
             .doc("drops/ANALYTICS-"+year+"-"+month)
             .set(incAnalyticsDrop(drop,a))
             .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
-        return drop;
     });
 
 export const statsDelete = functions
@@ -143,14 +106,13 @@ export const statsDelete = functions
         const month:number = dropDate.getMonth();
         const year:number = dropDate.getFullYear();
 
-        getAnalytics(month,year).then( (a:any) => {
-            admin.firestore()
+        return getAnalytics(month,year).then( (a:any) => {
+            return admin.firestore()
             .doc("drops/ANALYTICS-"+year+"-"+month)
             .set(decAnalyticsDrop(drop,a))
             .catch((err) => console.log(err));
         })
         .catch((err) => console.log(err));
-        return drop;
     });
 
 
@@ -296,15 +258,7 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
             }
 
             d.date = admin.firestore.Timestamp.fromDate(calculDate.toDate());
-            /*
-            if (d.recurrence === "weekday") {
-                console.log(d.type);
-                console.log(d.text);
-                console.log(d.date.toDate());
-                console.log(startDate.tz("Europe/Zurich").day());
-            }
-            */
-            admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
+            return admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
             .catch( (err) => console.log(err));
         });
     })
