@@ -25,12 +25,18 @@ async function getAnalytics(month:number,year:number) {
 }
 
 const incDropType = ( d: any, totals: Array<number>) => { 
-        console.log( " incDropType totals ");
-        console.log( totals );
-        
+        /*
+         0 -> totals tasks, 
+         1 -> total task completed
+         2 -> total expenses
+         3 -> total incomes
+         4 -> total rates
+         5 -> total rate values
+         6 -> total notes
+        */
         switch (d.type) {
             case "NOTE": totals[6] += 1; break;
-            case "TASK": totals[0] += 1; totals[1] += d.task.complete ? 1 : 0; break;
+            case "TASK": totals[0] += 1; totals[1] += d.task.completed ? 1 : 0; break;
             case "TRX": totals[d.transaction.type === "expense" ? 2 : 3] += d.transaction.value; break;
             case "RATE": totals[4] += 1; totals[5] += d.rate.value; break;
         }
@@ -38,12 +44,12 @@ const incDropType = ( d: any, totals: Array<number>) => {
         return totals;
 };
 const decDropType = ( d: any, totals: Array<number>) => { 
-        console.log( " incDropType totals ");
+        console.log( " decDropType totals ");
         console.log( totals );
         
         switch (d.type) {
             case "NOTE": totals[6] -= 1; break;
-            case "TASK": totals[0] -= 1; totals[1] -= d.task.complete ? 1 : 0; break;
+            case "TASK": totals[0] -= 1; totals[1] -= d.task.completed ? 1 : 0; break;
             case "TRX": totals[d.transaction.type === "expense" ? 2 : 3] -= d.transaction.value; break;
             case "RATE": totals[4] -= 1; totals[5] -= d.rate.value; break;
         }
@@ -52,24 +58,22 @@ const decDropType = ( d: any, totals: Array<number>) => {
 };
 
 const incAnalyticsDrop:any = (drop:any, dropa:any) => {
-    console.log( " incAnalyticsDrop analytics ");
-    console.log( dropa.analytics );
-    console.log( " drop  ");
-    console.log( drop );
 
     dropa.analytics.totals = incDropType(drop, dropa.analytics.totals)
     drop.tags.forEach( (t:any) => dropa.analytics.tags[t] = incDropType(drop, dropa.analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+    
+    console.log( " incDropType analytics ");
+    console.log( dropa.analytics );
 
     return dropa;
 }
 const decAnalyticsDrop:any = (drop:any, dropa:any) => {
-    console.log( " decAnalyticsDrop analytics ");
-    console.log( dropa.analytics );
-    console.log( " drop  ");
-    console.log( drop );
 
     dropa.analytics.totals = decDropType(drop, dropa.analytics.totals)
     drop.tags.forEach( (t:any) => dropa.analytics.tags[t] = decDropType(drop, dropa.analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+
+    console.log( " decDropType analytics ");
+    console.log( dropa.analytics );
 
     return dropa;
 }
@@ -99,6 +103,7 @@ export const statsDelete = functions
     .firestore
     .document('drops/{dropID}')
     .onDelete((snap, context) => {
+        console.log("stats delete...")
 
         const drop:any = snap.data();
         const dropDate = drop.date.toDate();
@@ -120,11 +125,12 @@ export const statsUpdate = functions
     .firestore
     .document('drops/{dropID}')
     .onUpdate((change:any, context) => {
+        console.log("stats update...")
 
         const beforeDrop:any = change.before.data();
-        const beforeDropDate = beforeDrop.date.toDate();
-
         const afterDrop:any = change.after.data();
+
+        const beforeDropDate = beforeDrop.date.toDate();
         const afterDropDate = afterDrop.date.toDate();
 
         const beforeMonth:number = beforeDropDate.getMonth();
@@ -132,41 +138,31 @@ export const statsUpdate = functions
 
         const afterMonth:number = afterDropDate.getMonth();
         const afterYear:number = afterDropDate.getFullYear();
-        /**
-        
-        if month changed, delete previous day,tag bucket add new day,tag bucket
-        else 
-            if day changed dec previous day, add new day
-            if tag changed dec previous tag, add new tag
-        
-        */
 
-        if ( afterMonth < moment().month() ) {
+        if ( afterMonth <= moment().month() ) {
             if (beforeMonth !== afterMonth) {
-                // remove from previous month
-                getAnalytics(beforeMonth,beforeYear).then( (a:any) => {
+                // a drop was updated from different months, updating two analytics
+                return Promise.all([getAnalytics(beforeMonth,beforeYear),getAnalytics(afterMonth,afterYear)])
+                .then( ([anlyBefore,anlyAfter]) => {
+
                     admin.firestore()
                     .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
-                    .set(decAnalyticsDrop(beforeDrop,a))
+                    .set(decAnalyticsDrop(beforeDrop,anlyBefore))
                     .catch((err) => console.log(err));
-                })
-                .catch((err) => console.log(err));
-                // add to next month
-                getAnalytics(afterMonth,afterYear).then( (a:any) => {
-                    admin.firestore()
-                    .doc("drops/"+afterYear+"-"+afterMonth)
-                    .set(incAnalyticsDrop(afterDrop,a))
-                    .catch((err) => console.log(err));
-                })
-                .catch((err) => console.log(err));
 
+                    admin.firestore()
+                    .doc("drops/ANALYTICS-"+afterYear+"-"+afterMonth)
+                    .set(incAnalyticsDrop(afterDrop,anlyAfter))
+                    .catch((err) => console.log(err));
+                });
             } else {
-                getAnalytics(afterMonth,afterYear).then( (a:any) => {
-                    
-                    // remove analytics from previous drop
-                    let anly = decAnalyticsDrop(beforeDrop,a);
-                    // remove analytics from previous drop
-                    anly = incAnalyticsDrop(afterDrop,a);
+               // a drop was updated in the current month, just update its count
+                return getAnalytics(afterMonth,afterYear).then( (a:any) => {
+                    console.log(" same month ... ")
+                    // remove analytics from previous drop and add from the current drop
+                    const anly = incAnalyticsDrop(afterDrop,decAnalyticsDrop(beforeDrop,a));
+                    console.log(" persist analytics ... ")
+                    console.log(anly.analytics);
 
                     admin.firestore()
                     .doc("drops/ANALYTICS-"+afterYear+"-"+afterMonth)
@@ -175,9 +171,16 @@ export const statsUpdate = functions
                 })
                 .catch((err) => console.log(err));
             }
+        } else {
+            // a drop was moved beyond the range of analytics, just remove its count
+            return getAnalytics(afterMonth,afterYear).then( (a:any) => {
+                admin.firestore()
+                .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
+                .set(decAnalyticsDrop(beforeDrop,a))
+                .catch((err) => console.log(err));
+            })
+            .catch((err) => console.log(err));            
         }
-
-        return afterDrop;
     });
 
 const fillAnalyticsMonth = (endOfMonth:any) => {
@@ -247,7 +250,7 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
                 case "week": calculDate.add(1,'weeks'); break;
                 case "month": calculDate.add(1,'months'); break;
                 case "year": calculDate.add(1,'years'); break;
-                case "weekend": startDate.tz("Europe/Zurich").day() === 6 ? calculDate.add(1,'days'): calculDate.add(7,'days'); break;
+                case "weekend": startDate.tz("Europe/Zurich").day() === 6 ? calculDate.add(1,'days'): calculDate.add(6,'days'); break;
                 case "weekday": startDate.tz("Europe/Zurich").day() === 5 ? calculDate.add(3,'days'): calculDate.add(1,'days'); break;
             }
 
