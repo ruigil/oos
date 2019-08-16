@@ -13,7 +13,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material';
 import { MatSelectModule } from '@angular/material/select';
 import { MatListModule } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
@@ -28,6 +28,9 @@ import { FormatDatePipe } from '../pipes/format-date.pipe';
 import { ShowdownPipe } from '../pipes/showdown.pipe';
 
 @NgModule({
+  providers: [
+    {provide: MAT_DATE_LOCALE, useValue: 'fr-CH'},
+  ],
   imports: [
     CommonModule,    
     FormsModule,

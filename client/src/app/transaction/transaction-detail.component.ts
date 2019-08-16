@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -20,6 +21,9 @@ export class TransactionDetailComponent implements OnInit {
     settings: Settings = new Settings();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
     recurrences: any;
+    field = new FormControl('', [
+        Validators.required,
+    ]);    
 
     constructor(
         private dropsService: FireService, 

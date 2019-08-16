@@ -101,6 +101,10 @@ export class HomeComponent implements OnInit {
             ).subscribe( (acc:any) => {this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60}); console.log(acc) });
   }
 
+  setStartAt(event) {
+      console.log(event);
+  }
+
   toggleFab() {
       this.fabButtons = !this.fabButtons;
   }
@@ -130,6 +134,9 @@ export class HomeComponent implements OnInit {
   }
   isRate(drop:Drop) {
       return drop.type === "RATE";
+  }
+  isGoal(drop:Drop) {
+      return drop.type === "GOAL";
   }
 
   isRecurrent(drop:Drop) {
@@ -216,12 +223,12 @@ export class HomeComponent implements OnInit {
       this.tagFilterService.selectPage(this.page);
   }
 
-  dropTags(drop) {
-      return Object.keys(drop.analytics.tags);
+  dropTags(tags) {
+      return Object.keys(tags);
   }
   
-  aTag(drop,tag,type) {
-      return drop.analytics.tags[tag][type];
+  aTag(tags,tag,type) {
+      return tags[tag][type];
   }
 
   tagColor(tag) {

@@ -19,11 +19,6 @@ const routes: Routes = [
     loadChildren: './home/home.module#HomePageModule'
   },
   {
-    path: 'analytics',
-    canActivate: [ AuthGuard ],
-    loadChildren: './analytics/analytics.module#AnalyticsModule'
-  },
-  {
     path: 'tags',
     canActivate: [ AuthGuard ],
     loadChildren: './tags/tags.module#TagsModule'
@@ -53,6 +48,11 @@ const routes: Routes = [
     canActivate: [ AuthGuard ],
     loadChildren: './rate/rate.module#RateModule'
   },
+  {
+    path: 'goal',
+    canActivate: [ AuthGuard ],
+    loadChildren: './goal/goal.module#GoalModule'
+  }
 ];
 
 @NgModule({

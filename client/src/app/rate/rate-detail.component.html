@@ -4,32 +4,40 @@
     </button>
   <span>Rate</span>
 </mat-toolbar>
-<div class="form-elements">
+<form #rateForm="ngForm" class="form-elements">
     <mat-form-field>
-        <input matInput [(ngModel)]="drop.rate.text" placeholder="What are you rating?">
+        <input type="text" matInput name="name" [(ngModel)]="drop.rate.text" placeholder="What are you rating?" required autofocus>
+        <mat-error *ngIf="field.hasError('required')">
+            Rate name is <strong>required</strong>
+        </mat-error> 
     </mat-form-field>
     <mat-form-field>
-        <input matInput type="number" [(ngModel)]="drop.rate.value" placeholder="Rate" min="0" max="5" step="1">
+        <input matInput type="number" [(ngModel)]="drop.rate.value" placeholder="Rate" min="0" max="5" step="1" name="value">
     </mat-form-field>
     <mat-form-field>
-        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDateTime.date" >
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDateTime.date" name="date" required>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="field.hasError('required')">
+            Date is <strong>required</strong>
+        </mat-error> 
     </mat-form-field>
     <mat-form-field >
-        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropDateTime.time">
-        <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
+        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropDateTime.time" name="time" required>
         <ngx-material-timepicker #timepicker></ngx-material-timepicker>
+        <mat-error *ngIf="field.hasError('required')">
+            Time is <strong>required</strong>
+        </mat-error> 
     </mat-form-field>
     <mat-form-field>
     <mat-label>Recurrence</mat-label>
-    <mat-select [(ngModel)]="drop.recurrence">
+    <mat-select [(ngModel)]="drop.recurrence" name="recurrence">
         <mat-option *ngFor="let rec of recurrences" [value]="rec.value">{{rec.text}}</mat-option>
     </mat-select>
     </mat-form-field>
   <mat-form-field>
     <mat-label>Description</mat-label>
-    <textarea matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.text"></textarea>
+    <textarea matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.text" name="description"></textarea>
   </mat-form-field>
     <button mat-flat-button color="primary" (click)="addRate()" *ngIf="!drop.id">
         <mat-icon>add</mat-icon>  Add Rate
@@ -38,4 +46,5 @@
         <mat-icon>add</mat-icon>  Update Rate
     </button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
-</div>
+</form>
+

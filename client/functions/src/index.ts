@@ -16,6 +16,20 @@ admin.initializeApp({ credential: admin.credential.applicationDefault() });
 //  response.send("Hello from Firebase!");
 // });
 
+enum Operation {
+    Increment,
+    Decrement
+}
+
+async function getFutureGoals() {
+    const qs = await admin.firestore().collection("drops").where("date",">",admin.firestore.Timestamp.fromDate(moment().toDate())).get();
+    const goals:Array<any> = [];
+    qs.forEach( d => goals.push({...d.data(), id: d.id }));
+
+    console.log("goals");
+    console.log(goals);
+    return goals;
+}
 
 async function getAnalytics(month:number,year:number) {
     const doc = await admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month).get();
@@ -24,7 +38,7 @@ async function getAnalytics(month:number,year:number) {
     else return Promise.resolve({ month: month, year: year, totals: [0,0,0,0,0,0,0], tags: {} } );
 }
 
-const incDropType = ( d: any, totals: Array<number>) => { 
+const countTotalsType = ( d: any, totals: Array<number>, operation: Operation ) => { 
         /*
          0 -> totals tasks, 
          1 -> total task completed
@@ -34,48 +48,92 @@ const incDropType = ( d: any, totals: Array<number>) => {
          5 -> total rate values
          6 -> total notes
         */
+        const f = operation === Operation.Increment ? 1 : -1;
         switch (d.type) {
-            case "NOTE": totals[6] += 1; break;
-            case "TASK": totals[0] += 1; totals[1] += d.task.completed ? 1 : 0; break;
-            case "TRX": totals[d.transaction.type === "expense" ? 2 : 3] += d.transaction.value; break;
-            case "RATE": totals[4] += 1; totals[5] += d.rate.value; break;
-        }
-        
-        return totals;
-};
-const decDropType = ( d: any, totals: Array<number>) => { 
-        console.log( " decDropType totals ");
-        console.log( totals );
-        
-        switch (d.type) {
-            case "NOTE": totals[6] -= 1; break;
-            case "TASK": totals[0] -= 1; totals[1] -= d.task.completed ? 1 : 0; break;
-            case "TRX": totals[d.transaction.type === "expense" ? 2 : 3] -= d.transaction.value; break;
-            case "RATE": totals[4] -= 1; totals[5] -= d.rate.value; break;
+            case "NOTE": totals[6] += f; break;
+            case "TASK": totals[0] += f; totals[1] += f * (d.task.completed ? 1 : 0); break;
+            case "TRX": totals[d.transaction.type === "expense" ? 2 : 3] += f*d.transaction.value; break;
+            case "RATE": totals[4] += f; totals[5] += f*d.rate.value; break;
         }
         
         return totals;
 };
 
-const incAnalyticsDrop:any = (drop:any, dropa:any) => {
+const countAnalyticsDrop:any = (drop:any, dropa:any, operation: Operation) => {
 
-    dropa.analytics.totals = incDropType(drop, dropa.analytics.totals)
-    drop.tags.forEach( (t:any) => dropa.analytics.tags[t] = incDropType(drop, dropa.analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+    if (dropa.type === "ANLY") {
+        dropa.analytics.totals = countTotalsType(drop, dropa.analytics.totals,operation)
+        drop.tags
+        .forEach( (t:any) => dropa.analytics.tags[t] = countTotalsType(drop, dropa.analytics.tags[t] || [0,0,0,0,0,0,0], operation ) );
+    }
+    if (dropa.type === "GOAL") {
+        dropa.goal.totals = countTotalsType(drop, dropa.goal.totals,operation)
+        drop.tags
+        .filter( (t:any) => dropa.tags.includes(t) )
+        .forEach( (t:any) => dropa.goal.tags[t] = countTotalsType(drop, dropa.goal.tags[t] || [0,0,0,0,0,0,0], operation ) );
+    }
     
-    console.log( " incDropType analytics ");
-    console.log( dropa.analytics );
+    console.log( " countDropType analytics operation -> " + operation);
+    //console.log( dropa.analytics );
 
     return dropa;
 }
-const decAnalyticsDrop:any = (drop:any, dropa:any) => {
 
-    dropa.analytics.totals = decDropType(drop, dropa.analytics.totals)
-    drop.tags.forEach( (t:any) => dropa.analytics.tags[t] = decDropType(drop, dropa.analytics.tags[t] || [0,0,0,0,0,0,0] ) );
+const fillAnalyticsMonth = async (dropa:any) => {
+    const endOfMonth = moment(dropa.date.toDate()).tz("Europe/Zurich").endOf('month');
+    const startOfMonth = moment(endOfMonth).tz("Europe/Zurich").startOf('month'); 
 
-    console.log( " decDropType analytics ");
-    console.log( dropa.analytics );
+    // there is a difference between the cloud scheduler time, and the timestamp in the function
 
-    return dropa;
+    const startOfMonthTS = admin.firestore.Timestamp.fromDate(startOfMonth.toDate());
+    const endOfMonthTS = admin.firestore.Timestamp.fromDate(endOfMonth.toDate());
+    
+    dropa.analytics = { month: startOfMonth.month(), year: startOfMonth.year(), totals: [0,0,0,0,0,0,0], tags: {} };
+    
+    const qs = await admin.firestore().collection("drops").where("date",">=",startOfMonthTS).where("date","<=",endOfMonthTS).get()
+    
+    const drops:any = [];
+    qs.forEach( d => drops.push(d.data()));
+    
+    //dropa = drops.reduce( (a:any, d:any) => countAnalyticsDrop(d,a,Operation.Increment), dropa ); 
+    //console.log(dropa.analytics);
+
+    return drops.reduce( (a:any, d:any) => countAnalyticsDrop(d,a,Operation.Increment), dropa );
+};
+
+const fillGoal = async (dropa:any) => {
+    console.log("fill goal")
+    const start = moment();
+    const end = moment(dropa.date.toDate()); 
+
+    // TODO:deal with timezones...
+    console.log("start "+start.toDate());
+    console.log("end "+end.toDate());
+
+    const startTS = admin.firestore.Timestamp.fromDate(start.toDate());
+    const endTS = admin.firestore.Timestamp.fromDate(end.toDate());
+
+    dropa.goal = { completed: false, totals: [0,0,0,0,0,0,0], tags: {} };
+
+    const qs = await admin.firestore().collection("drops").where("date",">=",startTS).where("date","<",endTS).get()
+    
+    const drops:any = [];
+    qs.forEach( d => drops.push(d.data()));
+
+    // filter the drops that have a least one of the goal tags
+    // acummulate the total sum of the tags
+    console.log(" drops before filter")
+    console.log(drops);
+    console.log(" dropa tags")
+    console.log(dropa.tags)
+    const ds = drops.filter( (d:any) => d.tags.some( (t:any) => dropa.tags.includes(t) ) )
+    console.log("drops to count");
+    console.log(ds);
+    const goal = ds.reduce( (a:any, d:any) => countAnalyticsDrop(d,a,Operation.Increment), dropa )
+    console.log("goal");
+    console.log(goal)
+    
+    return goal;
 }
 
 export const statsCreate = functions
@@ -83,6 +141,14 @@ export const statsCreate = functions
     .document('drops/{dropID}')
     .onCreate((snap, context) => {
         console.log("stats create...")
+        /**
+        if drop goal type fill the analytics of the drop, between the creation date (now) and the drop date
+        if drop analytics month type fill the anaéytics from the beginnign of the month to the end of the month
+
+        else 
+            get future goals, if some tags present update goals
+            update monthty analytics
+         */
 
         const drop:any = snap.data();
         const dropDate = drop.date.toDate();
@@ -90,13 +156,41 @@ export const statsCreate = functions
         const month:number = dropDate.getMonth();
         const year:number = dropDate.getFullYear();
 
-        return getAnalytics(month,year).then( (a:any) => {
-            return admin.firestore()
-            .doc("drops/ANALYTICS-"+year+"-"+month)
-            .set(incAnalyticsDrop(drop,a))
+        const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate())
+
+        if (drop.type === "ANLY") {
+            return fillAnalyticsMonth(drop).then( dropa => {
+                admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month)
+                .set({...dropa, updatedAt: currentTS, createdAt: currentTS })
+                .catch( (err) => console.log(err));
+            })
+            .catch( (err) => console.log(err));
+        } else if (drop.type === "GOAL") {
+            console.log("fill goal drop");
+            console.log(drop);
+            return fillGoal(drop).then( dropa => {
+                console.log("drop goal filled->");
+                console.log(dropa.goal.tags);
+                //admin.firestore().doc("drops/"+drop.id)
+                snap.ref.set({...dropa, updatedAt: currentTS, createdAt: currentTS })
+                .catch( (err) => console.log(err));
+            })
+            .catch( (err) => console.log(err));
+        } else {
+            return Promise.all( [ getFutureGoals(),getAnalytics(month,year)] )
+            .then( ([goals,a]) => {
+                
+                let promises:any = goals
+                .filter( g => drop.tags.some( (t:any) => g.tags.includes(t)))
+                .map( g => admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(drop,g,Operation.Increment) ) );
+
+                promises.push(admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month).set(countAnalyticsDrop(drop,a,Operation.Increment)))
+                        
+                return Promise.all(promises).catch( (err) => console.log(err) );
+            })
             .catch((err) => console.log(err));
-        })
-        .catch((err) => console.log(err));
+        }
+        return drop;
     });
 
 export const statsDelete = functions
@@ -111,13 +205,16 @@ export const statsDelete = functions
         const month:number = dropDate.getMonth();
         const year:number = dropDate.getFullYear();
 
-        return getAnalytics(month,year).then( (a:any) => {
-            return admin.firestore()
-            .doc("drops/ANALYTICS-"+year+"-"+month)
-            .set(decAnalyticsDrop(drop,a))
-            .catch((err) => console.log(err));
-        })
+        if ((drop.type !== "ANLY") && (drop.type !== "GOAL")) {
+            getAnalytics(month,year).then( (a:any) => {
+                admin.firestore()
+                .doc("drops/ANALYTICS-"+year+"-"+month)
+                .set(countAnalyticsDrop(drop,a,Operation.Decrement))
+                .catch((err) => console.log(err));
+            })
         .catch((err) => console.log(err));
+        }
+        return drop;
     });
 
 
@@ -147,12 +244,12 @@ export const statsUpdate = functions
 
                     admin.firestore()
                     .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
-                    .set(decAnalyticsDrop(beforeDrop,anlyBefore))
+                    .set(countAnalyticsDrop(beforeDrop,anlyBefore,Operation.Decrement))
                     .catch((err) => console.log(err));
 
                     admin.firestore()
                     .doc("drops/ANALYTICS-"+afterYear+"-"+afterMonth)
-                    .set(incAnalyticsDrop(afterDrop,anlyAfter))
+                    .set(countAnalyticsDrop(afterDrop,anlyAfter,Operation.Increment))
                     .catch((err) => console.log(err));
                 });
             } else {
@@ -160,7 +257,7 @@ export const statsUpdate = functions
                 return getAnalytics(afterMonth,afterYear).then( (a:any) => {
                     console.log(" same month ... ")
                     // remove analytics from previous drop and add from the current drop
-                    const anly = incAnalyticsDrop(afterDrop,decAnalyticsDrop(beforeDrop,a));
+                    const anly = countAnalyticsDrop(afterDrop,countAnalyticsDrop(beforeDrop,a,Operation.Decrement),Operation.Increment);
                     console.log(" persist analytics ... ")
                     console.log(anly.analytics);
 
@@ -176,49 +273,12 @@ export const statsUpdate = functions
             return getAnalytics(afterMonth,afterYear).then( (a:any) => {
                 admin.firestore()
                 .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
-                .set(decAnalyticsDrop(beforeDrop,a))
+                .set(countAnalyticsDrop(beforeDrop,a, Operation.Decrement))
                 .catch((err) => console.log(err));
             })
             .catch((err) => console.log(err));            
         }
     });
-
-const fillAnalyticsMonth = (endOfMonth:any) => {
-    const startOfMonth = moment(endOfMonth).tz("Europe/Zurich").startOf('month'); 
-
-    // there is a difference between the cloud scheduler time, and the timestamp in the function
-
-    const startOfMonthTS = admin.firestore.Timestamp.fromDate(startOfMonth.toDate());
-    const endOfMonthTS = admin.firestore.Timestamp.fromDate(endOfMonth.toDate());
-    
-    return admin.firestore().collection("drops").where("date",">=",startOfMonthTS).where("date","<=",endOfMonthTS).get()
-    .then( qs => {
-        const drops:any = [];
-        qs.forEach( d => drops.push(d.data()));
-        const analytics = drops.reduce( (a:any, d:any) => incAnalyticsDrop(d,a) , { month: startOfMonth.month(), year: startOfMonth.year(), totals: [0,0,0,0,0,0,0], tags: {} } );
-        
-        console.log(analytics);
-
-        const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate());
-
-        admin.firestore()
-        .doc("drops/ANALYTICS-"+endOfMonth.year()+"-"+endOfMonth.month())
-        .set({
-            text: "Analytics for " + endOfMonth.format("MMMM YYYY" ),
-            type: "ANLY",
-            tags: ["ANALYTICS"],
-            recurrence: "month",
-            analytics: analytics,
-            date: endOfMonthTS,
-            updatedAt: currentTS,
-            createdAt: currentTS,
-        })
-        .catch((err) => console.log(err));
-
-    })
-    .catch( err => console.log(err));
-};
-
 
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (message, context) => {
     // there is a difference between the cloud scheduler time, and the timestamp in the function
@@ -253,14 +313,12 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
                 case "weekend": startDate.tz("Europe/Zurich").day() === 6 ? calculDate.add(1,'days'): calculDate.add(6,'days'); break;
                 case "weekday": startDate.tz("Europe/Zurich").day() === 5 ? calculDate.add(3,'days'): calculDate.add(1,'days'); break;
             }
+            d.date = admin.firestore.Timestamp.fromDate(calculDate.toDate());
 
             if (d.type==="SYS") d.text = calculDate.tz("Europe/Zurich").format("dddd, D MMMM YYYY" ); 
-            if (d.type==="ANLY") {
-                d.text = "Analytics for " + calculDate.tz("Europe/Zurich").format("MMMM YYYY");
-                d.analytics = fillAnalyticsMonth(calculDate);
-            }
-
-            d.date = admin.firestore.Timestamp.fromDate(calculDate.toDate());
+            
+            if (d.type==="ANLY") d.text = "Analytics for " + calculDate.tz("Europe/Zurich").format("MMMM YYYY");
+                
             return admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
             .catch( (err) => console.log(err));
         });
@@ -268,6 +326,33 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
     .catch( (err) => console.log(err));
 });
 
+/*
+export const initAnalytics = functions.https.onRequest((req, res) => {
+    console.log("initAnalytics");
+    const endOfMonth = moment().tz("Europe/Zurich").endOf('month');
+    const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate());
+    const endOfMonthTS = admin.firestore.Timestamp.fromDate(endOfMonth.toDate());
+
+    let dropa = {
+        text: "Analytics for " + endOfMonth.format("MMMM YYYY"),
+        type: "ANLY",
+        tags: ["ANALYTICS"],
+        recurrence: "month",
+        analytics: {},
+        date: endOfMonthTS,
+        updatedAt: currentTS,
+        createdAt: currentTS,
+    }
+    
+    return fillAnalyticsMonth(dropa).then( d => {
+        return admin.firestore()
+        .doc("drops/ANALYTICS-"+endOfMonth.year()+"-"+endOfMonth.month())
+        .set(d)
+        .catch((err) => console.log(err));
+    });
+
+});
+*/
 export const updateTagCount = functions
     .firestore
     .document('drops/{dropID}')

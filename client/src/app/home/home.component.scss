@@ -32,8 +32,13 @@
 .date-preview {
     display: flex;
     align-items:center;
-    justify-content: space-around;
-    width: 500px;
+    justify-content: space-between; 
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.preview {
+    width: 80px;
 }
 
 .mat-expansion-panel-header-description {
@@ -103,6 +108,11 @@ p {
 .rate {
     color: #ff6633;
 }
+
+.goal {
+    color: #ff3333;
+}
+
 .rate-bg {
     background-color: #ffeedd;
 }
@@ -150,6 +160,11 @@ p {
 .rate-fab {
     margin-bottom: 10px;
     background-color: #ff6633;
+}
+
+.goal-fab {
+    margin-bottom: 10px;
+    background-color: #ff3333;
 }
 
 .trans-fab {

@@ -4,37 +4,46 @@
     </button>
   <span>Transaction</span>
 </mat-toolbar>
-<div class="form-elements">
+<form class="form-elements">
     <mat-form-field>
         <mat-label>{{settings.transaction?.currency}}</mat-label>
-    <input matInput type="number" value="0.00" [(ngModel)]="drop.transaction.value" placeholder="Amount...">
+        <input matInput type="number" value="0.00" [(ngModel)]="drop.transaction.value" placeholder="Amount..." name="amount" required autofocus>
+        <mat-error *ngIf="field.hasError('required')">
+            Amount is <strong>required</strong>
+        </mat-error> 
     </mat-form-field>
     <mat-form-field>
         <mat-label>Transaction Type</mat-label>
-        <mat-select [(ngModel)]="drop.transaction.type">
+        <mat-select  name="type" [(ngModel)]="drop.transaction.type">
             <mat-option [value]="'expense'">Expense</mat-option>
             <mat-option [value]="'income'">Income</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field>
-        <input matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDateTime.date" >
+        <input  name="date" matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="dropDateTime.date" required>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="field.hasError('required')">
+            Date is <strong>required</strong>
+        </mat-error> 
     </mat-form-field>
     <mat-form-field >
-        <input matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropDateTime.time">
+        <input  name="time" matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropDateTime.time" required>
         <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
         <ngx-material-timepicker #timepicker></ngx-material-timepicker>
+        <mat-error *ngIf="field.hasError('required')">
+            Time is <strong>required</strong>
+        </mat-error> 
     </mat-form-field>
     <mat-form-field>
     <mat-label>Recurrence</mat-label>
-    <mat-select [(ngModel)]="drop.recurrence">
+    <mat-select [(ngModel)]="drop.recurrence" name="recurrence">
         <mat-option *ngFor="let rec of recurrences" [value]="rec.value">{{rec.text}}</mat-option>
     </mat-select>
     </mat-form-field>
-  <mat-form-field>
-    <textarea matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.text"></textarea>
-  </mat-form-field>
+    <mat-form-field>
+        <textarea  name="description" matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.text"></textarea>
+    </mat-form-field>
     <button mat-flat-button color="primary" (click)="addTransaction()" *ngIf="!drop.id">
         <mat-icon>add</mat-icon>  Add Transaction
     </button>
@@ -42,57 +51,4 @@
         <mat-icon>add</mat-icon>  Update Transaction
     </button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
-</div>
-<!--
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-button routerLink="/home"><ion-icon name="arrow-back"></ion-icon></ion-button>
-    </ion-buttons>
-    <ion-title>
-      Edit Transaction
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content>
-    <ion-item>
-        <ion-label>{{settings.transaction?.currency}}</ion-label>
-        <ion-input type="number" value="0.00" [(ngModel)]="drop.transaction.value"></ion-input>
-    </ion-item>
-  <ion-radio-group [(ngModel)]="drop.transaction.type">
-    <ion-item>
-      <ion-label>Expense</ion-label>
-      <ion-radio value="expense"></ion-radio>
-    </ion-item>
-    <ion-item>
-      <ion-label>Income</ion-label>
-      <ion-radio value="income"></ion-radio>
-    </ion-item>
-  </ion-radio-group>
-<ion-item>
-  <ion-label>Date</ion-label>
-  <ion-datetime display-format="DD MMM YYYY, HH:mm" [(ngModel)]="dropDate"></ion-datetime>
-</ion-item>
-  <ion-item>
-    <ion-label>Recurrent</ion-label>
-    <ion-select [(ngModel)]="drop.recurrence" okText="Okay" cancelText="Dismiss">
-      <ion-select-option value="none">No</ion-select-option>
-      <ion-select-option value="month">Montly</ion-select-option>
-      <ion-select-option value="week">Weekly</ion-select-option>
-      <ion-select-option value="day">Daily</ion-select-option>
-    </ion-select>
-  </ion-item>
-<ion-item>
-    <ion-textarea placeHolder="Enter you text here..." rows="4" [(ngModel)]="drop.text"></ion-textarea>
-</ion-item>
-
-    <ion-button (click)="addTransaction()" shape="round" fill="outline" *ngIf="!drop.id">
-        <ion-icon name="document" slot="start"></ion-icon>Add Transaction
-    </ion-button>
-    <ion-button (click)="updateTransaction()" shape="round" fill="outline" *ngIf="drop.id">
-        <ion-icon name="document" slot="start"></ion-icon>Update Transaction
-    </ion-button>
-    <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
-</ion-content>
--->
+</form>

@@ -9,11 +9,11 @@ import { DateTimeService } from '../services/date-time.service';
 import { Drop } from '../model/drop';
 
 @Component({
-  selector: 'oos-note-detail',
-  templateUrl: './note-detail.component.html',
-  styleUrls: ['./note-detail.component.css']
+  selector: 'oos-goal',
+  templateUrl: './goal.component.html',
+  styleUrls: ['./goal.component.scss']
 })
-export class NoteDetailComponent implements OnInit {
+export class GoalComponent implements OnInit {
 
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
@@ -33,9 +33,10 @@ export class NoteDetailComponent implements OnInit {
                 return id === "new" ? of(new Drop(
                     { 
                         text: "", 
-                        type: "NOTE",
+                        type: "GOAL",
+                        goal: { completed: false, totals: [0,0,0,0,0,0,0] , tags: { OOS: [3,2,0,0,0,0,3] } }, 
                         recurrence: "none",
-                        tags: [], 
+                        tags: ["OOS"], 
                         date: this.dropsService.date2ts(new Date())
                     }) ) : this.dropsService.docWithId$("drops/"+id);
             })
@@ -45,7 +46,7 @@ export class NoteDetailComponent implements OnInit {
         });
     }
 
-    updateNote() {
+    updateGoal() {
         let id = this.drop.id;
         this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
         if (delete this.drop.id)
@@ -56,7 +57,7 @@ export class NoteDetailComponent implements OnInit {
         this.router.navigate(["home"]);
     }
 
-    addNote() {
+    addGoal() {
         this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
         this.dropsService.add("drops",this.drop).then(
             (value) => { console.log("OK") },

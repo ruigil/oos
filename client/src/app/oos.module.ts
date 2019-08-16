@@ -12,7 +12,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { FormsModule } from '@angular/forms';
 
 import { OOSRoutingModule } from './oos-routing.module';
-
+ 
 import { OOSComponent } from './oos.component';
 import { TagFilterComponent } from './tag-filter/tag-filter.component';
 
@@ -20,6 +20,7 @@ import { SearchTagPipe } from './pipes/search-tag.pipe';
 import { SortTagPipe } from './pipes/sort-tag.pipe';
 import { LoginComponent } from './login/login.component';
 import { NgxAuthFirebaseUIModule } from 'ngx-auth-firebaseui';
+
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,6 +31,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
 
+/*
+*/
+
 @NgModule({
   declarations: [
     OOSComponent,
@@ -39,15 +43,15 @@ import { MatDividerModule } from '@angular/material/divider';
     LoginComponent
   ],
   imports: [
-      MatSidenavModule,
-      MatToolbarModule,
-      MatButtonModule,
-      MatIconModule,
-      MatListModule,
-      MatInputModule,
-      MatChipsModule,
-      MatBadgeModule,
-      MatDividerModule,
+    MatSidenavModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatListModule,
+    MatInputModule,
+    MatChipsModule,
+    MatBadgeModule,
+    MatDividerModule,
     BrowserModule,
     BrowserAnimationsModule,
     OOSRoutingModule,

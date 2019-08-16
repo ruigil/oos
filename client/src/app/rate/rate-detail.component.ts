@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
@@ -18,6 +19,9 @@ export class RateDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
+    field = new FormControl('', [
+        Validators.required,
+    ]);    
 
     recurrences: Array<{ value: string, text: string }>;
     
