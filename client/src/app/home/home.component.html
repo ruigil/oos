@@ -81,10 +81,10 @@
                 <mat-chip-list>
                     <mat-chip><mat-icon [ngClass]="tagColor(tag)">bookmark</mat-icon>{{tag}}</mat-chip> 
                 </mat-chip-list>
-                <span class="stats" *ngIf="aTag(drop,tag,6) != 0"><mat-icon class="iconpad" color="primary">note</mat-icon>{{aTag(drop,tag,6)}}</span>
-                <span class="stats" *ngIf="aTag(drop,tag,0) != 0"><mat-icon class="task iconpad">folder</mat-icon>{{aTag(drop,tag,1)}} of {{aTag(drop,tag,0)}} ({{(aTag(drop,tag,1)/aTag(drop,tag,0)*100).toFixed(2)}}%)</span>
-                <span class="stats" *ngIf="aTag(drop,tag,2) != 0 || aTag(drop,tag,3) != 0"  ><mat-icon class="iconpad transaction">monetization_on</mat-icon>{{(aTag(drop,tag,2)+aTag(drop,tag,3)).toFixed(2)}}</span>
-                <span class="stats" *ngIf="aTag(drop,tag,5) != 0"><mat-icon class="iconpad rate">star_rate</mat-icon>{{(aTag(drop,tag,5)/aTag(drop,tag,4)).toFixed(2)}}</span>
+                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,6) != 0"><mat-icon class="iconpad" color="primary">note</mat-icon>{{aTag(drop.analytics.tags,tag,6)}}</span>
+                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,0) != 0"><mat-icon class="task iconpad">folder</mat-icon>{{aTag(drop.analytics.tags,tag,1)}} of {{aTag(drop.analytics.tags,tag,0)}} ({{(aTag(drop.analytics.tags,tag,1)/aTag(drop.analytics.tags,tag,0)*100).toFixed(2)}}%)</span>
+                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,2) != 0 || aTag(drop.analytics.tags,tag,3) != 0"  ><mat-icon class="iconpad transaction">monetization_on</mat-icon>{{(aTag(drop.analytics.tags,tag,2)+aTag(drop.analytics.tags,tag,3)).toFixed(2)}}</span>
+                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,5) != 0"><mat-icon class="iconpad rate">star_rate</mat-icon>{{(aTag(drop.analytics.tags,tag,5)/aTag(drop.analytics.tags,tag,4)).toFixed(2)}}</span>
                 </div>
             </mat-list-item>
                 <h4>Summary</h4>

@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-        this.dropsObs = this.tagFilterService.drops();
+        this.dropsObs = this.tagFilterService.drops().pipe( tap( d => console.log( "drops "+ d.length ) ) );
         this.scroll.scrolled(200)
             .pipe( 
                 map((s:any) => { let p = s.measureScrollOffset("top") / (s.measureScrollOffset("top")+s.measureScrollOffset("bottom")); return p < 0.33 ? -1 : p > 0.66 ? 1 : 0 }),

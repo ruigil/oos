@@ -25,7 +25,7 @@ export class FireService {
     constructor(private firestore: AngularFirestore) { }
 
     get timestamp() {
-        return firebase.firestore.FieldValue.serverTimestamp();
+        return firebase.firestore.Timestamp.fromDate(new Date());//FieldValue.serverTimestamp();
     }
 
     col<T>(ref: CollectionPredicate<T>, queryFn?): AngularFirestoreCollection<T> {

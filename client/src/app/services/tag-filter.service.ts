@@ -48,6 +48,6 @@ export class TagFilterService {
   }
 
   drops():Observable<Drop[]> {
-    return this.drops$;
+    return this.drops$.pipe( tap( d => console.log("n drops -> " + d.length)) ); 
   }
 }
