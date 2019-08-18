@@ -33,7 +33,7 @@ async function getAnalytics(month:number,year:number) {
     const doc = await admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month).get();
     
     if (doc.exists) return doc.data();
-    else return Promise.resolve({ month: month, year: year, totals: [0,0,0,0,0,0,0], tags: {} } );
+    else throw Error(` No Analytics found for month[${ month }] and year [${ year }] `);
 }
 
 const countTotalsType = ( d: any, totals: Array<number>, operation: Operation ) => { 
@@ -115,6 +115,79 @@ const fillGoal = async (dropa:any) => {
     return goal;
 }
 
+export const settingsUpdate = functions
+    .firestore
+    .document('settings/{settingsID}')
+    .onUpdate((change:any, context) => {
+        console.log("setting update...")
+        const beforeSetting:any = change.before.data();
+        const afterSetting:any = change.after.data();
+
+        console.log("Settings before");
+        console.log(beforeSetting);
+
+        console.log("Settings after");
+        console.log(afterSetting);
+        const date = moment().tz("Europe/Zurich").endOf('month');
+        const today = moment().tz("Europe/Zurich").startOf('day');
+        const todayTS = admin.firestore.Timestamp.fromDate(today.toDate());
+        const dateTS = admin.firestore.Timestamp.fromDate(date.toDate());
+        const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate());
+
+        if ((!beforeSetting.system.analytics) && (afterSetting.system.analytics)) {
+            // create analytics
+            console.log("create analytics")
+            return admin.firestore()
+            .doc(`drops/ANALYTICS-${ moment().year() }-${ moment().month() }`)
+            .set(
+            {
+                text: "Analytics for " + date.format("MMMM YYYY"),
+                type: "ANLY",
+                tags: ["ANALYTICS"],
+                recurrence: "month",
+                analytics: { totals: [0,0,0,0,0,0,0], tags: {} },
+                date: dateTS,
+                updatedAt: currentTS,
+                createdAt: currentTS,
+            })
+            .catch( (err) => console.log(err) )
+            // TODO: create tag analytics
+        }
+        if ((!afterSetting.system.analytics) && (beforeSetting.system.analytics)) {
+            console.log("delete analytics");
+            return admin.firestore()
+            .doc(`drops/ANALYTICS-${ moment().year() }-${ moment().month() }`)
+            .delete()
+            .catch( (err) => console.log(err) )
+        }
+        if ((!beforeSetting.system.day) && (afterSetting.system.day)) {
+            // create day
+            return admin.firestore()
+            .doc(`drops/DAY-${ moment().year() }-${ moment().month() }-${ moment().date() }`)
+            .set(
+            {
+                text: today.format("dddd, D MMMM YYYY"),
+                type: "SYS",
+                tags: [],
+                recurrence: "day",
+                date: todayTS,
+                updatedAt: currentTS,
+                createdAt: currentTS,
+            })
+            .catch( (err) => console.log(err) )
+        }
+        if ((beforeSetting.system.day) && (!afterSetting.system.day)) {
+            // delete day
+            return admin.firestore()
+            .doc(`drops/DAY-${ moment().year() }-${ moment().month() }-${ moment().date() }`)
+            .delete()
+            .catch( (err) => console.log(err) )
+        }
+
+
+        return change;
+    });
+
 export const statsCreate = functions
     .firestore
     .document('drops/{dropID}')
@@ -139,6 +212,8 @@ export const statsCreate = functions
         const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate())
 
         if (drop.type === "ANLY") {
+            console.log("fill analytics")
+            console.log(drop);
             return fillAnalyticsMonth(drop).then( dropa => {
                 snap.ref.set({...dropa, updatedAt: currentTS, createdAt: currentTS })
                 .catch( (err) => console.log(err));
@@ -331,12 +406,26 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
             }
             d.date = admin.firestore.Timestamp.fromDate(calculDate.toDate());
 
-            if (d.type==="SYS") d.text = calculDate.tz("Europe/Zurich").format("dddd, D MMMM YYYY" ); 
+            if (d.type==="SYS") {
+                d.text = calculDate.tz("Europe/Zurich").format("dddd, D MMMM YYYY" ); 
+                return admin.firestore().doc(`drops/DAY-${ calculDate.year() }-${ calculDate.month() }-${ calculDate.date() }`)
+                .set({...d, updatedAt: endTS, createdAt: endTS })
+                .catch( (err) => console.log(err));
+
+            } else 
             
-            if (d.type==="ANLY") d.text = "Analytics for " + calculDate.tz("Europe/Zurich").format("MMMM YYYY");
+            if (d.type==="ANLY") {
+                d.text = "Analytics for " + calculDate.tz("Europe/Zurich").format("MMMM YYYY");
+                return admin.firestore().doc(`drops/ANALYTICS-${ calculDate.year() }-${ calculDate.month() }`)
+                .set({...d, updatedAt: endTS, createdAt: endTS })
+                .catch( (err) => console.log(err));
+
+            } else {
                 
-            return admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
-            .catch( (err) => console.log(err));
+                return admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
+                .catch( (err) => console.log(err));
+
+            }
         });
     })
     .catch( (err) => console.log(err));

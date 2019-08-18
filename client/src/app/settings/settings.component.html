@@ -5,9 +5,9 @@
   <span>Settings</span>
 </mat-toolbar>
 <div class="form-elements">
-<mat-list>
-  <mat-list-item>Transaction</mat-list-item>
-    <mat-form-field class="full-width">
+    <mat-label class="section-title"><b>Transaction</b></mat-label>
+    <mat-divider class="section"></mat-divider>
+    <mat-form-field>
         <mat-label>Currency</mat-label>
         <mat-select [(ngModel)]="settings.transaction.currency">
             <mat-option *ngFor="let currency of currencies" [value]="currency.value">
@@ -15,8 +15,10 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-  <mat-list-item>Home</mat-list-item>
-    <mat-form-field class="full-width">
+
+    <mat-label class="section-title"><b>Home</b></mat-label>
+    <mat-divider class="section"></mat-divider>
+    <mat-form-field>
         <mat-label>Default Preview</mat-label>
         <mat-select [(ngModel)]="settings.home.preview">
             <mat-option *ngFor="let preview of previews" [value]="preview.value">
@@ -24,16 +26,20 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-  <mat-form-field class="full-width">
-    <mat-label>Timezone</mat-label>
-    <input matInput [(ngModel)]="settings.home.timezone"/>
-  </mat-form-field>
-  </mat-list>
-  <button mat-flat-button color="primary" (click)="saveSettings()">
-      <mat-icon>save</mat-icon>
-      Save Settings
-    </button>
-</div>    
+    <mat-form-field>
+        <mat-label>Timezone</mat-label>
+        <input matInput [(ngModel)]="settings.home.timezone"/>
+    </mat-form-field>
+    <mat-label class="section-title"><b>System drops</b></mat-label>
+    <mat-divider class="section"></mat-divider>
+    <mat-slide-toggle class="slide" [(ngModel)]="settings.system.day">Current Day is {{ settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
+    <mat-slide-toggle class="slide" [(ngModel)]="settings.system.analytics">Monthly Analytics is {{ settings.system.analytics ? 'Active' : 'Inactive' }}</mat-slide-toggle>
+
+    <button mat-flat-button color="primary" (click)="saveSettings()">
+        <mat-icon>save</mat-icon>
+        Save Settings
+        </button>
+    </div>    
 <!--
 <ion-content>
     <ion-list>

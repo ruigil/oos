@@ -119,12 +119,12 @@
             </mat-list-item>
         </mat-list>
 
-            <mat-chip-list *ngIf="!isGoal(drop)">
+            <mat-chip-list *ngIf="!isGoal(drop) && !isAnalytics(drop)">
                 <mat-chip *ngFor="let t of drop.tags"><mat-icon [ngClass]="tagColor(t)">bookmark</mat-icon> {{t}}</mat-chip> 
             </mat-chip-list>
         </div>
-        
-        <mat-action-row class="actions" > <!-- *ngIf="!isAnalytics(drop)" *ngIf="!isSystem(drop)"-->
+         
+        <mat-action-row class="actions" *ngIf="!isAnalytics(drop) && !isSystem(drop)" > <!-- -->
             <button mat-stroked-button color="primary" (click)="edit(drop)">Edit</button>
             <div class="grow"></div>
             <button mat-stroked-button color="warn" (click)="delete(drop)">Delete</button>

@@ -22,6 +22,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 
 import { FormatDatePipe } from '../pipes/format-date.pipe';
@@ -53,7 +54,8 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatSnackBarModule,
     MatRadioModule,
     MatGridListModule,
-    ScrollingModule
+    ScrollingModule,
+    MatSlideToggleModule    
   ],
   declarations: [
     FormatDatePipe, 
@@ -83,7 +85,8 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatSnackBarModule,
     MatRadioModule,
     MatGridListModule,
-    ScrollingModule
+    ScrollingModule,
+    MatSlideToggleModule
   ] 
 })
 export class OOSCommonModule { }

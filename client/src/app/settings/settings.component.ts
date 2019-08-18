@@ -23,7 +23,7 @@ export class SettingsComponent implements OnInit {
         {name: "Year", value:"year"}
     ];
 
-  settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day", timezone: new Date().getTimezoneOffset()/60 } });
+  settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day", timezone: new Date().getTimezoneOffset()/60}, system: { day: true, analytics: false } } );
 
   constructor(
       private settingsService: SettingsService,
