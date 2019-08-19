@@ -22,10 +22,11 @@ enum Operation {
 }
 
 async function getFutureGoals(date:Date) {
-    const qs = await admin.firestore().collection("drops").where("date",">",admin.firestore.Timestamp.fromDate(date)).get();
+    const qs = await admin.firestore().collection("drops").where("date",">",admin.firestore.Timestamp.fromDate(date)).where("type","==","GOAL").get();
     const goals:Array<any> = [];
     qs.forEach( d => goals.push({...d.data(), id: d.id }));
-
+    console.log("getting goals");
+    console.log(goals);
     return goals;
 }
 
@@ -115,7 +116,7 @@ const fillGoal = async (dropa:any) => {
     return goal;
 }
 
-export const settingsUpdate = functions
+export const updateSettings = functions
     .firestore
     .document('settings/{settingsID}')
     .onUpdate((change:any, context) => {
@@ -188,186 +189,181 @@ export const settingsUpdate = functions
         return change;
     });
 
-export const statsCreate = functions
+
+export const updateStatistics = functions
     .firestore
     .document('drops/{dropID}')
-    .onCreate((snap, context) => {
-        console.log("stats create...")
+    .onWrite((change:any, context) => {
+        console.log("statistics update...")
+        const newDrop = change.after ? change.after.exists ? change.after.data() : null : null;
+        const oldDrop = change.before ? change.before.exists ? change.before.data() : null : null;
 
-        /**
-        if drop goal type fill the analytics of the drop, between the creation date (now) and the drop date
-        if drop analytics month type fill the anaéytics from the beginnign of the month to the end of the month
+        if ((!newDrop) && (oldDrop)) { // delete
+            if ((oldDrop.type !== "ANLY") && (oldDrop.type !== "GOAL")) {
+                const dropDate = oldDrop.date.toDate();
 
-        else 
-            get future goals, if some tags present update goals
-            update monthty analytics
-         */
-
-        const drop:any = snap.data();
-        const dropDate = drop.date.toDate();
-
-        const month:number = dropDate.getMonth();
-        const year:number = dropDate.getFullYear();
-
-        const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate())
-
-        if (drop.type === "ANLY") {
-            console.log("fill analytics")
-            console.log(drop);
-            return fillAnalyticsMonth(drop).then( dropa => {
-                snap.ref.set({...dropa, updatedAt: currentTS, createdAt: currentTS })
-                .catch( (err) => console.log(err));
-            })
-            .catch( (err) => console.log(err));
-        } else if (drop.type === "GOAL") {
-            return fillGoal(drop).then( dropa => {
-                snap.ref.set({...dropa, updatedAt: currentTS, createdAt: currentTS })
-                .catch( (err) => console.log(err));
-            })
-            .catch( (err) => console.log(err));
-        } else {
-            return Promise.all( [ getFutureGoals(dropDate), getAnalytics(month,year) ] )
-            .then( ([goals,a]) => {
+                const month:number = dropDate.getMonth();
+                const year:number = dropDate.getFullYear();
                 
-                const promises:any = goals
-                .filter( g => drop.tags.some( (t:any) => g.tags.includes(t)))
-                .map( g => admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(drop,g,Operation.Increment) ) );
+                return Promise.all( [ getFutureGoals(dropDate),getAnalytics(month,year)] )
+                .then( ([goals,a]) => {
+                    
+                    const promises:any = goals
+                    .filter( g => oldDrop.tags.some( (t:any) => g.tags.includes(t)))
+                    .map( g => admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(oldDrop,g,Operation.Decrement) ) );
 
-                promises.push(admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month).set(countAnalyticsDrop(drop,a,Operation.Increment)))
-                        
-                return Promise.all(promises).catch( (err) => console.log(err) );
-            })
-            .catch((err) => console.log(err));
-        }
-        return drop;
-    });
-
-export const statsDelete = functions
-    .firestore
-    .document('drops/{dropID}')
-    .onDelete((snap, context) => {
-        console.log("stats delete...")
-
-        const drop:any = snap.data();
-        const dropDate = drop.date.toDate();
-
-        const month:number = dropDate.getMonth();
-        const year:number = dropDate.getFullYear();
-
-        if ((drop.type !== "ANLY") && (drop.type !== "GOAL")) {
-            return Promise.all( [ getFutureGoals(dropDate),getAnalytics(month,year)] )
-            .then( ([goals,a]) => {
-                
-                const promises:any = goals
-                .filter( g => drop.tags.some( (t:any) => g.tags.includes(t)))
-                .map( g => admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(drop,g,Operation.Decrement) ) );
-
-                promises.push(admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month).set(countAnalyticsDrop(drop,a,Operation.Decrement)))
-                        
-                return Promise.all(promises).catch( (err) => console.log(err) );
-            })
-            .catch((err) => console.log(err));
-        }
-        return drop;
-    });
-
-
-export const statsUpdate = functions
-    .firestore
-    .document('drops/{dropID}')
-    .onUpdate((change:any, context) => {
-        console.log("stats update...")
-
-        const beforeDrop:any = change.before.data();
-        const afterDrop:any = change.after.data();
-
-        const beforeDropDate = beforeDrop.date.toDate();
-        const afterDropDate = afterDrop.date.toDate();
-
-        const beforeMonth:number = beforeDropDate.getMonth();
-        const beforeYear:number = beforeDropDate.getFullYear();
-
-        const afterMonth:number = afterDropDate.getMonth();
-        const afterYear:number = afterDropDate.getFullYear();
-
-
-
-        if ((afterDrop.type !== "GOAL") || (afterDrop.type !== "ANLY")) {
-            /*
-            get future goals
-            if after and not before just inc
-            if before and not after just dec
-            if drop date between goal creation date and goal date dec/inc
-            */
-            getFutureGoals(moment().toDate())
-            .then( (goals:any) => {
-                const isBetween = (date:any, g:any )  => moment(date).isBetween(moment(g.createAt.toDate()), moment(g.date.toDate()) )
-        
-                const promises:any = goals
-                .filter( (g:any) => afterDrop.tags.some( (t:any) => g.tags.includes(t)) )
-                .flatMap( (g:any) => {
-                    // if the drop is before the goal finish date and it was before the creation date (not counted)
-                    // then just count it
-                    if (isBetween(afterDropDate,g) && !isBetween(beforeDropDate,g )) {
-                        return [ admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(afterDrop,g,Operation.Increment) ) ]
-                    } else if (!isBetween(afterDropDate,g) && isBetween(beforeDropDate,g) ) {
-                        return [ admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(beforeDrop,g,Operation.Decrement) ) ]
-                    } else 
-                        return [ 
-                            admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(beforeDrop,g,Operation.Decrement) ),
-                            admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(afterDrop,g,Operation.Increment) ),
-                         ]
-                });
-                return Promise.all(promises).catch( (err) => console.log(err) );
-            })
-            .catch((err) => console.log(err));
-
-            // TODO: refactor the between month to find symmetries with between goals
-
-            if ( afterMonth <= moment().month() ) {
-                if (beforeMonth !== afterMonth) {
-                    // a drop was updated from different months, updating two analytics
-                    return Promise.all([getAnalytics(beforeMonth,beforeYear),getAnalytics(afterMonth,afterYear)])
-                    .then( ([anlyBefore,anlyAfter]) => {
-
-                        admin.firestore()
-                        .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
-                        .set(countAnalyticsDrop(beforeDrop,anlyBefore,Operation.Decrement))
-                        .catch((err) => console.log(err));
-
-                        admin.firestore()
-                        .doc("drops/ANALYTICS-"+afterYear+"-"+afterMonth)
-                        .set(countAnalyticsDrop(afterDrop,anlyAfter,Operation.Increment))
-                        .catch((err) => console.log(err));
-                    });
-                } else {
-                // a drop was updated in the current month, just update its count
-                    return getAnalytics(afterMonth,afterYear).then( (a:any) => {
-                        console.log(" same month ... ")
-                        // remove analytics from previous drop and add from the current drop
-                        const anly = countAnalyticsDrop(afterDrop,countAnalyticsDrop(beforeDrop,a,Operation.Decrement),Operation.Increment);
-                        console.log(" persist analytics ... ")
-                        console.log(anly.analytics);
-
-                        admin.firestore()
-                        .doc("drops/ANALYTICS-"+afterYear+"-"+afterMonth)
-                        .set(anly)
-                        .catch((err) => console.log(err));
-                    })
-                    .catch((err) => console.log(err));
-                }
-            } else {
-                // a drop was moved beyond the range of analytics, just remove its count
-                return getAnalytics(afterMonth,afterYear).then( (a:any) => {
-                    admin.firestore()
-                    .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
-                    .set(countAnalyticsDrop(beforeDrop,a, Operation.Decrement))
-                    .catch((err) => console.log(err));
+                    promises.push(admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month).set(countAnalyticsDrop(oldDrop,a,Operation.Decrement)))
+                            
+                    return Promise.all(promises).catch( (err) => console.log(err) );
                 })
-                .catch((err) => console.log(err));            
+                .catch((err) => console.log(err));
             }
         }
-        return afterDrop;
+
+        if ((newDrop) && (!oldDrop)) { // create
+            /**
+            if drop goal type fill the analytics of the drop, between the creation date (now) and the drop date
+            if drop analytics month type fill the anaéytics from the beginnign of the month to the end of the month
+
+            else 
+                get future goals, if some tags present update goals
+                update monthty analytics
+            */
+
+            const dropDate = newDrop.date.toDate();
+
+            const month:number = dropDate.getMonth();
+            const year:number = dropDate.getFullYear();
+
+            const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate())
+
+            if (newDrop.type === "ANLY") {
+                console.log("fill analytics")
+                console.log(newDrop);
+                return fillAnalyticsMonth(newDrop).then( dropa => {
+                    change.after.ref.set({...dropa, updatedAt: currentTS, createdAt: currentTS })
+                    .catch( (err:any) => console.log(err));
+                })
+                .catch( (err) => console.log(err));
+            } else if (newDrop.type === "GOAL") {
+                return fillGoal(newDrop).then( dropa => {
+                    change.after.ref.set({...dropa, updatedAt: currentTS, createdAt: currentTS })
+                    .catch( (err:any) => console.log(err));
+                })
+                .catch( (err) => console.log(err));
+            } else {
+                return Promise.all( [ getFutureGoals(dropDate), getAnalytics(month,year) ] )
+                .then( ([goals,a]) => {
+                    
+                    const promises:any = goals
+                    .filter( g => newDrop.tags.some( (t:any) => g.tags.includes(t)))
+                    .map( g => admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(newDrop,g,Operation.Increment) ) );
+
+                    promises.push(admin.firestore().doc("drops/ANALYTICS-"+year+"-"+month).set(countAnalyticsDrop(newDrop,a,Operation.Increment)))
+                            
+                    return Promise.all(promises).catch( (err) => console.log(err) );
+                })
+                .catch((err) => console.log(err));
+            }
+
+        }
+
+        if ((newDrop) && (oldDrop)) { // update
+            const beforeDropDate = oldDrop.date.toDate();
+            const afterDropDate = newDrop.date.toDate();
+
+            const beforeMonth:number = beforeDropDate.getMonth();
+            const beforeYear:number = beforeDropDate.getFullYear();
+
+            const afterMonth:number = afterDropDate.getMonth();
+            const afterYear:number = afterDropDate.getFullYear();
+
+            if ((newDrop.type !== "GOAL") && (newDrop.type !== "ANLY")) {
+                /*
+                get future goals
+                if after and not before just inc
+                if before and not after just dec
+                if drop date between goal creation date and goal date dec/inc
+                */
+                getFutureGoals(moment().toDate())
+                .then( (goals:any) => {
+                    console.log("updating goals ");
+                    const promises:any = goals
+                    .filter( (g:any) => newDrop.tags.some( (t:any) => g.tags.includes(t)) )
+                    .map( (g:any) => {
+                        const isBetween = (date:any, ga:any )  => moment(date).isBetween(moment(ga.createdAt.toDate()), moment(ga.date.toDate()) )
+                        // if the drop is between the creation and goal date, as was not just coun it
+                        console.log("goal")
+                        console.log(g);
+                        if (isBetween(afterDropDate,g) && !isBetween(beforeDropDate,g )) {
+                            console.log(" goal increment ");
+                            return [ admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(newDrop,g,Operation.Increment) ) ]
+                        // if the drop was between the creation and goal date, as now is not not just uncount it
+                        } else if (!isBetween(afterDropDate,g) && isBetween(beforeDropDate,g) ) {
+                            console.log(" goal decrement ");
+                            return [ admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(oldDrop,g,Operation.Decrement) ) ]
+                        } else 
+                            console.log(" goal decrement/increment ");
+                        // if the drop is between the creation and goal date, ajust update
+                            return [ 
+                                admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(oldDrop,g,Operation.Decrement) ),
+                                admin.firestore().doc("drops/"+g.id).set(countAnalyticsDrop(newDrop,g,Operation.Increment) ),
+                                ]
+                    });
+                    const flat = (array:Array<any>) => [].concat(...array);
+
+                    return Promise.all( flat(promises) ).catch( (err) => console.log(err) );
+                })
+                .catch((err) => console.log(err));
+
+                // TODO: refactor the between month to find symmetries with between goals
+
+                if ( afterMonth <= moment().month() ) {
+                    if (beforeMonth !== afterMonth) {
+                        // a drop was updated from different months, updating two analytics
+                        return Promise.all([getAnalytics(beforeMonth,beforeYear),getAnalytics(afterMonth,afterYear)])
+                        .then( ([anlyBefore,anlyAfter]) => {
+
+                            admin.firestore()
+                            .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
+                            .set(countAnalyticsDrop(oldDrop,anlyBefore,Operation.Decrement))
+                            .catch((err) => console.log(err));
+
+                            admin.firestore()
+                            .doc("drops/ANALYTICS-"+afterYear+"-"+afterMonth)
+                            .set(countAnalyticsDrop(newDrop,anlyAfter,Operation.Increment))
+                            .catch((err) => console.log(err));
+                        });
+                    } else {
+                    // a drop was updated in the current month, just update its count
+                        return getAnalytics(afterMonth,afterYear).then( (a:any) => {
+                            console.log(" same month ... ")
+                            // remove analytics from previous drop and add from the current drop
+                            const anly = countAnalyticsDrop(newDrop,countAnalyticsDrop(oldDrop,a,Operation.Decrement),Operation.Increment);
+                            console.log(" persist analytics ... ")
+                            console.log(anly.analytics);
+
+                            admin.firestore()
+                            .doc("drops/ANALYTICS-"+afterYear+"-"+afterMonth)
+                            .set(anly)
+                            .catch((err) => console.log(err));
+                        })
+                        .catch((err) => console.log(err));
+                    }
+                } else {
+                    // a drop was moved beyond the range of analytics, just remove its count
+                    return getAnalytics(afterMonth,afterYear).then( (a:any) => {
+                        admin.firestore()
+                        .doc("drops/ANALYTICS-"+beforeYear+"-"+beforeMonth)
+                        .set(countAnalyticsDrop(oldDrop,a, Operation.Decrement))
+                        .catch((err) => console.log(err));
+                    })
+                    .catch((err) => console.log(err));            
+                }
+            }
+        }
+
+        return null; // we get here when it is an analytics drop 
     });
 
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (message, context) => {
@@ -431,33 +427,6 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
     .catch( (err) => console.log(err));
 });
 
-/*
-export const initAnalytics = functions.https.onRequest((req, res) => {
-    console.log("initAnalytics");
-    const endOfMonth = moment().tz("Europe/Zurich").endOf('month');
-    const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate());
-    const endOfMonthTS = admin.firestore.Timestamp.fromDate(endOfMonth.toDate());
-
-    let dropa = {
-        text: "Analytics for " + endOfMonth.format("MMMM YYYY"),
-        type: "ANLY",
-        tags: ["ANALYTICS"],
-        recurrence: "month",
-        analytics: {},
-        date: endOfMonthTS,
-        updatedAt: currentTS,
-        createdAt: currentTS,
-    }
-    
-    return fillAnalyticsMonth(dropa).then( d => {
-        return admin.firestore()
-        .doc("drops/ANALYTICS-"+endOfMonth.year()+"-"+endOfMonth.month())
-        .set(d)
-        .catch((err) => console.log(err));
-    });
-
-});
-*/
 export const updateTagCount = functions
     .firestore
     .document('drops/{dropID}')

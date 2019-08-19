@@ -23,7 +23,7 @@
   <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index;  trackBy: dropIdentity"> 
         <mat-expansion-panel-header [ngClass]="{ 'month': isMonth(drop), 'week': isWeek(drop), 'today': isToday(drop), 'past': isPast(drop)  }" >
             <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon><div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div></mat-panel-title>
-            <mat-panel-title *ngIf="isGoal(drop)"><mat-icon class="goal">center_focus_weak</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>  
+            <mat-panel-title *ngIf="isGoal(drop)"><mat-icon class="goal">center_focus_strong</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>  
             
                 <div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div>
             
@@ -146,7 +146,7 @@
         <mat-icon>folder</mat-icon>
     </button>
     <button color="primary" mat-mini-fab aria-label="Goal" class="goal-fab" routerLink="/goal/edit/new">
-        <mat-icon>center_focus_weak</mat-icon>
+        <mat-icon>center_focus_strong</mat-icon>
     </button>
     <button color="primary" mat-mini-fab aria-label="Rate" class="rate-fab" routerLink="/rate/edit/new">
         <mat-icon>star_rate</mat-icon>
