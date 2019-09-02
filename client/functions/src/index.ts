@@ -95,13 +95,13 @@ const fillAnalyticsMonth = async (dropa:any) => {
 };
 
 const fillGoal = async (dropa:any) => {
-    const start = moment();
+    const start = moment(dropa.createdAt.toDate());
     const end = moment(dropa.date.toDate()); 
 
     const startTS = admin.firestore.Timestamp.fromDate(start.toDate());
     const endTS = admin.firestore.Timestamp.fromDate(end.toDate());
 
-    dropa.goal = { completed: false, totals: [0,0,0,0,0,0,0], tags: {} };
+    dropa.goal = { system: true, completed: false, totals: [0,0,0,0,0,0,0], tags: {} };
 
     const qs = await admin.firestore().collection("drops").where("date",">=",startTS).where("date","<",endTS).get()
     
@@ -278,6 +278,19 @@ export const updateStatistics = functions
             const afterMonth:number = afterDropDate.getMonth();
             const afterYear:number = afterDropDate.getFullYear();
 
+            // updating a goal requires recalculation of all the tags, and the time span.
+            if ((newDrop.type === "GOAL") && (!newDrop.goal.system) ) {
+                console.log(" user goal update... ")
+                const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate())
+                return fillGoal(newDrop).then( dropa => {
+                    change.after.ref.set({...dropa, updatedAt: currentTS })
+                    .catch( (err:any) => console.log(err));
+                })
+                .catch( (err) => console.log(err));
+            } else if (newDrop.type === "GOAL") {
+                console.log(" system goal update ...");
+            }
+
             if ((newDrop.type !== "GOAL") && (newDrop.type !== "ANLY")) {
                 /*
                 get future goals
@@ -427,7 +440,7 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
     .catch( (err) => console.log(err));
 });
 
-export const updateTagCount = functions
+export const updateTags = functions
     .firestore
     .document('drops/{dropID}')
     .onWrite((change, context) => {
@@ -441,7 +454,7 @@ export const updateTagCount = functions
       const inc = newTags.filter( nt => oldTags.every( ot => ot !== nt ) )
       const incTags = inc.map( t => admin.firestore().doc("tags/"+t).get() );
       Promise.all(incTags).then( docs => {
-          docs.map( d => d.data() ).map( (t:any) => admin.firestore().doc("tags/"+t.name).update({ count: ++t.count, updatedAt: admin.firestore.FieldValue.serverTimestamp()}) )
+          docs.map( d => d.data() ).map( (t:any) => admin.firestore().doc("tags/"+t.name).update({ count: ++t.count, updatedAt: admin.firestore.Timestamp.fromDate(moment().toDate())}) )
       })
       .catch((err) => console.log(err));
 
@@ -450,7 +463,7 @@ export const updateTagCount = functions
       const dec = oldTags.filter( ot => newTags.every( nt => nt !== ot ) );
       const decTags = dec.map( t => admin.firestore().doc("tags/"+t).get() );
       Promise.all(decTags).then( docs => {
-          docs.map( d => d.data() ).map( (t:any) => admin.firestore().doc("tags/"+t.name).update({ count: --t.count}) )
+          docs.map( d => d.data() ).map( (t:any) => admin.firestore().doc("tags/"+t.name).update({ count: --t.count }) )
       })
       .catch((err) => console.log(err));
 

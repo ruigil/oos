@@ -6,7 +6,7 @@ export class Drop {
     task?: { title: string, date: any, completed: boolean };
     analytics?: { month: number, year: number, totals: Array<number>, tags: {} };
     rate?: { text: string, value: number };
-    goal?: { completed: boolean, totals: Array<number>, tags: {} };
+    goal?: { system: false, completed: boolean, totals: Array<number>, tags: {} };
     recurrence: string;
     tags: Array<string>;
     date: any;

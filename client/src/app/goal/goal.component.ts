@@ -34,9 +34,9 @@ export class GoalComponent implements OnInit {
                     { 
                         text: "", 
                         type: "GOAL",
-                        goal: { completed: false, totals: [0,0,0,0,0,0,0] , tags: { OOS: [3,2,0,0,0,0,3] } }, 
+                        goal: { system: false, completed: false, totals: [0,0,0,0,0,0,0] , tags: {} }, 
                         recurrence: "none",
-                        tags: ["OOS"], 
+                        tags: [""],
                         date: this.dropsService.date2ts(new Date())
                     }) ) : this.dropsService.docWithId$("drops/"+id);
             })
@@ -49,6 +49,7 @@ export class GoalComponent implements OnInit {
     updateGoal() {
         let id = this.drop.id;
         this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
+        this.drop.goal.system = false; // notify that this is a user update.
         if (delete this.drop.id)
             this.dropsService.update("drops/"+ id, this.drop ).then( 
                 (value) => { console.log("OK") },

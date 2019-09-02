@@ -157,7 +157,7 @@ export class HomeComponent implements OnInit {
   }
 
   edit(drop:Drop) {
-      return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.isTask(drop) ? this.router.navigate(['/task/edit',drop.id]) : this.router.navigate(['/rate/edit',drop.id]);
+      return this.isNote(drop) ? this.router.navigate(['/note/edit',drop.id]) : this.isTransaction(drop) ? this.router.navigate(['/transaction/edit',drop.id]) : this.isTask(drop) ? this.router.navigate(['/task/edit',drop.id]) : this.isGoal(drop) ? this.router.navigate(['/goal/edit',drop.id]) : this.router.navigate(['/rate/edit',drop.id]);
   }
 
   isToday(drop) {

@@ -19,6 +19,7 @@ export class DateTimeService {
 
   getRecurrences() {
     return [ 
+        { value: "none", text: "None"}, 
         { value: "day", text: "Daily"}, 
         { value: "week", text: "Weekly"}, 
         { value: "month", text: "Monthly"}, 
