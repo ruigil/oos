@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Location } from '@angular/common';
 
 import { FireService } from '../services/fire.service';
 import { DateTimeService } from '../services/date-time.service';
@@ -19,6 +21,7 @@ export class TaskDetailComponent implements OnInit {
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
     recurrences: Array<{ value: string, text: string }>;
+    btnDisabled: boolean = false; 
     field = new FormControl('', [
         Validators.required,
     ]);    
@@ -27,7 +30,9 @@ export class TaskDetailComponent implements OnInit {
         private dropsService: FireService, 
         private route: ActivatedRoute, 
         private router: Router,
-        private dtService: DateTimeService) { 
+        private dtService: DateTimeService,
+        private snackbar: MatSnackBar,
+        private location: Location) { 
         
         this.drop = new Drop({ task: {title: "", date: null, completed: false}, recurrence: 'none'});
         this.recurrences = dtService.getRecurrences();
@@ -41,7 +46,7 @@ export class TaskDetailComponent implements OnInit {
                     text: "", 
                     type: "TASK",
                     tags: [],
-                    date: this.dropsService.date2ts(new Date()),
+                    date: this.dtService.date2ts(new Date()),
                     recurrence: 'none',
                     task: {
                         title: "",
@@ -56,25 +61,31 @@ export class TaskDetailComponent implements OnInit {
     }
 
     addTask() {
-        this.dropsService.add("drops",{...this.drop, date: this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime))}).then(
-            (value) => { this.router.navigate(["home"]) },
-            (error) => { /*this.presentToast(error);*/ this.router.navigate(["home"]); }
+        this.btnDisabled = true;
+        this.dropsService.add("drops",{...this.drop, date: this.dtService.date2ts(this.dtService.getDate(this.dropDateTime))}).then(
+            (value) => { this.location.back() },
+            (error) => { this.snackbar.open(`Error adding task [${error}]`); this.btnDisabled = false; }
         );
     }
     
     updateTask() {
+        this.btnDisabled = true;
         let id = this.drop.id;
         if (delete this.drop.id)
-            this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
+            this.drop.date = this.dtService.date2ts(this.dtService.getDate(this.dropDateTime));
             this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { this.router.navigate(["home"]) },
-                (error) => { console.log("error") }
+                (value) => { this.location.back() },
+                (error) => { this.snackbar.open(`Error updating task [${error}]`); this.btnDisabled = false; }
             );
     }
 
 
     selectedTags(tags: Array<string>) {
         this.drop.tags = tags;
+    }
+
+    goBack() {
+        this.location.back();
     }
 
 }

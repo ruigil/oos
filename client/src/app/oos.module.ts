@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; 
 import { NgModule } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -30,6 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatDividerModule } from '@angular/material/divider';
+import { StartComponent } from './start/start.component';
 
 /*
 */
@@ -40,7 +41,8 @@ import { MatDividerModule } from '@angular/material/divider';
     TagFilterComponent,
     SearchTagPipe,
     SortTagPipe,
-    LoginComponent
+    LoginComponent,
+    StartComponent
   ],
   imports: [
     MatSidenavModule,

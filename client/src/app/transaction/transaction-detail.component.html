@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar" color="primary">
-    <button mat-icon-button routerLink="/home">
+    <button mat-icon-button (click)="goBack()">
         <mat-icon aria-label="Back">arrow_back</mat-icon>
     </button>
   <span>Transaction</span>
@@ -29,7 +29,6 @@
     </mat-form-field>
     <mat-form-field >
         <input  name="time" matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropDateTime.time" required>
-        <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
         <ngx-material-timepicker #timepicker></ngx-material-timepicker>
         <mat-error *ngIf="field.hasError('required')">
             Time is <strong>required</strong>
@@ -44,10 +43,10 @@
     <mat-form-field>
         <textarea  name="description" matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.text"></textarea>
     </mat-form-field>
-    <button mat-flat-button color="primary" (click)="addTransaction()" *ngIf="!drop.id">
+    <button mat-flat-button color="primary" (click)="addTransaction()" [disabled]="btnDisabled" *ngIf="!drop.id">
         <mat-icon>add</mat-icon>  Add Transaction
     </button>
-    <button mat-flat-button color="primary" (click)="updateTransaction()" *ngIf="drop.id">
+    <button mat-flat-button color="primary" (click)="updateTransaction()" [disabled]="btnDisabled" *ngIf="drop.id">
         <mat-icon>add</mat-icon>  Update Transaction
     </button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>

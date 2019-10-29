@@ -3,6 +3,7 @@ export class Tag {
     name: string;
     color: string;
     count: number;
+    uid: string;
     createdAt: any;
     updatedAt: any;
 

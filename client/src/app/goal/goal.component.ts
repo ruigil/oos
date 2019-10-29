@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Location } from '@angular/common';
 
 import { FireService } from '../services/fire.service';
 import { DateTimeService } from '../services/date-time.service';
@@ -18,11 +20,19 @@ export class GoalComponent implements OnInit {
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
     recurrences: Array<{ value: string, text: string }>;
+    btnDisabled: boolean = false;
     field = new FormControl('', [
         Validators.required,
     ]);    
     
-    constructor(private dropsService: FireService, private route: ActivatedRoute, private router: Router, private dtService: DateTimeService) { 
+    constructor(
+        private dropsService: FireService, 
+        private route: ActivatedRoute, 
+        private router: Router, 
+        private dtService: DateTimeService,
+        private snackbar: MatSnackBar,
+        private location: Location) { 
+            
         this.recurrences = dtService.getRecurrences();
     }
 
@@ -37,7 +47,7 @@ export class GoalComponent implements OnInit {
                         goal: { system: false, completed: false, totals: [0,0,0,0,0,0,0] , tags: {} }, 
                         recurrence: "none",
                         tags: [""],
-                        date: this.dropsService.date2ts(new Date())
+                        date: this.dtService.date2ts(new Date())
                     }) ) : this.dropsService.docWithId$("drops/"+id);
             })
         ).subscribe( d => {
@@ -47,28 +57,33 @@ export class GoalComponent implements OnInit {
     }
 
     updateGoal() {
+        this.btnDisabled = true;
         let id = this.drop.id;
-        this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
-        this.drop.goal.system = false; // notify that this is a user update.
-        if (delete this.drop.id)
+        if (delete this.drop.id) {
+            this.drop.date = this.dtService.date2ts(this.dtService.getDate(this.dropDateTime));
+            this.drop.goal.system = false; // notify that this is a user update.
             this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { console.log("OK") },
-                (error) => { console.log("error") }
+                (value) => { this.location.back() },
+                (error) => { this.snackbar.open(`Error adding goal [${error}]`); this.btnDisabled = false; }
             );
-        this.router.navigate(["home"]);
+        }
     }
 
     addGoal() {
-        this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
+        this.btnDisabled = true;
+        this.drop.date = this.dtService.date2ts(this.dtService.getDate(this.dropDateTime));
         this.dropsService.add("drops",this.drop).then(
-            (value) => { console.log("OK") },
-            (error) => { console.log("error") }
+            (value) => { this.location.back() },
+            (error) => { this.snackbar.open(`Error updating goal [${error}]`); this.btnDisabled = false; }
         );
-        this.router.navigate(["home"]);
     }
 
     selectedTags(tags: Array<string>) {
         this.drop.tags = tags;
+    }
+
+    goBack() {
+        this.location.back();
     }
 
 }

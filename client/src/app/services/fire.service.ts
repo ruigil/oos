@@ -12,7 +12,8 @@ import {
 import * as firebase from 'firebase/app';
 
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
+import { AuthService } from './auth.service';
 
 type CollectionPredicate<T> = string | AngularFirestoreCollection<T>;
 type DocPredicate<T> = string | AngularFirestoreDocument<T>;
@@ -22,10 +23,14 @@ type DocPredicate<T> = string | AngularFirestoreDocument<T>;
 })
 export class FireService {
 
-    constructor(private firestore: AngularFirestore) { }
+    uid: string;
+
+    constructor(private firestore: AngularFirestore, private authService: AuthService) { 
+        authService.user().subscribe( u => this.uid = u.uid );
+    }
 
     get timestamp() {
-        return firebase.firestore.Timestamp.fromDate(new Date());//FieldValue.serverTimestamp();
+        return firebase.firestore.Timestamp.fromDate(new Date());
     }
 
     col<T>(ref: CollectionPredicate<T>, queryFn?): AngularFirestoreCollection<T> {
@@ -85,36 +90,36 @@ export class FireService {
         const now = this.timestamp;
         return this.doc(ref).set({
             ...data,
+            uid: this.uid,
             updatedAt: now,
             createdAt: now,
         });
     }
       
     update<T>(ref: DocPredicate<T>, data: any): Promise<void> {
-        console.log("fireservice update...")
         const now = this.timestamp;
         return this.doc(ref).update({
             ...data,
+            uid: this.uid,
             updatedAt: now
         });
     }
       
     delete<T>(ref: DocPredicate<T>): Promise<void> {
-        return this.doc(ref).delete();
+        console.log("obtain ref");
+        let d  = this.doc(ref);
+        console.log("delete");
+        return d.delete();
     }
       
     add<T>(ref: CollectionPredicate<T>, data): Promise<firebase.firestore.DocumentReference> {
-      console.log("fireservice add...")
       const now = this.timestamp;
         return this.col(ref).add({
           ...data,
+          uid: this.uid,
           updatedAt: now,
           createdAt: now,
         });
-    }
-
-    date2ts(date): firebase.firestore.Timestamp {
-        return firebase.firestore.Timestamp.fromDate(date);
     }
 
 }

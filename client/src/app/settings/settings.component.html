@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar" color="primary">
-    <button mat-icon-button routerLink="/home">
+    <button mat-icon-button (click)="goBack()">
         <mat-icon aria-label="Back">arrow_back</mat-icon>
     </button>
   <span>Settings</span>
@@ -35,46 +35,8 @@
     <mat-slide-toggle class="slide" [(ngModel)]="settings.system.day">Current Day is {{ settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
     <mat-slide-toggle class="slide" [(ngModel)]="settings.system.analytics">Monthly Analytics is {{ settings.system.analytics ? 'Active' : 'Inactive' }}</mat-slide-toggle>
 
-    <button mat-flat-button color="primary" (click)="saveSettings()">
+    <button mat-flat-button color="primary" [disabled]="btnDisabled" (click)="saveSettings()">
         <mat-icon>save</mat-icon>
         Save Settings
         </button>
-    </div>    
-<!--
-<ion-content>
-    <ion-list>
-        <ion-list-header>
-            <ion-label>Transactions</ion-label>
-        </ion-list-header>
-        <ion-item>
-            <ion-label>Currency</ion-label>
-            <ion-select [(ngModel)]="settings.transaction.currency" okText="Okay" cancelText="Dismiss">
-                <ion-select-option value="CHF">Swiss Franc</ion-select-option>
-                <ion-select-option value="EUR">Euro</ion-select-option>
-                <ion-select-option value="USD">Dollar</ion-select-option>
-                <ion-select-option value="GPB">Pound</ion-select-option>
-            </ion-select>
-        </ion-item>
-        <ion-list-header>
-            <ion-label>Home</ion-label>
-        </ion-list-header>
-        <ion-item>
-            <ion-label>Default Preview</ion-label>
-            <ion-select [(ngModel)]="settings.home.preview" okText="Okay" cancelText="Dismiss">
-                <ion-select-option value="day">Day</ion-select-option>
-                <ion-select-option value="week">Week</ion-select-option>
-                <ion-select-option value="month">Month</ion-select-option>
-                <ion-select-option value="year">Year</ion-select-option>
-            </ion-select>
-        </ion-item>
-        <ion-item>
-            <ion-label>Timezone</ion-label>
-            <ion-input [(ngModel)]="settings.home.timezone"></ion-input>
-        </ion-item>
-    </ion-list>    
-    
-    <ion-button (click)="saveSettings()" shape="round" fill="outline">
-        <ion-icon name="document" slot="start"></ion-icon>Save
-    </ion-button>
-</ion-content>
--->
+    </div>

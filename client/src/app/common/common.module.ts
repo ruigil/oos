@@ -58,9 +58,8 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatSlideToggleModule    
   ],
   declarations: [
-    FormatDatePipe, 
+    FormatDatePipe,  
     ShowdownPipe
-
   ],
   exports: [
     FormatDatePipe, 

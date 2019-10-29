@@ -2,18 +2,18 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OOSCommonModule } from '../common/common.module';
 
-import { RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router'; 
 
 import { HomeComponent } from './home.component';
 
 @NgModule({
   imports: [
-    CommonModule,
+    CommonModule, 
     OOSCommonModule,
     RouterModule.forChild([
       {
         path: '',
-        component: HomeComponent
+        component: HomeComponent 
       }
     ])
   ],

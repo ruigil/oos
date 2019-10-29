@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar" color="primary">
-    <button mat-icon-button routerLink="/home">
+    <button mat-icon-button (click)="goBack()">
         <mat-icon aria-label="Back">arrow_back</mat-icon>
     </button>
   <span>Rate</span>
@@ -39,11 +39,11 @@
     <mat-label>Description</mat-label>
     <textarea matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.text" name="description"></textarea>
   </mat-form-field>
-    <button mat-flat-button color="primary" (click)="addRate()" *ngIf="!drop.id">
-        <mat-icon>add</mat-icon>  Add Rate
+    <button mat-flat-button color="primary" (click)="addRate()" [disabled]="btnDisabled" *ngIf="!drop.id">
+        <mat-icon>add</mat-icon> Add Rate
     </button>
-    <button mat-flat-button color="primary" (click)="updateRate()" *ngIf="drop.id">
-        <mat-icon>add</mat-icon>  Update Rate
+    <button mat-flat-button color="primary" (click)="updateRate()" [disabled]="btnDisabled" *ngIf="drop.id">
+        <mat-icon>update</mat-icon> Update Rate
     </button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </form>

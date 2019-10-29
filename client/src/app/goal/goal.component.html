@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar" color="primary">
-    <button mat-icon-button routerLink="/home">
+    <button mat-icon-button (click)="goBack()">
         <mat-icon aria-label="Back">arrow_back</mat-icon>
     </button>
   <span>Goal</span>
@@ -21,7 +21,6 @@
     </mat-form-field>
     <mat-form-field >
         <input name="time" matInput [ngxTimepicker]="timepicker" [format]="24" placeholder="Time" [(ngModel)]="dropDateTime.time" required>
-        <!--<ngx-material-timepicker-toggle [for]="timepicker"></ngx-material-timepicker-toggle>-->
         <ngx-material-timepicker #timepicker></ngx-material-timepicker>
         <mat-error *ngIf="field.hasError('required')">
             Time is <strong>required</strong>
@@ -33,11 +32,11 @@
         <mat-option *ngFor="let rec of recurrences" [value]="rec.value">{{rec.text}}</mat-option>
     </mat-select>
     </mat-form-field>
-    <button mat-flat-button color="primary" (click)="addGoal()" *ngIf="!drop.id">
-        <mat-icon>add</mat-icon>  Add Goal
+    <button mat-flat-button color="primary" (click)="addGoal()" [disabled]="btnDisabled" *ngIf="!drop.id">
+        <mat-icon>add</mat-icon> Add Goal
     </button>
-    <button mat-flat-button color="primary" (click)="updateGoal()" *ngIf="drop.id">
-        <mat-icon>add</mat-icon>  Update Goal
+    <button mat-flat-button color="primary" (click)="updateGoal()" [disabled]="btnDisabled" *ngIf="drop.id">
+        <mat-icon>update</mat-icon> Update Goal
     </button>
     <oos-tags [mode]="false" [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </form>

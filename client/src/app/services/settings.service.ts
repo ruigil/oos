@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
+import { map, switchMap, share } from 'rxjs/operators';
 
-import { FireService } from '../services/fire.service';
+import { FireService } from './fire.service';
 import { Settings } from '../model/settings'
+import { AuthService } from './auth.service';
+import { User } from '../model/user';
 
 @Injectable({
   providedIn: 'root'
@@ -10,16 +13,21 @@ import { Settings } from '../model/settings'
 export class SettingsService {
 
   settings: Settings;
+  user: any;
+  settings$: Subject<Settings> = new Subject<Settings>();
 
-  constructor(private fireService: FireService) { 
-      this.settings = new Settings()
+  constructor(private fireService: FireService, private authService: AuthService) { 
+      this.settings = new Settings({ home:{ preview: 'day', timezone: -2 }, system: { day: true, analytics: true }, transaction: { currency: 'CHF'} })
   }
 
   getSettings(): Observable<Settings> {
-      return this.fireService.doc$("settings/settings");
+      return this.authService.user().pipe( switchMap(u => {
+          this.user = u;
+          return this.fireService.doc$("settings/"+u.uid).pipe( map( (s:Settings) => s ? s : this.settings) )
+      }), share());
   }
 
-  saveSettings(settings: Settings) {
-      return this.fireService.update("settings/settings",settings);
+  saveSettings(sets: Settings) {
+      return this.fireService.set("settings/"+this.user.uid, sets );
   }
 }

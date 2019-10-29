@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FireService } from '../services/fire.service';
 import { Tag } from '../model/tag';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'oos-tags',
@@ -23,14 +24,19 @@ export class TagsComponent implements OnInit {
         {name: "Yellow", value:"yellow"}
     ];
 
+    uid: string;
+
     
 
-    constructor(private fireService: FireService) {
+    constructor(private fireService: FireService, private authService: AuthService) {
     }
 
     ngOnInit() {
-      this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc')).subscribe( (tags:Tag[]) => {
-          this.tags = tags.map( t => ({ id: t.id, name: t.name, color: t.color, count: t.count, available: !this.selected.includes(t.name)}) );
+      this.authService.user().subscribe( u => {
+        this.uid = u.uid 
+        this.fireService.colWithIds$("tags", ref => ref.where("uid","==",u.uid).orderBy('updatedAt','desc')).subscribe( (tags:Tag[]) => {
+            this.tags = tags.map( t => ({ id: t.id, name: t.name, color: t.color, count: t.count, available: !this.selected.includes(t.name)}) );
+        });
       });
     }
 
@@ -41,7 +47,7 @@ export class TagsComponent implements OnInit {
     addTag() {
       const ta = this.tags.filter( t => t.name === this.tagName);
       const tagCount = ta.length == 0 ? 0 : ta[0].count;
-      this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: tagCount, color: this.tagColor });
+      this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: tagCount, color: this.tagColor, uid: this.uid });
       if (!this.mode) {
         this.selected.push(this.tagName);
       }

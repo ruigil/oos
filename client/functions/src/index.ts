@@ -1,20 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-//import { format, addDays, addWeeks, addMonths, endOfToday, startOfToday, getMonth, endOfMonth, addYears, isSaturday, isFriday } from 'date-fns';
-//import * as moment from 'moment';
 import * as moment from 'moment-timezone';
 
 admin.initializeApp({ credential: admin.credential.applicationDefault() });
-
-
-//functions.config().firebase)
-
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
-//
-// export const helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
 
 enum Operation {
     Increment,
@@ -115,6 +103,27 @@ const fillGoal = async (dropa:any) => {
     
     return goal;
 }
+
+
+
+export const migrateData = functions.pubsub.topic("oos-time").onPublish(async (message, context) => {
+    
+    return admin.firestore().collection("drops").limit(10000).get()
+    .then( qs => {
+        const drops:any = [];
+        qs.forEach( d => drops.push({ ...d.data(), id: d.id } ) );
+        console.log("Total drops: " + drops.length);
+
+        drops.map( (drop:any) => { 
+                let id = drop.id; 
+                delete drop.id; 
+                if (!id) console.log(" id is -> " + id);
+                //console.log("update id " + id);
+                return admin.firestore().doc("drops/"+id).set( {...drop, uid: "y03RkJVdZlNoL3IwFHTke01DJjv2"} ).then( d => console.log("updated "+ id));
+            } ); 
+    });    
+});
+
 
 export const updateSettings = functions
     .firestore
@@ -382,11 +391,8 @@ export const updateStatistics = functions
 export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (message, context) => {
     // there is a difference between the cloud scheduler time, and the timestamp in the function
     // cloud scheduler fires at 00:00 zurich time, but the execution time is utc.
-    // so it is 22:00 GMT = 00:00 GMT+2
+    // so it is 22:00 GMT = 00:00 CET+2
     // check if we can use schedule cloud function
-
-    console.log(moment().startOf("day").tz("Europe/Zurich").toDate());
-    console.log(admin.firestore.Timestamp.fromDate(moment().startOf("day").tz("Europe/Zurich").toDate()));
 
     const endDate = moment().endOf('day').subtract(2,'hours');
     const startDate = moment().startOf('day').subtract(2,'hours');
@@ -401,6 +407,8 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
     .then( qs => {
         const drops:any = [];
         qs.forEach( d => drops.push(d.data()));
+        console.log("qs");
+        console.log( drops );
         drops.filter( (d:any) => d.recurrence !== "none").map( (d:any) => {
             const calculDate = moment(d.date.toDate());
             if (d.type==="TASK") d.task.completed = false;
@@ -430,6 +438,7 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
                 .catch( (err) => console.log(err));
 
             } else {
+                console.log(d);
                 
                 return admin.firestore().collection("drops").add({...d, updatedAt: endTS, createdAt: endTS })
                 .catch( (err) => console.log(err));

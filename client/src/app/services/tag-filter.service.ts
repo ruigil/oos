@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
-import { map, flatMap, filter, tap } from 'rxjs/operators';
+import { map, flatMap, filter, tap, withLatestFrom, distinctUntilChanged, shareReplay, share } from 'rxjs/operators';
 
 import { FireService } from '../services/fire.service';
 import { Drop } from "../model/drop";
 import { Tag } from "../model/tag";
+import * as moment from 'moment';
+import { AuthService } from './auth.service';
+ 
+interface Page {
+    startAt: any;
+    size: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -12,42 +19,44 @@ import { Tag } from "../model/tag";
 export class TagFilterService {
 
   drops$: Observable<Drop[]>;
-  skeys: Array<any> = [{},{},{}];
-  sidx: number = 0;
-  tags$: Observable<Tag[]>;
   selectedTags$: BehaviorSubject<string[]> = new BehaviorSubject([]);
-  startPage$: Subject<any> = new Subject();
+  startPage$: Subject<Page> = new Subject();  
 
-  constructor(private fireService: FireService) {
-    this.drops$ = combineLatest(this.selectedTags$,this.startPage$).pipe( flatMap( ([tags,page]) => {
-            ////console.log(tags);
-            //console.log(ts);
-            //console.log(sa);
+  constructor(private fireService: FireService, private authService: AuthService) {
+
+      
+    this.drops$ = combineLatest(this.selectedTags$,this.startPage$, this.authService.user()).pipe( flatMap( ([tags,page,user]) => {
+        console.log("user");
+        console.log(user);
+        console.log("tags");
+        console.log(tags);
+        console.log("page");
+        console.log(page);  
         return tags.length > 0 ? 
-            this.fireService.colWithIds$("drops", ref => ref.where("date","<=",page.startAt).where("tags","array-contains",tags[0]).orderBy("date","desc").limit(page.size) )
+            this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).where("tags","array-contains",tags[0]).orderBy("date","desc").startAt(page.startAt).limit(page.size) )
                 // local filter by the selected tags.
                 .pipe ( map( drops => drops.filter( d => tags.every(t => d.tags.includes(t),this) )))  
-            : this.fireService.colWithIds$("drops", ref => ref.where("date","<=",page.startAt).orderBy("date","desc").limit(page.size) );
-    }));
-    this.tags$ = this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc'));
+            : this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).orderBy("date","desc").startAt(page.startAt).limit(page.size) );
+    }), share(), tap( d => console.log("n drops -> " + d.length))  );  
 }
 
   selectTag(tags: string[]) {
     this.selectedTags$.next(tags);
   }
 
-  selectPage(page: any) {
+  selectPage(page: Page) {
       this.startPage$.next(page);
   }
 
   tags():Observable<Tag[]> {
-    return combineLatest(this.tags$,this.drops$, this.selectedTags$).pipe( map( ([tags,drops, select]) => {
+    return combineLatest(this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc')),this.drops$)
+    .pipe( map( ([tags,drops]) => {
       // filter the tags that are contained in a least one those drops.
-      return select.length == 0 ? tags : tags.filter( t => drops.some( d => d.tags.includes(t.name)) );
-    }) );
+      return tags.filter( t => drops.some( d => d.tags.includes(t.name)) ); 
+    }));
   }
 
   drops():Observable<Drop[]> {
-    return this.drops$.pipe( tap( d => console.log("n drops -> " + d.length)) ); 
+    return this.drops$; 
   }
 }

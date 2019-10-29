@@ -3,6 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Location } from '@angular/common';
 
 import { SettingsService } from '../services/settings.service';
 import { FireService } from '../services/fire.service';
@@ -19,6 +21,7 @@ export class RateDetailComponent implements OnInit {
 
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
+    btnDisabled: boolean = false; 
     field = new FormControl('', [
         Validators.required,
     ]);    
@@ -30,11 +33,12 @@ export class RateDetailComponent implements OnInit {
         private settingsService: SettingsService, 
         private route: ActivatedRoute, 
         private router: Router,
-        private dtService:DateTimeService) { 
+        private dtService: DateTimeService,
+        private snackbar: MatSnackBar,
+        private location: Location) { 
 
         this.drop = new Drop({ rate: {text: "", value: 0}, recurrence: 'none' });
         this.recurrences = dtService.getRecurrences();
-
     }
 
     ngOnInit() {
@@ -45,7 +49,7 @@ export class RateDetailComponent implements OnInit {
                     text: "",
                     type: "RATE",
                     tags: [], 
-                    date: this.dropsService.date2ts(new Date()),
+                    date: this.dtService.date2ts(new Date()),
                     recurrence: 'none',
                     rate: {
                         value: 3,
@@ -59,26 +63,32 @@ export class RateDetailComponent implements OnInit {
     }
 
     addRate() {
-            this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
-            this.dropsService.add("drops",this.drop).then(
-            (value) => { this.router.navigate(["home"]) },
-            (error) => { console.log("error") }
+        this.btnDisabled = true;
+        this.drop.date = this.dtService.date2ts(this.dtService.getDate(this.dropDateTime));
+        this.dropsService.add("drops",this.drop).then(
+            (value) => { this.location.back() },
+            (error) => { this.snackbar.open(`Error updating adding [${error}]`); this.btnDisabled = false; }
         );
     }
     
     updateRate() {
+        this.btnDisabled = true;
         let id = this.drop.id;
-        if (delete this.drop.id)
-            this.drop.date = this.dropsService.date2ts(this.dtService.getDate(this.dropDateTime));
+        if (delete this.drop.id) {
+            this.drop.date = this.dtService.date2ts(this.dtService.getDate(this.dropDateTime));
             this.dropsService.update("drops/"+ id, this.drop ).then( 
-                (value) => { this.router.navigate(["home"]) },
-                (error) => { console.log("error") }
+                (value) => { this.location.back() },
+                (error) => { this.snackbar.open(`Error updating rate [${error}]`); this.btnDisabled = false; }
             ); 
+        }
     }
 
     selectedTags(tags: Array<string>) {
         this.drop.tags = tags;
     }
 
+    goBack() {
+        this.location.back();
+    }
 
 }

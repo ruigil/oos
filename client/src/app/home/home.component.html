@@ -13,36 +13,35 @@
     <mat-chip-list>
         <mat-chip color="accent" selected (click)="picker.open()"><mat-icon>access_time</mat-icon>&nbsp;{{ page.startAt.toDate() | formatDate }}</mat-chip>
     </mat-chip-list>
-    <input matInput [matDatepicker]="picker" (change)="setStartAt(event)" placeholder="Choose a date" style="display: none" value="">
+    <input matInput [matDatepicker]="picker" (change)="setStartAt($event)" placeholder="Choose a date" style="display: none" value="">
     <mat-datepicker #picker></mat-datepicker>
 
 </div>
-</mat-toolbar>
+</mat-toolbar> 
 <div class="space"></div>
 <mat-accordion cdkScrollable>
   <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index;  trackBy: dropIdentity"> 
         <mat-expansion-panel-header [ngClass]="{ 'month': isMonth(drop), 'week': isWeek(drop), 'today': isToday(drop), 'past': isPast(drop)  }" >
-            <mat-panel-title *ngIf="isNote(drop)"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon><div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div></mat-panel-title>
-            <mat-panel-title *ngIf="isGoal(drop)"><mat-icon class="goal">center_focus_strong</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>  
-            
-                <div class="note" [innerHTML]="drop.text.substring(0,20).concat('...') | showdown"></div>
-            
+            <mat-panel-title *ngIf="isType(drop,'NOTE')"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon><div [innerHTML]="textPreview(drop) | showdown"></div></mat-panel-title>
+            <mat-panel-title *ngIf="isType(drop,'GOAL')"><mat-icon class="goal">center_focus_strong</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>  
+                <div [innerHTML]="textPreview(drop) | showdown"></div>
             </mat-panel-title>
-            <mat-panel-title *ngIf="isTransaction(drop)"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
+            <mat-panel-title *ngIf="isType(drop,'TRX')"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
             <mat-chip-list>
                 <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip> <mat-panel-description>{{drop.text}}</mat-panel-description>
             </mat-chip-list>
             </mat-panel-title>
-            <mat-panel-title *ngIf="isTask(drop)"><mat-icon class="task">folder</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
-                
-                <mat-chip-list [selectable]="true" >
+            <mat-panel-title *ngIf="isType(drop,'TASK')"><mat-icon class="task">folder</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
+                <mat-chip-list [selectable]="true">
                     <mat-chip [ngClass]="{'taskbg' : drop.task.completed }" (click)="complete(drop)"><mat-icon >{{drop.task.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>&nbsp;{{drop.task.title}}</mat-chip>
                 </mat-chip-list>
             </mat-panel-title>
-            <mat-panel-title *ngIf="isSystem(drop)" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
-            <mat-panel-title *ngIf="isAnalytics(drop)" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
-            <mat-panel-title *ngIf="isRate(drop)" class="drop-summary">
-                <mat-icon class="rate">star_rate</mat-icon>
+            
+            <mat-panel-title *ngIf="isType(drop,'SYS')" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
+            <mat-panel-title *ngIf="isType(drop,'ANLY')" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
+
+            <mat-panel-title *ngIf="isType(drop,'RATE')" class="drop-summary">
+                <mat-icon class="rate">star_rate</mat-icon> 
                 <mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>
                 <mat-chip-list [selectable]="true">
                     <mat-chip class="rate-bg">
@@ -52,13 +51,13 @@
                 </mat-chip-list>
             </mat-panel-title>
 
-            <mat-panel-description *ngIf="!isAnalytics(drop) && !isSystem(drop)" class="align-right">{{ drop.date?.toDate() | formatDate }}</mat-panel-description>
+            <mat-panel-description *ngIf="!isType(drop,'ANLY') && !isType(drop,'SYS')" class="align-right">{{ drop.date?.toDate() | formatDate }}</mat-panel-description>
         </mat-expansion-panel-header> 
 
 
         <div>
-            <p *ngIf="!isAnalytics(drop) && !isSystem(drop)" [innerHTML]="drop.text | showdown "></p>
-            <mat-list *ngIf="isGoal(drop)">
+            <p *ngIf="!isType(drop,'ANLY') && !isType(drop,'SYS')" [innerHTML]="drop.text | showdown "></p>
+            <mat-list *ngIf="isType(drop,'GOAL')">
             <mat-divider></mat-divider>
             <mat-list-item *ngFor="let tag of dropTags(drop.goal.tags)">
                 <div class="tag-summary">
@@ -73,7 +72,7 @@
             </mat-list-item>
 
             </mat-list>
-            <mat-list *ngIf="isAnalytics(drop)">
+            <mat-list *ngIf="isType(drop,'ANLY')">
             <h4>Tags</h4>
             <mat-divider></mat-divider>
             <mat-list-item *ngFor="let tag of dropTags(drop.analytics.tags)">
@@ -119,23 +118,23 @@
             </mat-list-item>
         </mat-list>
 
-            <mat-chip-list *ngIf="!isGoal(drop) && !isAnalytics(drop)">
+            <mat-chip-list *ngIf="!isType(drop,'GOAL') && !isType(drop,'ANLY')">
                 <mat-chip *ngFor="let t of drop.tags"><mat-icon [ngClass]="tagColor(t)">bookmark</mat-icon> {{t}}</mat-chip> 
             </mat-chip-list>
         </div>
          
-        <mat-action-row class="actions" *ngIf="!isAnalytics(drop) && !isSystem(drop)" > <!-- -->
+        <mat-action-row class="actions" *ngIf="!isType(drop,'ANLY') && !isType(drop,'SYS')" > 
             <button mat-stroked-button color="primary" (click)="edit(drop)">Edit</button>
             <div class="grow"></div>
             <button mat-stroked-button color="warn" (click)="delete(drop)">Delete</button>
         </mat-action-row>
 
    </mat-expansion-panel>
-</mat-accordion>
+</mat-accordion> 
 <button class="fab" mat-fab aria-label="Add drop" (click)="toggleFab()">
     <mat-icon>add</mat-icon>
 </button>
-<div [ngClass]="{'fab-buttons-on': fabButtons, 'fab-buttons-off': !fabButtons }">
+<div [@openClose]="fabButtons ? 'fab-buttons-on' : 'fab-buttons-off' " [ngClass]="fabButtons ? 'fab-buttons-on' : 'fab-buttons-off'"> 
     <button color="primary" mat-mini-fab aria-label="Note" class="note-fab" routerLink="/note/edit/new">
         <mat-icon>note</mat-icon>
     </button>

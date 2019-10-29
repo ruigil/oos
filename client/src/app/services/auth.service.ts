@@ -3,56 +3,47 @@ import { Router } from '@angular/router';
 
 import { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
-import {
-    AngularFirestore,
-    AngularFirestoreDocument
-} from '@angular/fire/firestore';
 
 import { Observable, of} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { User } from '../model/user';
+import { FireService } from './fire.service';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-    user$ : Observable<User>;
+    user$ : Observable<any>;
 
-  constructor(private auth: AngularFireAuth, private afs: AngularFirestore, private router: Router) { 
-      this.user$ = this.auth.authState.pipe( 
-          switchMap(user => {
-              if (user) {
-                  return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
-              } else {
-                  return of(null);
-              }
-
-          }
-      ));
+  constructor(private auth: AngularFireAuth, private router: Router) { 
+      this.user$ = this.auth.authState.pipe( switchMap(user => of(user) ));
   }
 
+  user() {return this.user$; }
+
+/*
   async googleSignin() {
       const provider = new auth.GoogleAuthProvider();
+      console.log("login in user");
       const credential = await this.auth.auth.signInWithPopup(provider);
-      let r = this.updateUserData(credential.user);
-      console.log(r);
-      return this.router.navigate(["/home"]);
+      console.log("setting user");
+
+      return this.fireService.doc<User>(`users/${credential.user.uid}`).set(
+        {
+            uid: credential.user.uid,
+            email: credential.user.email,
+            displayName: credential.user.displayName,
+            settings: { transaction: { currency: 'CHF'}, home: { preview: 'day', timezone: -2}, system: { day: true, analytics: true } }
+        }
+      ).then( (success) => this.router.navigate(["/home"]) );
   }
 
   async signOut() {
+      console.log("signout");
       await this.auth.auth.signOut();
       return this.router.navigate(["/"]);
   }
+  */
 
-  updateUserData(user) {
-      return this.afs.doc<User>(`users/${user.uid}`).set(
-      {
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName
-      }, 
-      {merge: true});
-      //return this.router.navigate(["/home"]);
-  }
 }
