@@ -26,7 +26,11 @@ export class FireService {
     uid: string;
 
     constructor(private firestore: AngularFirestore, private authService: AuthService) { 
-        authService.user().subscribe( u => this.uid = u.uid );
+        this.authService.user().subscribe( u => {
+            console.log("new User Logged in in fireservice");
+            console.log("new user uid " + u.uid ? u.uid : "NULL");
+            this.uid = u.uid ? u.uid : "NULL";
+        });
     }
 
     get timestamp() {
@@ -117,6 +121,7 @@ export class FireService {
         return this.col(ref).add({
           ...data,
           uid: this.uid,
+          deleted: false,
           updatedAt: now,
           createdAt: now,
         });

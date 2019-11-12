@@ -10,6 +10,7 @@ export class Drop {
     recurrence: string;
     tags: Array<string>;
     date: any;
+    deleted: boolean;
     updatedAt: any;
     createdAt: any;
     

@@ -62,7 +62,7 @@ export class HomeComponent implements OnInit {
   colors = {};
   perf = firebase.performance();
 
-  page: Page = { startAt: this.dtService.date2ts(moment().endOf('day').toDate()), size: 60 }
+  page: Page = { startAt: this.dtService.date2ts(moment().endOf('day').toDate()), size: 30 }
 
   preview: string = "day";
   times: Array<{ name: string, value: string}> = [ 
@@ -129,6 +129,14 @@ export class HomeComponent implements OnInit {
 
   delete(drop:Drop) {
     console.log("delete drop..."+drop.id);
+    let id = drop.id;
+    drop.deleted = true;
+    if (delete drop.id) {
+        this.fireService.update("drops/"+ id, drop ).then( 
+            (value) => { console.log("success") },
+            (error) => { console.log("error") }
+        );
+    }
 
     this.fireService.delete("drops/"+drop.id).then(
         (value) => { console.log(" deleted item") },

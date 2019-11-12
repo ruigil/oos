@@ -25,18 +25,16 @@ export class TagFilterService {
   constructor(private fireService: FireService, private authService: AuthService) {
 
       
-    this.drops$ = combineLatest(this.selectedTags$,this.startPage$, this.authService.user()).pipe( flatMap( ([tags,page,user]) => {
-        console.log("user");
-        console.log(user);
-        console.log("tags");
-        console.log(tags);
-        console.log("page");
-        console.log(page);  
+    this.drops$ = combineLatest(this.selectedTags$,this.startPage$, this.authService.user()).pipe( flatMap( ([tags,page,user]) => {  
+        //console.log("tags");
+        //console.log(tags);
+        //console.log("page");
+        //console.log(page);  
         return tags.length > 0 ? 
-            this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).where("tags","array-contains",tags[0]).orderBy("date","desc").startAt(page.startAt).limit(page.size) )
+            this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).where("deleted","==",false).where("tags","array-contains",tags[0]).orderBy("date","desc").startAt(page.startAt).limit(page.size) )
                 // local filter by the selected tags.
                 .pipe ( map( drops => drops.filter( d => tags.every(t => d.tags.includes(t),this) )))  
-            : this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).orderBy("date","desc").startAt(page.startAt).limit(page.size) );
+            : this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).where("deleted","==",false).orderBy("date","desc").startAt(page.startAt).limit(page.size) );
     }), share(), tap( d => console.log("n drops -> " + d.length))  );  
 }
 

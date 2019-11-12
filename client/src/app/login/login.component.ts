@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { AuthProcessService } from 'ngx-auth-firebaseui';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { User } from '../model/user';
 import {
     AngularFirestore,
@@ -18,21 +18,11 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
     user$ : Observable<User>;
 
-  constructor(private auth: AuthProcessService,private afs: AngularFirestore, private router: Router) { 
+  constructor(private auth: AuthService,private afs: AngularFirestore, private router: Router) { 
       //auth2.handleSuccess().then()
       //auth.user$.subscribe( user => user ? console.log(user.email) : console.log("login") );      
       //auth2.afa.authState.subscribe( user => console.log(user) );
-      this.user$ = this.auth.afa.authState.pipe( 
-          switchMap(user => {
-              console.log(user);
-              if (user) {
-                  return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
-              } else {
-                  return of(null);
-              }
-
-          }
-      ));
+      this.user$ = this.auth.user().pipe( tap( u => console.log(" in the login component ")) );
  }
 
   ngOnInit() {

@@ -114,13 +114,16 @@ export const migrateData = functions.pubsub.topic("oos-time").onPublish(async (m
         qs.forEach( d => drops.push({ ...d.data(), id: d.id } ) );
         console.log("Total drops: " + drops.length);
 
+        const promises:any = [];
+
         drops.map( (drop:any) => { 
-                let id = drop.id; 
-                delete drop.id; 
-                if (!id) console.log(" id is -> " + id);
-                //console.log("update id " + id);
-                return admin.firestore().doc("drops/"+id).set( {...drop, uid: "y03RkJVdZlNoL3IwFHTke01DJjv2"} ).then( d => console.log("updated "+ id));
-            } ); 
+            let id = drop.id; 
+            delete drop.id; 
+            if (!id) console.log(" id is -> " + id);
+            //console.log("update id " + id);
+            promises.push(admin.firestore().doc("drops/"+id).set( {...drop, deleted: false } ));
+        }); 
+        return Promise.all(promises).then( s => console.log(drops.length + " drops updated."));
     });    
 });
 
@@ -128,10 +131,10 @@ export const migrateData = functions.pubsub.topic("oos-time").onPublish(async (m
 export const updateSettings = functions
     .firestore
     .document('settings/{settingsID}')
-    .onUpdate((change:any, context) => {
+    .onWrite((change:any, context) => {
         console.log("setting update...")
-        const beforeSetting:any = change.before.data();
-        const afterSetting:any = change.after.data();
+        const afterSetting = change.after ? change.after.exists ? change.after.data() : null : null;
+        const beforeSetting = change.before ? change.before.exists ? change.before.data() : null : null;
 
         console.log("Settings before");
         console.log(beforeSetting);
@@ -157,6 +160,8 @@ export const updateSettings = functions
                 recurrence: "month",
                 analytics: { totals: [0,0,0,0,0,0,0], tags: {} },
                 date: dateTS,
+                deleted: false,
+                uid: afterSetting.uid,
                 updatedAt: currentTS,
                 createdAt: currentTS,
             })
@@ -167,7 +172,7 @@ export const updateSettings = functions
             console.log("delete analytics");
             return admin.firestore()
             .doc(`drops/ANALYTICS-${ moment().year() }-${ moment().month() }`)
-            .delete()
+            .update({ deleted: true })
             .catch( (err) => console.log(err) )
         }
         if ((!beforeSetting.system.day) && (afterSetting.system.day)) {
@@ -181,6 +186,8 @@ export const updateSettings = functions
                 tags: [],
                 recurrence: "day",
                 date: todayTS,
+                deleted: false,
+                uid: afterSetting.uid,
                 updatedAt: currentTS,
                 createdAt: currentTS,
             })
@@ -190,7 +197,7 @@ export const updateSettings = functions
             // delete day
             return admin.firestore()
             .doc(`drops/DAY-${ moment().year() }-${ moment().month() }-${ moment().date() }`)
-            .delete()
+            .update({ deleted: true })
             .catch( (err) => console.log(err) )
         }
 

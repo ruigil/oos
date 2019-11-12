@@ -23,7 +23,7 @@ export class SettingsService {
   getSettings(): Observable<Settings> {
       return this.authService.user().pipe( switchMap(u => {
           this.user = u;
-          return this.fireService.doc$("settings/"+u.uid).pipe( map( (s:Settings) => s ? s : this.settings) )
+          return this.fireService.doc$("settings/"+u.uid).pipe( map( (s:Settings) => s ? {...s, uid: u.uid } : {...this.settings, uid: u.uid }) )
       }), share());
   }
 

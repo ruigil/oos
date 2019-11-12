@@ -5,9 +5,10 @@ import { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 import { Observable, of} from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap, share } from 'rxjs/operators';
 import { User } from '../model/user';
 import { FireService } from './fire.service';
+import { AuthProcessService } from 'ngx-auth-firebaseui';
 
 
 @Injectable({
@@ -16,8 +17,10 @@ import { FireService } from './fire.service';
 export class AuthService {
     user$ : Observable<any>;
 
-  constructor(private auth: AngularFireAuth, private router: Router) { 
-      this.user$ = this.auth.authState.pipe( switchMap(user => of(user) ));
+  constructor(private auth: AngularFireAuth, private auth2: AuthProcessService, private router: Router) { 
+      this.user$ = this.auth2.afa.authState.pipe( tap( u => { console.log("new User Logged in in authservice"); console.log(u) })); 
+            
+      //this.user$ = this.auth.authState.pipe( switchMap(user => { console.log(user); return of(user); }));
   }
 
   user() {return this.user$; }
