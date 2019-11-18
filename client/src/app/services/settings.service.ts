@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { map, switchMap, share } from 'rxjs/operators';
+import { Subject, Observable, of } from 'rxjs';
+import { map, flatMap, share, filter } from 'rxjs/operators';
 
 import { FireService } from './fire.service';
 import { Settings } from '../model/settings'
@@ -21,7 +21,7 @@ export class SettingsService {
   }
 
   getSettings(): Observable<Settings> {
-      return this.authService.user().pipe( switchMap(u => {
+      return this.authService.user().pipe( filter(u => u != null), flatMap((u:any) => {
           this.user = u;
           return this.fireService.doc$("settings/"+u.uid).pipe( map( (s:Settings) => s ? {...s, uid: u.uid } : {...this.settings, uid: u.uid }) )
       }), share());

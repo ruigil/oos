@@ -19,23 +19,26 @@ interface Page {
 export class TagFilterService {
 
   drops$: Observable<Drop[]>;
+  tags$: Observable<any[]>;
   selectedTags$: BehaviorSubject<string[]> = new BehaviorSubject([]);
   startPage$: Subject<Page> = new Subject();  
 
   constructor(private fireService: FireService, private authService: AuthService) {
 
       
-    this.drops$ = combineLatest(this.selectedTags$,this.startPage$, this.authService.user()).pipe( flatMap( ([tags,page,user]) => {  
-        //console.log("tags");
-        //console.log(tags);
-        //console.log("page");
-        //console.log(page);  
-        return tags.length > 0 ? 
-            this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).where("deleted","==",false).where("tags","array-contains",tags[0]).orderBy("date","desc").startAt(page.startAt).limit(page.size) )
+    this.drops$ = combineLatest(this.selectedTags$,this.startPage$, this.authService.user()).pipe( filter(([tags,page,user]) => user != null), flatMap( ([tags,page,user]) => {  
+        console.log("tags"); 
+        console.log(tags);
+        console.log("page");
+        console.log(page);
+        console.log("user in drops observable");  
+        console.log(user);
+        return tags.length > 0 ?   
+            this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).where("tags","array-contains",tags[0]).orderBy("date","desc").startAt(page.startAt).limit(page.size) )
                 // local filter by the selected tags.
                 .pipe ( map( drops => drops.filter( d => tags.every(t => d.tags.includes(t),this) )))  
-            : this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).where("deleted","==",false).orderBy("date","desc").startAt(page.startAt).limit(page.size) );
-    }), share(), tap( d => console.log("n drops -> " + d.length))  );  
+            : this.fireService.colWithIds$("drops", ref => ref.where("uid","==",user.uid).orderBy("date","desc").startAt(page.startAt).limit(page.size) );
+    }), map( (ds:Drop[]) => ds.filter( d => !d.deleted ) ), share(), tap( d => console.log("n drops -> " + d.length)) );
 }
 
   selectTag(tags: string[]) {
@@ -50,7 +53,7 @@ export class TagFilterService {
     return combineLatest(this.fireService.colWithIds$("tags", ref => ref.orderBy('updatedAt','desc')),this.drops$)
     .pipe( map( ([tags,drops]) => {
       // filter the tags that are contained in a least one those drops.
-      return tags.filter( t => drops.some( d => d.tags.includes(t.name)) ); 
+      return tags.filter( t => drops.some( d => d.tags.includes(t.name)) );
     }));
   }
 

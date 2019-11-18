@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
       private scroll: ScrollDispatcher) {
 
       settings.getSettings().subscribe( s => {
-          console.log(s);
+          //console.log(s);
           this.preview = s.home.preview; 
           this.page.startAt = dtService.getTimestamp(s.home.preview);
           this.tagFilterService.selectPage(this.page);  
@@ -95,12 +95,12 @@ export class HomeComponent implements OnInit {
         this.dropsObs = this.tagFilterService.drops();
         this.scroll.scrolled(200)
             .pipe( 
-                map((s:any) => { let p = s.measureScrollOffset("top") / (s.measureScrollOffset("top")+s.measureScrollOffset("bottom")); return p < 0.33 ? -1 : p > 0.66 ? 1 : 0 }),
-                distinctUntilChanged(),   
+                map((s:any) => { let p = s.measureScrollOffset("top") / (s.measureScrollOffset("top")+s.measureScrollOffset("bottom")); console.log(p); return p < 0.2 ? -1 : p > 0.8 ? 1 : 0 }), 
+                distinctUntilChanged(),
                 withLatestFrom(this.dropsObs), 
-                scan( (acc, [dir,drops]) => dir == -1 ? (acc.length != 1 ? acc.slice(0,acc.length-1) : [this.page.startAt] ) : (dir == 1 ? acc.concat([drops[15].date]) : acc) , [this.page.startAt]),
-                distinctUntilChanged((prev,curr) => prev.length === curr.length),    
-            ).subscribe( (acc:any) => { this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60}); console.log(acc) }); //
+                scan( (acc, [dir,drops]) => dir == -1 ? (acc.length != 1 ? acc.slice(0,acc.length-1) : [this.page.startAt] ) : (dir == 1 ? acc.concat([drops[10].date]) : acc) , [this.page.startAt]),
+                distinctUntilChanged((prev,curr) => prev.length === curr.length),
+            ).subscribe( (acc:any) => { this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 40}); console.log(acc) }); 
   }
 
   menuToggle() {
@@ -132,16 +132,12 @@ export class HomeComponent implements OnInit {
     let id = drop.id;
     drop.deleted = true;
     if (delete drop.id) {
-        this.fireService.update("drops/"+ id, drop ).then( 
+        this.fireService.update("drops/"+ id, drop ).then(
             (value) => { console.log("success") },
             (error) => { console.log("error") }
         );
     }
 
-    this.fireService.delete("drops/"+drop.id).then(
-        (value) => { console.log(" deleted item") },
-        (error) => { console.log("error") }
-    );
   }
 
   edit(drop:Drop) {

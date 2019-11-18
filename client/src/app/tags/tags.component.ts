@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FireService } from '../services/fire.service';
 import { Tag } from '../model/tag';
 import { AuthService } from '../services/auth.service';
+import { Observable } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'oos-tags',
@@ -24,7 +26,7 @@ export class TagsComponent implements OnInit {
         {name: "Yellow", value:"yellow"}
     ];
 
-    uid: string;
+    uid: string = null;
 
     
 
@@ -32,8 +34,9 @@ export class TagsComponent implements OnInit {
     }
 
     ngOnInit() {
-      this.authService.user().subscribe( u => {
-        this.uid = u.uid 
+      this.authService.user().pipe( filter( u => u != null) ).subscribe( u => {
+          console.log("tags component");
+        this.uid = u.uid;
         this.fireService.colWithIds$("tags", ref => ref.where("uid","==",u.uid).orderBy('updatedAt','desc')).subscribe( (tags:Tag[]) => {
             this.tags = tags.map( t => ({ id: t.id, name: t.name, color: t.color, count: t.count, available: !this.selected.includes(t.name)}) );
         });
@@ -45,13 +48,15 @@ export class TagsComponent implements OnInit {
     }
 
     addTag() {
-      const ta = this.tags.filter( t => t.name === this.tagName);
-      const tagCount = ta.length == 0 ? 0 : ta[0].count;
-      this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: tagCount, color: this.tagColor, uid: this.uid });
-      if (!this.mode) {
-        this.selected.push(this.tagName);
-      }
-      this.tagName = "";
+        if (this.uid != null) {
+            const ta = this.tags.filter( t => t.name === this.tagName );
+            const tagCount = ta.length == 0 ? 0 : ta[0].count;
+            this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: tagCount, color: this.tagColor, uid: this.uid });
+            if (!this.mode) {
+                this.selected.push(this.tagName);
+            }
+            this.tagName = "";
+        }
     }
 
     tagsAvailable() {

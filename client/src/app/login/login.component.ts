@@ -22,7 +22,7 @@ export class LoginComponent implements OnInit {
       //auth2.handleSuccess().then()
       //auth.user$.subscribe( user => user ? console.log(user.email) : console.log("login") );      
       //auth2.afa.authState.subscribe( user => console.log(user) );
-      this.user$ = this.auth.user().pipe( tap( u => console.log(" in the login component ")) );
+      this.user$ = this.auth.user().pipe( tap( u => { console.log(" in the login component "); console.log(u); }));
  }
 
   ngOnInit() {

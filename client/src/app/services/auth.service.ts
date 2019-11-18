@@ -5,25 +5,27 @@ import { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 import { Observable, of} from 'rxjs';
-import { switchMap, tap, share } from 'rxjs/operators';
+import { switchMap, tap, shareReplay, distinctUntilKeyChanged } from 'rxjs/operators';
 import { User } from '../model/user';
 import { FireService } from './fire.service';
-import { AuthProcessService } from 'ngx-auth-firebaseui';
+import { AuthProcessService } from 'ngx-auth-firebaseui'; 
 
 
 @Injectable({
   providedIn: 'root'
+
 })
 export class AuthService {
     user$ : Observable<any>;
 
-  constructor(private auth: AngularFireAuth, private auth2: AuthProcessService, private router: Router) { 
-      this.user$ = this.auth2.afa.authState.pipe( tap( u => { console.log("new User Logged in in authservice"); console.log(u) })); 
-            
-      //this.user$ = this.auth.authState.pipe( switchMap(user => { console.log(user); return of(user); }));
-  }
+  constructor(private auth: AngularFireAuth, private router: Router) { 
+      this.user$ = this.auth.authState.pipe( 
+        distinctUntilKeyChanged("uid"),
+        tap( u => { console.log("New user logged in authservice"); console.log(u) }), 
+        shareReplay()); 
+  } 
 
-  user() {return this.user$; }
+  user() { return this.user$; } 
 
 /*
   async googleSignin() {

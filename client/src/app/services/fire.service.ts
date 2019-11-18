@@ -11,8 +11,8 @@ import {
 
 import * as firebase from 'firebase/app';
 
-import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+import { map, take, withLatestFrom, combineLatest, flatMap, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 type CollectionPredicate<T> = string | AngularFirestoreCollection<T>;
@@ -24,13 +24,18 @@ type DocPredicate<T> = string | AngularFirestoreDocument<T>;
 export class FireService {
 
     uid: string;
+    loggedIn: boolean = false;
 
-    constructor(private firestore: AngularFirestore, private authService: AuthService) { 
+    constructor(private firestore: AngularFirestore, private authService: AuthService) {
+        /*
         this.authService.user().subscribe( u => {
             console.log("new User Logged in in fireservice");
-            console.log("new user uid " + u.uid ? u.uid : "NULL");
-            this.uid = u.uid ? u.uid : "NULL";
+            console.log(u);
+            //console.log("new user uid " + !!u ? u.uid : "NULL");
+            this.loggedIn = u != null;
+            if (this.loggedIn) this.uid = u.uid;
         });
+        */
     }
 
     get timestamp() {
@@ -49,7 +54,9 @@ export class FireService {
         return this.doc(ref)
           .snapshotChanges()
           .pipe(
-            map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
+              withLatestFrom(this.authService.user()),
+            //map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
+              map(([doc,user]) => {
               return doc.payload.data() as T;
             }),
           );
@@ -58,7 +65,9 @@ export class FireService {
         return this.doc(ref)
           .snapshotChanges()
           .pipe(
-            map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
+              withLatestFrom(this.authService.user()),
+            //map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
+              map(([doc,user]) => {
                 const data: Object = doc.payload.data() as T;
                 const id = doc.payload.id;
                 return { id, ...data };
@@ -67,20 +76,26 @@ export class FireService {
     }
     
     col$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<T[]> {
-        return this.col(ref, queryFn)            
+        return this.col(ref, queryFn)
           .snapshotChanges()
           .pipe(
-            map((docs: DocumentChangeAction<T>[]) => {
+              withLatestFrom(this.authService.user()),
+            //map((docs: DocumentChangeAction<T>[]) => {
+              map(([docs,user]) => {
               return docs.map((a: DocumentChangeAction<T>) => a.payload.doc.data()) as T[];
             }),
         );
     }
     
     colWithIds$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<any[]> {
+        //if (!this.loggedIn) return of([])
+        //else 
         return this.col(ref, queryFn)
           .snapshotChanges()
           .pipe(
-            map((actions: DocumentChangeAction<T>[]) => {
+              withLatestFrom(this.authService.user()),
+            //map((actions: DocumentChangeAction<T>[]) => {
+              map(([actions,user]) => {
               return actions.map((a: DocumentChangeAction<T>) => {
                 const data: Object = a.payload.doc.data() as T;
                 const id = a.payload.doc.id;
@@ -92,39 +107,45 @@ export class FireService {
 
     set<T>(ref: DocPredicate<T>, data: any): Promise<void> {
         const now = this.timestamp;
-        return this.doc(ref).set({
-            ...data,
-            uid: this.uid,
-            updatedAt: now,
-            createdAt: now,
-        });
+        return from([this.doc(ref)])
+                .pipe( 
+                    withLatestFrom(this.authService.user()),
+                    switchMap( ([doc,user]) => from(doc.set({...data, uid: user.uid, createdAt: now, updatedAt: now }) )),
+                    tap( (_) => console.log("doc set") )
+                ).toPromise();
     }
       
     update<T>(ref: DocPredicate<T>, data: any): Promise<void> {
         const now = this.timestamp;
-        return this.doc(ref).update({
-            ...data,
-            uid: this.uid,
-            updatedAt: now
-        });
+        console.log("update in fireservice...");
+        return from([this.doc(ref)])
+                .pipe( 
+                    withLatestFrom(this.authService.user()),
+                    switchMap( ([doc,user]) => from(doc.update({...data, uid: user.uid, updatedAt: now }) )),
+                    tap( (_) => console.log("doc updated") )
+                ).toPromise();
     }
       
     delete<T>(ref: DocPredicate<T>): Promise<void> {
-        console.log("obtain ref");
-        let d  = this.doc(ref);
-        console.log("delete");
-        return d.delete();
+        //console.log("obtain ref");
+        //let d  = this.doc(ref);
+        //console.log("delete");
+        //return d.delete();
+        // cannot delete a drop without index rebuilt, and that takes a loooot of time!
+        return null;
     }
       
     add<T>(ref: CollectionPredicate<T>, data): Promise<firebase.firestore.DocumentReference> {
-      const now = this.timestamp;
-        return this.col(ref).add({
-          ...data,
-          uid: this.uid,
-          deleted: false,
-          updatedAt: now,
-          createdAt: now,
-        });
+        const now = this.timestamp;
+        console.log("entering add...");
+        console.log(this.col(ref)); 
+        return from([this.col(ref)])
+                .pipe( 
+                    tap( (d) => { console.log("doc is: "); console.log(d) }), 
+                    withLatestFrom(this.authService.user()),
+                    flatMap( ([col,user]) => { console.log("flatmap"); console.log(col); console.log(user); return from(col.add({...data, uid: user.uid, deleted: false, createdAt: now, updatedAt: now })) }), 
+                    tap( (_) => console.log("doc added") )
+                ).toPromise();
     }
 
 }

@@ -105,7 +105,7 @@ const fillGoal = async (dropa:any) => {
 }
 
 
-
+/*
 export const migrateData = functions.pubsub.topic("oos-time").onPublish(async (message, context) => {
     
     return admin.firestore().collection("drops").limit(10000).get()
@@ -126,7 +126,7 @@ export const migrateData = functions.pubsub.topic("oos-time").onPublish(async (m
         return Promise.all(promises).then( s => console.log(drops.length + " drops updated."));
     });    
 });
-
+*/
 
 export const updateSettings = functions
     .firestore
@@ -147,10 +147,12 @@ export const updateSettings = functions
         const dateTS = admin.firestore.Timestamp.fromDate(date.toDate());
         const currentTS = admin.firestore.Timestamp.fromDate(moment().toDate());
 
+        let promises:any = [];
+
         if ((!beforeSetting.system.analytics) && (afterSetting.system.analytics)) {
             // create analytics
-            console.log("create analytics")
-            return admin.firestore()
+            console.log("create analytics drop")
+            promises.push(admin.firestore()
             .doc(`drops/ANALYTICS-${ moment().year() }-${ moment().month() }`)
             .set(
             {
@@ -164,20 +166,20 @@ export const updateSettings = functions
                 uid: afterSetting.uid,
                 updatedAt: currentTS,
                 createdAt: currentTS,
-            })
-            .catch( (err) => console.log(err) )
+            }));            
             // TODO: create tag analytics
         }
         if ((!afterSetting.system.analytics) && (beforeSetting.system.analytics)) {
-            console.log("delete analytics");
-            return admin.firestore()
+            console.log("delete analytics drop");
+            promises.push(admin.firestore()
             .doc(`drops/ANALYTICS-${ moment().year() }-${ moment().month() }`)
-            .update({ deleted: true })
-            .catch( (err) => console.log(err) )
+            .delete());
+            
         }
         if ((!beforeSetting.system.day) && (afterSetting.system.day)) {
+            console.log("create day drop");
             // create day
-            return admin.firestore()
+            promises.push(admin.firestore()
             .doc(`drops/DAY-${ moment().year() }-${ moment().month() }-${ moment().date() }`)
             .set(
             {
@@ -190,19 +192,18 @@ export const updateSettings = functions
                 uid: afterSetting.uid,
                 updatedAt: currentTS,
                 createdAt: currentTS,
-            })
-            .catch( (err) => console.log(err) )
+            }));
+            
         }
         if ((beforeSetting.system.day) && (!afterSetting.system.day)) {
+            console.log("delete day drop");
             // delete day
-            return admin.firestore()
+            promises.push_(admin.firestore()
             .doc(`drops/DAY-${ moment().year() }-${ moment().month() }-${ moment().date() }`)
-            .update({ deleted: true })
-            .catch( (err) => console.log(err) )
+            .delete());            
         }
 
-
-        return change;
+        return Promise.all(promises).then( (r:any) => console.log(" settings updated ")).catch( err => {console.log(" error updateding settings "); console.log(err); } );
     });
 
 
