@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
@@ -17,13 +17,14 @@ import { Settings } from '../model/settings';
   templateUrl: './transaction-detail.component.html',
   styleUrls: ['./transaction-detail.component.css']
 })
-export class TransactionDetailComponent implements OnInit {
+export class TransactionDetailComponent implements OnInit, OnDestroy {
 
     drop: Drop = new Drop();
     settings: Settings = new Settings();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
     btnDisabled: boolean = false;
     recurrences: any;
+    subs: Subscription = new Subscription();
     field = new FormControl('', [
         Validators.required,
     ]);    
@@ -43,7 +44,7 @@ export class TransactionDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.paramMap.pipe(
+        this.subs.add(this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
                 return id === "new" ? of(new Drop({ ...this.drop, 
@@ -61,7 +62,7 @@ export class TransactionDetailComponent implements OnInit {
         ).subscribe( d => {
             this.drop = d; 
             this.dropDateTime = this.dtService.getDateTime(d.date.toDate()); 
-        });
+        }));
     }
 
     addTransaction() {
@@ -95,6 +96,10 @@ export class TransactionDetailComponent implements OnInit {
 
     goBack() {
         this.location.back();
+    }
+
+    ngOnDestroy() {
+        this.subs.unsubscribe();
     }
 
 }

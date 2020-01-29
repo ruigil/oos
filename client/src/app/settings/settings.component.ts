@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { SettingsService } from '../services/settings.service';
 import { Settings } from '../model/settings';
 import { MatSnackBar } from '@angular/material';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'oos-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent implements OnInit {
+export class SettingsComponent implements OnInit, OnDestroy {
 
     public currencies:Array<any> = [ 
         {name: "Swiss Franc", value:"CHF"},
@@ -24,17 +25,18 @@ export class SettingsComponent implements OnInit {
         {name: "Year", value:"year"}
     ];
 
-    settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day", timezone: new Date().getTimezoneOffset()/60}, system: { day: true, analytics: false } } );
+    settings: Settings = new Settings({ transaction: { currency: ""}, home: { preview: "day", timezone: new Date().getTimezoneOffset() }, system: { day: true, analytics: false } } );
     btnDisabled: boolean = false;
+    subs: Subscription = new Subscription();
 
   constructor(
       private settingsService: SettingsService,
       public snackBar: MatSnackBar,
       private location: Location) { 
       
-      settingsService.getSettings().subscribe( set => { 
+      this.subs.add(settingsService.getSettings().subscribe( set => { 
           this.settings = set;
-      } );
+      } ));
   }
 
   saveSettings() {
@@ -52,5 +54,8 @@ export class SettingsComponent implements OnInit {
     this.location.back();
   }
 
+    ngOnDestroy() {
+        this.subs.unsubscribe();
+    }
 
 }

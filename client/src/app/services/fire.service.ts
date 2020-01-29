@@ -23,19 +23,7 @@ type DocPredicate<T> = string | AngularFirestoreDocument<T>;
 })
 export class FireService {
 
-    uid: string;
-    loggedIn: boolean = false;
-
     constructor(private firestore: AngularFirestore, private authService: AuthService) {
-        /*
-        this.authService.user().subscribe( u => {
-            console.log("new User Logged in in fireservice");
-            console.log(u);
-            //console.log("new user uid " + !!u ? u.uid : "NULL");
-            this.loggedIn = u != null;
-            if (this.loggedIn) this.uid = u.uid;
-        });
-        */
     }
 
     get timestamp() {
@@ -54,20 +42,17 @@ export class FireService {
         return this.doc(ref)
           .snapshotChanges()
           .pipe(
-              withLatestFrom(this.authService.user()),
-            //map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
-              map(([doc,user]) => {
+            map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
               return doc.payload.data() as T;
             }),
           );
     }
+    
     docWithId$<T>(ref: DocPredicate<T>): Observable<any> {
         return this.doc(ref)
           .snapshotChanges()
           .pipe(
-              withLatestFrom(this.authService.user()),
-            //map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
-              map(([doc,user]) => {
+            map((doc: Action<DocumentSnapshotDoesNotExist | DocumentSnapshotExists<T>>) => {
                 const data: Object = doc.payload.data() as T;
                 const id = doc.payload.id;
                 return { id, ...data };
@@ -79,28 +64,22 @@ export class FireService {
         return this.col(ref, queryFn)
           .snapshotChanges()
           .pipe(
-              withLatestFrom(this.authService.user()),
-            //map((docs: DocumentChangeAction<T>[]) => {
-              map(([docs,user]) => {
+            map((docs: DocumentChangeAction<T>[]) => {
               return docs.map((a: DocumentChangeAction<T>) => a.payload.doc.data()) as T[];
             }),
         );
     }
     
-    colWithIds$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<any[]> {
-        //if (!this.loggedIn) return of([])
-        //else 
+    colWithIds$<T>(ref: CollectionPredicate<T>, queryFn?): Observable<any[]> { 
         return this.col(ref, queryFn)
           .snapshotChanges()
           .pipe(
-              withLatestFrom(this.authService.user()),
-            //map((actions: DocumentChangeAction<T>[]) => {
-              map(([actions,user]) => {
-              return actions.map((a: DocumentChangeAction<T>) => {
-                const data: Object = a.payload.doc.data() as T;
-                const id = a.payload.doc.id;
-                return { id, ...data };
-              });
+              map((actions: DocumentChangeAction<T>[]) => {
+                return actions.map((a: DocumentChangeAction<T>) => {
+                    const data: Object = a.payload.doc.data() as T;
+                    const id = a.payload.doc.id;
+                    return { id, ...data };
+                });
             }),
         );
     }    
@@ -114,10 +93,9 @@ export class FireService {
                     tap( (_) => console.log("doc set") )
                 ).toPromise();
     }
-      
+       
     update<T>(ref: DocPredicate<T>, data: any): Promise<void> {
         const now = this.timestamp;
-        console.log("update in fireservice...");
         return from([this.doc(ref)])
                 .pipe( 
                     withLatestFrom(this.authService.user()),
@@ -126,24 +104,19 @@ export class FireService {
                 ).toPromise();
     }
       
-    delete<T>(ref: DocPredicate<T>): Promise<void> {
-        //console.log("obtain ref");
-        //let d  = this.doc(ref);
-        //console.log("delete");
-        //return d.delete();
-        // cannot delete a drop without index rebuilt, and that takes a loooot of time!
-        return null;
+    delete<T>(ref: DocPredicate<T>): Promise<boolean> {
+        // return this.doc(ref).delete();
+        // cannot delete a drop without index rebuild, and that takes a loooot of time!
+        return Promise.resolve(false);
     }
       
     add<T>(ref: CollectionPredicate<T>, data): Promise<firebase.firestore.DocumentReference> {
         const now = this.timestamp;
-        console.log("entering add...");
-        console.log(this.col(ref)); 
         return from([this.col(ref)])
                 .pipe( 
-                    tap( (d) => { console.log("doc is: "); console.log(d) }), 
+                    //tap( (d) => { console.log("doc is: "); console.log(d) }), 
                     withLatestFrom(this.authService.user()),
-                    flatMap( ([col,user]) => { console.log("flatmap"); console.log(col); console.log(user); return from(col.add({...data, uid: user.uid, deleted: false, createdAt: now, updatedAt: now })) }), 
+                    switchMap( ([col,user]) => from(col.add({...data, uid: user.uid, deleted: false, createdAt: now, updatedAt: now })) ),  
                     tap( (_) => console.log("doc added") )
                 ).toPromise();
     }

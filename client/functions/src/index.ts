@@ -402,6 +402,10 @@ export const timeTrigger = functions.pubsub.topic("oos-time").onPublish(async (m
     // so it is 22:00 GMT = 00:00 CET+2
     // check if we can use schedule cloud function
 
+    // every 15 minutes in utc, check all the users that have timezone offset of current time until midnight
+    // so if it is 22h, check if the offset plus the time equal midnight.
+    // if it is run the copy clone for all these users.
+
     const endDate = moment().endOf('day').subtract(2,'hours');
     const startDate = moment().startOf('day').subtract(2,'hours');
 

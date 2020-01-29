@@ -14,7 +14,6 @@ import { FormsModule } from '@angular/forms';
 import { OOSRoutingModule } from './oos-routing.module';
  
 import { OOSComponent } from './oos.component';
-import { TagFilterComponent } from './tag-filter/tag-filter.component';
 
 import { SearchTagPipe } from './pipes/search-tag.pipe';
 import { SortTagPipe } from './pipes/sort-tag.pipe';
@@ -38,7 +37,6 @@ import { StartComponent } from './start/start.component';
 @NgModule({
   declarations: [
     OOSComponent,
-    TagFilterComponent,
     SearchTagPipe,
     SortTagPipe,
     LoginComponent,

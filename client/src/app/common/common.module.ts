@@ -23,7 +23,9 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTabsModule } from '@angular/material/tabs';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { MatBadgeModule } from '@angular/material/badge';
 
 import { FormatDatePipe } from '../pipes/format-date.pipe';
 import { ShowdownPipe } from '../pipes/showdown.pipe';
@@ -38,9 +40,11 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatButtonModule,
     MatExpansionModule,
     MatFormFieldModule,
+    MatTabsModule,
     MatInputModule,
     MatIconModule,
     MatChipsModule,
+    MatBadgeModule,
     MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
@@ -65,12 +69,14 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     FormatDatePipe, 
     ShowdownPipe,
     FormsModule,
+    MatTabsModule,    
     MatButtonModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
     MatIconModule,
     MatChipsModule,
+    MatBadgeModule,
     MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,

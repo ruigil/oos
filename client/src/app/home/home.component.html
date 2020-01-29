@@ -19,8 +19,10 @@
 </div>
 </mat-toolbar> 
 <div class="space"></div>
+<mat-tab-group>
+  <mat-tab label="Drops">
 <mat-accordion cdkScrollable>
-  <mat-expansion-panel *ngFor="let drop of dropsObs | async; let i = index;  trackBy: dropIdentity"> 
+  <mat-expansion-panel *ngFor="let drop of dropsObs | async ; let i = index;  trackBy: dropIdentity"> 
         <mat-expansion-panel-header [ngClass]="{ 'month': isMonth(drop), 'week': isWeek(drop), 'today': isToday(drop), 'past': isPast(drop)  }" >
             <mat-panel-title *ngIf="isType(drop,'NOTE')"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon><div [innerHTML]="textPreview(drop) | showdown"></div></mat-panel-title>
             <mat-panel-title *ngIf="isType(drop,'GOAL')"><mat-icon class="goal">center_focus_strong</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>  
@@ -151,3 +153,8 @@
         <mat-icon>star_rate</mat-icon>
     </button>
 </div>
+  </mat-tab>
+  <mat-tab label="Tags">
+        <oos-tag-filter></oos-tag-filter>
+  </mat-tab>
+</mat-tab-group>

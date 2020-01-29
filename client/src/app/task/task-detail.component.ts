@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
@@ -16,12 +16,13 @@ import * as moment from "moment";
   templateUrl: './task-detail.component.html',
   styleUrls: ['./task-detail.component.css']
 })
-export class TaskDetailComponent implements OnInit {
+export class TaskDetailComponent implements OnInit, OnDestroy {
 
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
     recurrences: Array<{ value: string, text: string }>;
     btnDisabled: boolean = false; 
+    subs:Subscription = new Subscription();
     field = new FormControl('', [
         Validators.required,
     ]);    
@@ -39,7 +40,7 @@ export class TaskDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.paramMap.pipe(
+        this.subs.add(this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
                 return id === "new" ? of(new Drop({ ...this.drop, 
@@ -57,7 +58,7 @@ export class TaskDetailComponent implements OnInit {
         ).subscribe( d => {
             this.drop = d; 
             this.dropDateTime = this.dtService.getDateTime(d.date.toDate()); 
-        });
+        }));
     }
 
     addTask() {
@@ -86,6 +87,10 @@ export class TaskDetailComponent implements OnInit {
 
     goBack() {
         this.location.back();
+    }
+
+    ngOnDestroy() {
+        this.subs.unsubscribe();
     }
 
 }

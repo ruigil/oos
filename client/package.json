@@ -6,6 +6,7 @@
     "start": "ng serve --port 8080 --disable-host-check",
     "build": "ng build",
     "dist": "ng build --prod",
+    "deploy": "ng build --prod && firebase deploy --only hosting",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

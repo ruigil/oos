@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
@@ -17,7 +17,7 @@ import * as moment from "moment";
   templateUrl: './rate-detail.component.html',
   styleUrls: ['./rate-detail.component.scss']
 })
-export class RateDetailComponent implements OnInit {
+export class RateDetailComponent implements OnInit, OnDestroy {
 
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
@@ -25,6 +25,7 @@ export class RateDetailComponent implements OnInit {
     field = new FormControl('', [
         Validators.required,
     ]);    
+    subs: Subscription = new Subscription();;
 
     recurrences: Array<{ value: string, text: string }>;
     
@@ -42,7 +43,7 @@ export class RateDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.paramMap.pipe(
+        this.subs.add(this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
                 return id === "new" ? of(new Drop({ ...this.drop, 
@@ -59,7 +60,7 @@ export class RateDetailComponent implements OnInit {
         ).subscribe( d => {
             this.drop = d; 
             this.dropDateTime = this.dtService.getDateTime(d.date.toDate())
-        });
+        }));
     }
 
     addRate() {
@@ -89,6 +90,10 @@ export class RateDetailComponent implements OnInit {
 
     goBack() {
         this.location.back();
+    }
+
+    ngOnDestroy() {
+        this.subs.unsubscribe();
     }
 
 }

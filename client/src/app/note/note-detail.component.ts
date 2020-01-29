@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
@@ -15,12 +15,13 @@ import { Drop } from '../model/drop';
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.css']
 })
-export class NoteDetailComponent implements OnInit {
+export class NoteDetailComponent implements OnInit, OnDestroy {
 
     drop: Drop = new Drop();
     dropDateTime: { date: Date, time: string } = { date: new Date(), time: "00:00" };
     recurrences: Array<{ value: string, text: string }>;
     btnDisabled: boolean = false; 
+    subs: Subscription = new Subscription();
     field = new FormControl('', [
         Validators.required,
     ]);    
@@ -37,7 +38,7 @@ export class NoteDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.route.paramMap.pipe(
+        this.subs.add(this.route.paramMap.pipe(
             switchMap( params => {
                 let id = params.get("id");
                 return id === "new" ? of(new Drop(
@@ -52,7 +53,7 @@ export class NoteDetailComponent implements OnInit {
         ).subscribe( d => {
             this.drop = d; 
             this.dropDateTime = this.dtService.getDateTime(d.date.toDate()); 
-        });
+        }));
     }
 
     updateNote() {
@@ -71,7 +72,7 @@ export class NoteDetailComponent implements OnInit {
         this.btnDisabled = true;
         this.drop.date = this.dtService.date2ts(this.dtService.getDate(this.dropDateTime));
         this.dropsService.add("drops",this.drop).then(
-            (value) => { this.location.back() },
+            (value) => { this.router.navigate(["/home"]) },
             (error) => { this.snackbar.open(`Error updating note [${error}]`); this.btnDisabled = false; }
         );
     }
@@ -82,6 +83,10 @@ export class NoteDetailComponent implements OnInit {
 
     goBack() {
         this.location.back();
+    }
+
+    ngOnDestroy() {
+        this.subs.unsubscribe();
     }
 
 }
