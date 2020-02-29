@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { Observable, Subject, fromEvent, from, combineLatest, Subscription } from 'rxjs';
 import { takeUntil, tap,map,flatMap,pairwise,exhaustMap, filter, take, first, debounceTime, scan, withLatestFrom, distinctUntilChanged, share } from 'rxjs/operators';
 import * as moment from 'moment';
-import { ScrollDispatcher } from '@angular/cdk/overlay'; 
-import * as firebase from 'firebase/app'; 
+import { ScrollDispatcher } from '@angular/cdk/overlay';
+import * as firebase from 'firebase/app';
 import "firebase/performance";
 import { TagFilterService } from '../services/tag-filter.service';
 import { SettingsService } from '../services/settings.service';
@@ -15,14 +15,14 @@ import { MenuService } from '../services/menu.service';
 import { Drop } from '../model/drop';
 import { Tag } from '../model/tag';
 
-import { 
-    AngularFirestore, 
-    AngularFirestoreCollection, 
+import {
+    AngularFirestore,
+    AngularFirestoreCollection,
     AngularFirestoreDocument,
     DocumentChangeAction,
     Action,
     DocumentSnapshotDoesNotExist,
-    DocumentSnapshotExists    
+    DocumentSnapshotExists
  } from '@angular/fire/firestore';
 import { DateTimeService } from '../services/date-time.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -55,22 +55,22 @@ interface Page {
         ]),
     ],
     styleUrls: ['home.component.scss'],
-}) 
-export class HomeComponent implements OnInit, OnDestroy { 
+})
+export class HomeComponent implements OnInit, OnDestroy {
 
-  dropsObs: Observable<Drop[]>; 
+  dropsObs: Observable<Drop[]>;
   fabButtons: boolean = false;
   subs: Subscription = new Subscription();
-  colors = {}; 
+  colors = {};
   perf = firebase.performance();
   drops: Drop[];
   dropsSubs: Subscription;
-  stop$: Subject<any> = new Subject(); 
+  stop$: Subject<any> = new Subject();
 
   page: Page = { startAt: this.dtService.date2ts(moment().endOf('day').toDate()), size: 30 }
 
   preview: string = "day";
-  times: Array<{ name: string, value: string}> = [ 
+  times: Array<{ name: string, value: string}> = [
       { name: 'Day', value: 'day'},
       { name: 'Week', value: 'week'},
       { name: 'Month', value: 'month'},
@@ -78,9 +78,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
 
   constructor(
-      private fireService: FireService, 
-      private tagFilterService: TagFilterService, 
-      private router: Router, 
+      private fireService: FireService,
+      private tagFilterService: TagFilterService,
+      private router: Router,
       private settings: SettingsService,
       private menu: MenuService,
       private dtService: DateTimeService,
@@ -88,8 +88,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
           // this must be refactored to user filtering
-      this.subs.add(this.fireService.col$("tags").subscribe( (t:Array<Tag>) => t.map( (t:any) => this.colors[t.name] = t.color ) )); 
-  } 
+      this.subs.add(this.fireService.col$("tags").subscribe( (t:Array<Tag>) => t.map( (t:any) => this.colors[t.name] = t.color ) ));
+  }
 
 
   ngOnInit(): void {
@@ -97,32 +97,32 @@ export class HomeComponent implements OnInit, OnDestroy {
       //takeUntil(this.stop$),
       //this.stop$.next();
       //this.stop$.complete();
-      //this.tagFilterService.selectTag([]);  
+      //this.tagFilterService.selectTag([]);
         this.subs.add(this.settings.getSettings().subscribe( s => {
             //console.log(s);
-            this.preview = s.home.preview; 
+            this.preview = s.home.preview;
             this.page.startAt = this.dtService.getTimestamp(s.home.preview);
-            this.tagFilterService.selectPage(this.page);  
+            this.tagFilterService.selectPage(this.page);
         }));
       //this.dropsSubs = this.tagFilterService.drops().subscribe( d => { console.log("drops in home"); this.drops = d});
-      console.log("home init "); 
+      console.log("home init ");
         //this.dropsObs = this.tagFilterService.drops();
-        this.subs.add(this.scroll.scrolled(200) 
-            .pipe( 
-                map((s:any) => { let p = s.measureScrollOffset("top") / (s.measureScrollOffset("top")+s.measureScrollOffset("bottom")); return p < 0.2 ? -1 : p > 0.8 ? 1 : 0 }), 
+        this.subs.add(this.scroll.scrolled(200)
+            .pipe(
+                map((s:any) => { let p = s.measureScrollOffset("top") / (s.measureScrollOffset("top")+s.measureScrollOffset("bottom")); return p < 0.2 ? -1 : p > 0.8 ? 1 : 0 }),
                 distinctUntilChanged(),
-                withLatestFrom(this.dropsObs), 
+                withLatestFrom(this.dropsObs),
                 scan( (acc, [dir,drops]) => dir == -1 ? (acc.length != 1 ? acc.slice(0,acc.length-1) : [this.page.startAt] ) : (dir == 1 ? acc.concat([drops[10].date]) : acc) , [this.page.startAt]),
                 distinctUntilChanged((prev,curr) => prev.length === curr.length),
             ).subscribe( (acc:any) => { this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 40}); console.log(acc) })
-        ); 
+        );
 
   }
 
   menuToggle() {
       this.menu.toggle();
   }
-  
+
   setStartAt(event) {
       console.log(event);
   }
@@ -170,17 +170,17 @@ export class HomeComponent implements OnInit, OnDestroy {
   isToday(drop) {
       return moment().isSame(drop.date.toDate(),"day");
   }
-  
+
   isWeek(drop) {
       return moment(drop.date.toDate()).isBefore(moment().endOf("day").add(1,"weeks")) && !this.isToday(drop);
   }
-  
+
   isMonth(drop) {
       return moment(drop.date.toDate()).isBefore(moment().endOf("day").add(1,"months")) && !this.isWeek(drop) && !this.isToday(drop);
   }
 
   isPast(drop) {
-      return moment(drop.date.toDate()).isBefore(moment().startOf("day")); 
+      return moment(drop.date.toDate()).isBefore(moment().startOf("day"));
   }
 
   dropIdentity( index, drop) {
@@ -192,7 +192,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         let id = drop.id;
         drop.task.date = this.dtService.date2ts(new Date());
         if (delete drop.id) {
-            this.fireService.update("drops/"+ id, drop ).then( 
+            this.fireService.update("drops/"+ id, drop ).then(
                 (value) => { console.log("success") },
                 (error) => { console.log("error") }
             );
@@ -203,7 +203,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         drop.rate.value = value;
         let id = drop.id;
         if (delete drop.id) {
-            this.fireService.update("drops/"+ id, drop ).then( 
+            this.fireService.update("drops/"+ id, drop ).then(
                 (value) => { console.log("success") },
                 (error) => { console.log("error") }
             );
@@ -214,19 +214,19 @@ export class HomeComponent implements OnInit, OnDestroy {
       //console.log(event);
       //console.log(this.preview);
     this.page.startAt =  this.dtService.getTimestamp(this.preview);
-    //this.tagFilterService.selectPage(this.page);
+    this.tagFilterService.selectPage(this.page);
   }
 
   dropTags(tags) {
       return Object.keys(tags);
   }
-  
+
   aTag(tags,tag,type) {
       return tags[tag][type];
   }
 
   tagColor(tag) {
-      return this.colors[tag]; 
+      return this.colors[tag];
   }
 
   ngOnDestroy() {
