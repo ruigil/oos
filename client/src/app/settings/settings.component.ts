@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { SettingsService } from '../services/settings.service';
 import { Settings } from '../model/settings';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 
 @Component({

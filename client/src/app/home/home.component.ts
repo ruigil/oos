@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   dropsSubs: Subscription;
   stop$: Subject<any> = new Subject();
 
-  page: Page = { startAt: this.dtService.date2ts(moment().endOf('day').toDate()), size: 30 }
+  page: Page = { startAt: this.dtService.date2ts(moment().endOf('day').toDate()), size: 60 }
 
   preview: string = "day";
   times: Array<{ name: string, value: string}> = [
@@ -112,9 +112,9 @@ export class HomeComponent implements OnInit, OnDestroy {
                 map((s:any) => { let p = s.measureScrollOffset("top") / (s.measureScrollOffset("top")+s.measureScrollOffset("bottom")); return p < 0.2 ? -1 : p > 0.8 ? 1 : 0 }),
                 distinctUntilChanged(),
                 withLatestFrom(this.dropsObs),
-                scan( (acc, [dir,drops]) => dir == -1 ? (acc.length != 1 ? acc.slice(0,acc.length-1) : [this.page.startAt] ) : (dir == 1 ? acc.concat([drops[10].date]) : acc) , [this.page.startAt]),
+                scan( (acc, [dir,drops]) => dir == -1 ? (acc.length != 1 ? acc.slice(0,acc.length-1) : [this.page.startAt] ) : (dir == 1 ? acc.concat([drops[15].date]) : acc) , [this.page.startAt]),
                 distinctUntilChanged((prev,curr) => prev.length === curr.length),
-            ).subscribe( (acc:any) => { this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 40}); console.log(acc) })
+            ).subscribe( (acc:any) => { this.tagFilterService.selectPage({startAt: acc[acc.length-1], size: 60}); console.log(acc) })
         );
 
   }
