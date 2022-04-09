@@ -36,7 +36,7 @@
     "firebase": "^7.9.3",
     "firebase-admin": "^8.9.2",
     "firebase-tools": "^7.14.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "moment-timezone": "^0.5.28",
     "ngx-auth-firebaseui": "^4.0.1",
     "ngx-infinite-scroll": "^8.0.1",
