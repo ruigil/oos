@@ -13,8 +13,9 @@ export class Drop {
     recurrence: string = "";
     tags: Array<Tag> = [];
     date: number = 0;
-    available?: boolean = true;
     color?: string = "";
+    filtered?: boolean = false;
+    available?: boolean = true;
     updatedAt: any;
     createdAt: any;
     

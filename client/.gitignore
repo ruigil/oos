@@ -38,12 +38,8 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Firebase
-.firebase/
-.firebaserc
-
 # Environment Firestore API Key
 environment.ts
 environment.prod.ts
 
-/client/.angular
+/.angular
