@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -11,28 +11,29 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatListModule } from '@angular/material/list';
-import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatRadioModule } from '@angular/material/radio';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatTabsModule } from '@angular/material/tabs';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
+
 
 import { FormatDatePipe } from '../pipes/format-date.pipe';
-import { ShowdownPipe } from '../pipes/showdown.pipe';
+import { MarkdownPipe } from '../pipes/markdown.pipe';
 
 @NgModule({
   providers: [
-    {provide: MAT_DATE_LOCALE, useValue: 'fr-CH'},
+    //{provide: MAT_DATE_LOCALE, useValue: 'fr-CH'},
   ],
   imports: [
     CommonModule,    
@@ -40,7 +41,6 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatButtonModule,
     MatExpansionModule,
     MatFormFieldModule,
-    MatTabsModule,
     MatInputModule,
     MatIconModule,
     MatChipsModule,
@@ -48,28 +48,28 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    NgxMaterialTimepickerModule,
     MatSelectModule,
     MatToolbarModule,
     MatButtonToggleModule,
     MatListModule,
-    MatCardModule,
     MatDividerModule,
     MatSnackBarModule,
     MatRadioModule,
     MatGridListModule,
     ScrollingModule,
-    MatSlideToggleModule    
+    MatSlideToggleModule,
+    MatMenuModule,
+    MatAutocompleteModule,
+    MatDialogModule,
   ],
   declarations: [
     FormatDatePipe,  
-    ShowdownPipe
+    MarkdownPipe
   ],
   exports: [
     FormatDatePipe, 
-    ShowdownPipe,
+    MarkdownPipe,
     FormsModule,
-    MatTabsModule,    
     MatButtonModule,
     MatExpansionModule,
     MatFormFieldModule,
@@ -80,18 +80,19 @@ import { ShowdownPipe } from '../pipes/showdown.pipe';
     MatCheckboxModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    NgxMaterialTimepickerModule,
     MatSelectModule,
     MatToolbarModule,
     MatButtonToggleModule,
     MatListModule,
-    MatCardModule,
     MatDividerModule,
     MatSnackBarModule,
     MatRadioModule,
     MatGridListModule,
     ScrollingModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatMenuModule,
+    MatAutocompleteModule,
+    MatDialogModule  
   ] 
 })
 export class OOSCommonModule { }

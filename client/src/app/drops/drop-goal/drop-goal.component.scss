@@ -1,0 +1,16 @@
+
+
+.tag-summary {
+    width: 100%;
+    display: flex;
+    font-size: 12px;
+    align-items: center;
+    margin-top:10px;
+    margin-bottom:10px;
+    justify-content: left;
+}
+
+
+mat-chip {
+    max-width: 200px;
+}

@@ -1,29 +1,35 @@
 <div class="tagcomponent">
-<div *ngIf="!mode" class="title">Current Tags</div>
-<mat-divider *ngIf="!mode" class="divider"></mat-divider>
-<mat-chip-list>
-    <mat-chip *ngFor="let tag of tagsSelected()" (click)="unselectTag(tag.name)"><mat-icon [ngClass]="tag.color" matPrefix>bookmark</mat-icon>{{tag.name}}</mat-chip>
-</mat-chip-list>
-<mat-form-field >
-    <mat-label>New Tag</mat-label>
-    <input matInput [(ngModel)]="tagName" placeholder="Enter tag name and choose color below...">
-</mat-form-field>
-<mat-radio-group aria-labelledby="tag color" class="tag-color" [(ngModel)]="tagColor">
-<mat-radio-button *ngFor="let color of colors" [value]="color.value">
-    <mat-icon [ngClass]="color.value">bookmark</mat-icon>
-</mat-radio-button>
-</mat-radio-group>
-<button mat-flat-button color="primary" (click)="addTag()">
-    <mat-icon>add</mat-icon>  Add Tag
-</button>
-<div class="title">Available Tags</div>
-<mat-divider class="divider"></mat-divider>
-<mat-chip-list *ngIf="mode; else blockTags">
-    <mat-chip *ngFor="let tag of tags" [removable]="true" (removed)="deleteTag(tag.id)"><mat-icon [ngClass]="tag.color" matPrefix>bookmark</mat-icon>{{tag.name}}<mat-icon matChipRemove>cancel</mat-icon></mat-chip>
-</mat-chip-list>
-<ng-template #blockTags>
+
+    <div>
+        <div class="title">Current Drop Tags</div>
+        <mat-divider class="divider"></mat-divider>
+        <mat-chip-list class="divider">
+            <mat-chip *ngFor="let tag of selectedTags | async" (click)="unselectTag(tag)"><mat-icon [ngClass]="tag.color" matPrefix>{{tag.icon}}</mat-icon>{{tag.name}}</mat-chip>
+        </mat-chip-list>
+    </div>
+    <mat-divider class="divider"></mat-divider>
+
+    <mat-form-field >
+        <mat-label>New Tag</mat-label>
+        <input matInput [(ngModel)]="currentTag.name" placeholder="Enter tag name and choose color below...">
+    </mat-form-field>
+
+    <mat-radio-group aria-labelledby="tag color" class="tag-color" [(ngModel)]="currentTag.color">
+        <mat-radio-button *ngFor="let color of colors" [value]="color.value">
+            <mat-icon [ngClass]="color.value">bookmark</mat-icon>
+        </mat-radio-button>
+    </mat-radio-group>
+      
+    <button mat-flat-button color="primary" (click)="newTag()" class="title">
+        <mat-icon>add</mat-icon>  New Tag
+    </button>
+
+    <div class="title">Available Tags</div>
+    <mat-divider class="divider"></mat-divider>
     <mat-chip-list>
-        <mat-chip *ngFor="let tag of tagsAvailable()" (click)="selectTag(tag.name)" ><mat-icon [ngClass]="tag.color" matPrefix>bookmark</mat-icon>{{tag.name}}</mat-chip>
+        <mat-chip *ngFor="let tag of unselectedTags | async" (click)="selectTag(tag)" [removable]="true" (removed)="deleteTag(tag)">
+            <mat-icon [ngClass]="tag.color" matPrefix>{{tag.icon}}</mat-icon>{{tag.name}}<mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
     </mat-chip-list>
-</ng-template>
+
 </div>

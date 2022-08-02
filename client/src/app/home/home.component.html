@@ -1,160 +1,100 @@
-
 <mat-toolbar class="toolbar" color="primary">
-  <button mat-icon-button (click)="menuToggle()">
-    <mat-icon aria-label="Menu">menu</mat-icon>
-  </button>
-<div class="date-preview">
-    <mat-form-field class="preview">
-        <mat-select [(ngModel)]="preview" (selectionChange)="futurePreview($event)">
-            <mat-option *ngFor="let time of times" [value]="time.value">{{time.name}}</mat-option>
+    <!-- preview -->
+    <mat-toolbar-row>  
+        <button mat-icon-button class="new-drop-button" [matMenuTriggerFor]="types">
+            <mat-icon aria-label="Add Drop" >menu</mat-icon>
+        </button>
+        <mat-menu #types="matMenu">
+            <button mat-menu-item aria-label="Note" routerLink="/note/edit/new">
+                <mat-icon class="note-icon">note</mat-icon> Note
+            </button>
+            <button mat-menu-item aria-label="Transaction" routerLink="/money/edit/new">
+                <mat-icon class="money-icon" >monetization_on</mat-icon> Transaction
+            </button>
+            <button mat-menu-item aria-label="Task" routerLink="/task/edit/new">
+                <mat-icon class="task-icon" >folder</mat-icon> Task
+            </button>
+            <button mat-menu-item aria-label="Goal" routerLink="/goal/edit/new">
+                <mat-icon class="goal-icon">center_focus_strong</mat-icon> Goal
+            </button>
+            <button mat-menu-item aria-label="Rate" routerLink="/rate/edit/new">
+                <mat-icon class="rate-icon">star_rate</mat-icon> Rate
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item routerLink="/settings">
+                <mat-icon aria-label="Setting">settings</mat-icon>Settings
+            </button>
+        </mat-menu>    
+        <span style="margin-right: 10px;">Preview</span>
+        <mat-select [(ngModel)]="stream.preview" (selectionChange)="futurePreview($event)">
+            <mat-option value="day">Day</mat-option>
+            <mat-option value="week">Week</mat-option>
+            <mat-option value="month">Month</mat-option>
+            <mat-option value="year">Year</mat-option>
         </mat-select>
-    </mat-form-field>
-    <span style="margin-right: 10px; margin-left: 10px">From</span>
-    <mat-chip-list>
-        <mat-chip color="accent" selected (click)="picker.open()"><mat-icon>access_time</mat-icon>&nbsp;{{ page.startAt.toDate() | formatDate }}</mat-chip>
-    </mat-chip-list>
-    <input matInput [matDatepicker]="picker" (change)="setStartAt($event)" placeholder="Choose a date" style="display: none" value="">
-    <mat-datepicker #picker></mat-datepicker>
+        <span style="margin-right: 10px; margin-left: 10px">@</span>
+        <mat-chip-list>
+            <mat-chip color="accent" selected (click)="picker.open()"><mat-icon>access_time</mat-icon>&nbsp;{{currentDate$ | async}}</mat-chip>
+        </mat-chip-list>
+        <input matInput [matDatepicker]="picker" (dateChange)="setStartAt($event)" style="z-index: -100; width:0px;">
+        <mat-datepicker #picker></mat-datepicker>
 
+    </mat-toolbar-row>
+
+    <!-- filter -->
+    <mat-toolbar-row>
+        <mat-form-field class="tag-list" >
+            <mat-chip-list #chipList aria-label="Tag selection">
+              <mat-chip
+                *ngFor="let tag of filteredTags$ | async" (removed)="unfilterTag(tag)">
+                <mat-icon [ngClass]="tag.color" matPrefix>bookmark</mat-icon>{{tag.name}}
+                <button matChipRemove>
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+              <input
+                placeholder="Filter..."
+                #tagInput
+                [matAutocomplete]="auto"
+                [matChipInputFor]="chipList">
+            </mat-chip-list>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="filterTag($event)">
+              <mat-option *ngFor="let tag of availableTags$ | async" [value]="tag">
+                <mat-icon class="{{tag.color}}">{{tag.icon}}</mat-icon>{{tag.name}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+    </mat-toolbar-row>
+</mat-toolbar>         
+
+<!-- drop list -->
+<div class="main-content">
+    <cdk-virtual-scroll-viewport #scroller itemSize="48" class="content">
+        <mat-accordion class="drop-headers" multi>
+            <oss-drops *cdkVirtualFor="let drop of drops" [drop]="drop"></oss-drops>
+        </mat-accordion>          
+    </cdk-virtual-scroll-viewport>
 </div>
-</mat-toolbar> 
-<div class="space"></div>
-<mat-tab-group>
-  <mat-tab label="Drops">
-<mat-accordion cdkScrollable>
-  <mat-expansion-panel *ngFor="let drop of dropsObs | async ; let i = index;  trackBy: dropIdentity"> 
-        <mat-expansion-panel-header [ngClass]="{ 'month': isMonth(drop), 'week': isWeek(drop), 'today': isToday(drop), 'past': isPast(drop)  }" >
-            <mat-panel-title *ngIf="isType(drop,'NOTE')"><mat-icon color="primary">note</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon><div [innerHTML]="textPreview(drop) | showdown"></div></mat-panel-title>
-            <mat-panel-title *ngIf="isType(drop,'GOAL')"><mat-icon class="goal">center_focus_strong</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>  
-                <div [innerHTML]="textPreview(drop) | showdown"></div>
-            </mat-panel-title>
-            <mat-panel-title *ngIf="isType(drop,'TRX')"><mat-icon class="transaction">monetization_on</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
-            <mat-chip-list>
-                <mat-chip [ngClass]="drop.transaction.type === 'expense' ? 'expense' : 'income'" >{{drop.transaction.value}} {{drop.transaction.currency}}</mat-chip> <mat-panel-description>{{drop.text}}</mat-panel-description>
-            </mat-chip-list>
-            </mat-panel-title>
-            <mat-panel-title *ngIf="isType(drop,'TASK')"><mat-icon class="task">folder</mat-icon><mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon> 
-                <mat-chip-list [selectable]="true">
-                    <mat-chip [ngClass]="{'taskbg' : drop.task.completed }" (click)="complete(drop)"><mat-icon >{{drop.task.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>&nbsp;{{drop.task.title}}</mat-chip>
-                </mat-chip-list>
-            </mat-panel-title>
-            
-            <mat-panel-title *ngIf="isType(drop,'SYS')" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
-            <mat-panel-title *ngIf="isType(drop,'ANLY')" class="drop-summary"><mat-icon>brightness_7</mat-icon><div class="text">{{drop.text}}</div></mat-panel-title>
 
-            <mat-panel-title *ngIf="isType(drop,'RATE')" class="drop-summary">
-                <mat-icon class="rate">star_rate</mat-icon> 
-                <mat-icon *ngIf="isRecurrent(drop)">loop</mat-icon>
-                <mat-chip-list [selectable]="true">
-                    <mat-chip class="rate-bg">
-                        {{drop.rate.text}}
-                        <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate" (click)="rate(drop,key)">{{ key <= drop.rate.value ? 'star_rate' : 'star_border'}}</mat-icon> 
-                    </mat-chip>
-                </mat-chip-list>
-            </mat-panel-title>
-
-            <mat-panel-description *ngIf="!isType(drop,'ANLY') && !isType(drop,'SYS')" class="align-right">{{ drop.date?.toDate() | formatDate }}</mat-panel-description>
-        </mat-expansion-panel-header> 
-
-
-        <div>
-            <p *ngIf="!isType(drop,'ANLY') && !isType(drop,'SYS')" [innerHTML]="drop.text | showdown "></p>
-            <mat-list *ngIf="isType(drop,'GOAL')">
-            <mat-divider></mat-divider>
-            <mat-list-item *ngFor="let tag of dropTags(drop.goal.tags)">
-                <div class="tag-summary">
-                <mat-chip-list>
-                    <mat-chip><mat-icon [ngClass]="tagColor(tag)">bookmark</mat-icon>{{tag}}</mat-chip> 
-                </mat-chip-list>
-                <span class="stats" *ngIf="aTag(drop.goal.tags,tag,6) != 0"><mat-icon class="iconpad" color="primary">note</mat-icon>{{aTag(drop.goal.tags,tag,6)}}</span>
-                <span class="stats" *ngIf="aTag(drop.goal.tags,tag,0) != 0"><mat-icon class="task iconpad">folder</mat-icon>{{aTag(drop.goal.tags,tag,1)}} of {{aTag(drop.goal.tags,tag,0)}} ({{(aTag(drop.goal.tags,tag,1)/aTag(drop.goal.tags,tag,0)*100).toFixed(2)}}%)</span>
-                <span class="stats" *ngIf="aTag(drop.goal.tags,tag,2) != 0 || aTag(drop.goal.tags,tag,3) != 0"  ><mat-icon class="iconpad transaction">monetization_on</mat-icon>{{(aTag(drop.goal.tags,tag,2)+aTag(drop.goal.tags,tag,3)).toFixed(2)}}</span>
-                <span class="stats" *ngIf="aTag(drop.goal.tags,tag,5) != 0"><mat-icon class="iconpad rate">star_rate</mat-icon>{{(aTag(drop.goal.tags,tag,5)/aTag(drop.goal.tags,tag,4)).toFixed(2)}}</span>
-                </div>
-            </mat-list-item>
-
-            </mat-list>
-            <mat-list *ngIf="isType(drop,'ANLY')">
-            <h4>Tags</h4>
-            <mat-divider></mat-divider>
-            <mat-list-item *ngFor="let tag of dropTags(drop.analytics.tags)">
-                <div class="tag-summary">
-                <mat-chip-list>
-                    <mat-chip><mat-icon [ngClass]="tagColor(tag)">bookmark</mat-icon>{{tag}}</mat-chip> 
-                </mat-chip-list>
-                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,6) != 0"><mat-icon class="iconpad" color="primary">note</mat-icon>{{aTag(drop.analytics.tags,tag,6)}}</span>
-                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,0) != 0"><mat-icon class="task iconpad">folder</mat-icon>{{aTag(drop.analytics.tags,tag,1)}} of {{aTag(drop.analytics.tags,tag,0)}} ({{(aTag(drop.analytics.tags,tag,1)/aTag(drop.analytics.tags,tag,0)*100).toFixed(2)}}%)</span>
-                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,2) != 0 || aTag(drop.analytics.tags,tag,3) != 0"  ><mat-icon class="iconpad transaction">monetization_on</mat-icon>{{(aTag(drop.analytics.tags,tag,2)+aTag(drop.analytics.tags,tag,3)).toFixed(2)}}</span>
-                <span class="stats" *ngIf="aTag(drop.analytics.tags,tag,5) != 0"><mat-icon class="iconpad rate">star_rate</mat-icon>{{(aTag(drop.analytics.tags,tag,5)/aTag(drop.analytics.tags,tag,4)).toFixed(2)}}</span>
-                </div>
-            </mat-list-item>
-                <h4>Summary</h4>
-            <mat-divider></mat-divider>
-            <mat-list-item>
-                <mat-icon color="primary" mat-list-icon>note</mat-icon>
-                <h4 mat-line>Notes</h4> 
-                    <mat-chip-list>
-                        <mat-chip>{{drop.analytics.totals[6]}}</mat-chip>
-                    </mat-chip-list>
-            </mat-list-item>
-            <mat-list-item>
-                <mat-icon mat-list-icon class="transaction">monetization_on</mat-icon>
-                <h4 mat-line>Transactions</h4>
-                    <mat-chip-list>
-                        <mat-chip>{{(drop.analytics.totals[2]+drop.analytics.totals[3]).toFixed(2)}}&nbsp;CHF</mat-chip>
-                    </mat-chip-list>
-            </mat-list-item>
-            <mat-list-item>
-                <mat-icon mat-list-icon class="task">folder</mat-icon>
-                <h4 mat-line>Tasks</h4>
-                    <mat-chip-list>
-                        <mat-chip>{{(drop.analytics.totals[1]/drop.analytics.totals[0]).toFixed(2)*100}}%</mat-chip> 
-                    </mat-chip-list>
-            </mat-list-item>
-            <mat-list-item>
-                <mat-icon mat-list-icon class="rate">star_rate</mat-icon>
-                <h4 mat-line>Rate</h4>
-                    <mat-chip-list>
-                        <mat-chip>{{drop.analytics.totals[5]}}</mat-chip>
-                    </mat-chip-list>
-            </mat-list-item>
-        </mat-list>
-
-            <mat-chip-list *ngIf="!isType(drop,'GOAL') && !isType(drop,'ANLY')">
-                <mat-chip *ngFor="let t of drop.tags"><mat-icon [ngClass]="tagColor(t)">bookmark</mat-icon> {{t}}</mat-chip> 
-            </mat-chip-list>
-        </div>
-         
-        <mat-action-row class="actions" *ngIf="!isType(drop,'ANLY') && !isType(drop,'SYS')" > 
-            <button mat-stroked-button color="primary" (click)="edit(drop)">Edit</button>
-            <div class="grow"></div>
-            <button mat-stroked-button color="warn" (click)="delete(drop)">Delete</button>
-        </mat-action-row>
-
-   </mat-expansion-panel>
-</mat-accordion> 
+<!-- fab buttons 
 <button class="fab" mat-fab aria-label="Add drop" (click)="toggleFab()">
     <mat-icon>add</mat-icon>
 </button>
 <div [@openClose]="fabButtons ? 'fab-buttons-on' : 'fab-buttons-off' " [ngClass]="fabButtons ? 'fab-buttons-on' : 'fab-buttons-off'"> 
-    <button color="primary" mat-mini-fab aria-label="Note" class="note-fab" routerLink="/note/edit/new">
+    <button mat-mini-fab aria-label="Note" class="note-icon drop-fab" routerLink="/note/edit/new">
         <mat-icon>note</mat-icon>
     </button>
-    <button mat-mini-fab aria-label="Transaction" class="trans-fab" routerLink="/transaction/edit/new">
+    <button mat-mini-fab aria-label="Money" class="drop-fab money-icon" routerLink="/money/edit/new">
         <mat-icon>monetization_on</mat-icon>
     </button>
-    <button mat-mini-fab aria-label="Task" class="task-fab" routerLink="/task/edit/new">
+    <button mat-mini-fab aria-label="Task" class="drop-fab task-icon" routerLink="/task/edit/new">
         <mat-icon>folder</mat-icon>
     </button>
-    <button color="primary" mat-mini-fab aria-label="Goal" class="goal-fab" routerLink="/goal/edit/new">
+    <button mat-mini-fab aria-label="Goal" class="goal-icon drop-fab" routerLink="/goal/edit/new">
         <mat-icon>center_focus_strong</mat-icon>
     </button>
-    <button color="primary" mat-mini-fab aria-label="Rate" class="rate-fab" routerLink="/rate/edit/new">
+    <button mat-mini-fab aria-label="Rate" class="rate-icon drop-fab" routerLink="/rate/edit/new">
         <mat-icon>star_rate</mat-icon>
     </button>
 </div>
-  </mat-tab>
-  <mat-tab label="Tags">
-        <oos-tag-filter></oos-tag-filter>
-  </mat-tab>
-</mat-tab-group>
+-->

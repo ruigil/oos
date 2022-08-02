@@ -1,12 +1,74 @@
 /* You can add global styles to this file, and also import other style files */
 
+@use "@angular/material" as mat;
+@include mat.core();
+
+html { 
+    height: 100%; 
+}
 
 body {
     height: 100vh;
-    /*overflow-y: hidden;*/
+    background: #2d2d2d;
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    color: white;
 }
 
+.spacer {
+    flex: 1 1 auto;
+}
+.future {
+    background-color: #181818;
+}
 
+// form detail elements
+.form-elements {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 40px;
+}
+
+// drop basics
+.description {
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 10px;
+}
+
+.drop-footer {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+//-- drop basics
+
+.new-drop-button {
+    width: 70px;
+    font-size: 40px;
+}
+
+// drop icon colors
+.goal-icon {
+    color: #3998f1;
+}
+.money-icon {
+    color: #ebff3c;
+}
+.note-icon {
+    color: #f83cff;
+}
+.rate-icon {
+    color: #ff874a;
+}
+.system-icon {
+    color: #fff;
+}
+.task-icon {
+    color: #69dd2f;
+}
+// tag colors
 .blue {
     color: #0066ff
 }
@@ -25,4 +87,24 @@ body {
 
 .dark {
     color: #000000 
+}
+
+.light {
+    color: #fff
+}
+
+.day {
+    background-color: #222;
+}
+.week {
+    background-color: #232; 
+}
+.month {
+    background-color: #322;
+}
+.year {
+    background-color: #223; 
+}
+.system {
+    background-color: #000;
 }

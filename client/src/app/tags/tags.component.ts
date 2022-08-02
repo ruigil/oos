@@ -1,85 +1,78 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { FireService } from '../services/fire.service';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
+import { DeleteTagDialog } from './DeleteTagDialog';
+
+import { OceanOSService } from '../services/ocean-os.service';
 import { Tag } from '../model/tag';
-import { AuthService } from '../services/auth.service';
-import { Observable, Subscription } from 'rxjs';
-import { map, filter, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'oos-tags',
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss']
 })
-export class TagsComponent implements OnInit, OnDestroy {
-    @Input() mode: boolean = true;
-    @Output() onSelectTag = new EventEmitter<string[]>();
-    tagName: string = "";
-    tagColor: string = "dark";
-    tags: Array<{ id: string, name: string, color: string, count: number, available: boolean}> = [];
-    @Input() selected: Array<string> = [];
-    available: Array<string> = [];
-    subs: Subscription = new Subscription();
+export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
+    @Output() onSelectTag = new EventEmitter<Tag[]>();
+    @Input() selected: Array<Tag> = [];
+    currentTag: Tag = new Tag( { id: "", name: "", icon: 'bookmark', color: 'dark'});
+    update:boolean = false;
+    unselectedTags: Observable<Tag[]>;
+    selectedTags: Observable<Tag[]>;
     public colors:Array<any> = [ 
         {name: "Dark", value:"dark"},
+        {name: "Light", value:"light"},
         {name: "Red", value:"red"},
         {name: "Blue", value:"blue"},
         {name: "Green", value:"green"},
         {name: "Yellow", value:"yellow"}
     ];
-    
 
-    constructor(private fireService: FireService, private authService: AuthService) {
+    constructor(private oss: OceanOSService, private dialog:MatDialog) {
+        this.selectedTags = this.oss.selectedTags();
+        this.unselectedTags = this.oss.unselectedTags();
+
+        this.selectedTags.subscribe( (ts:Tag[]) => this.onSelectTag.emit(ts ) );
     }
 
     ngOnInit() {
-      this.subs.add(
-        this.authService.user().pipe(  
-            filter( u => u != null), 
-            switchMap( u => this.fireService.colWithIds$("tags", ref => ref.where("uid","==",u.uid).orderBy('updatedAt','desc')) ) 
-        ).subscribe( (tags:Tag[]) => {
-            this.tags = tags.map( t => ({ id: t.id, name: t.name, color: t.color, count: t.count, available: !this.selected.includes(t.name)}) );
-        })
-      );
     }
 
-    deleteTag(tagId:string) {
-      this.fireService.delete("tags/"+tagId).then( () => console.log(tagId + " deleted.") );
+    ngAfterViewInit() {
+        this.oss.clearTagSelection();
+        this.selected.map( (t:Tag) => this.oss.selectTag(t) )
     }
 
-    addTag() {
-        const ta = this.tags.filter( t => t.name === this.tagName );
-        const tagCount = ta.length == 0 ? 0 : ta[0].count;
-        this.fireService.set("tags/"+this.tagName.toLocaleUpperCase(),{ name: this.tagName.toLocaleUpperCase(), count: tagCount, color: this.tagColor });
-        if (!this.mode) {
-            this.selected.push(this.tagName);
-        }
-        this.tagName = "";
+    deleteTag(tag:Tag) {
+        const dialogRef = this.dialog.open(DeleteTagDialog, {
+            width: '350px',
+            data: {tag: tag.name },
+          });
+      
+          dialogRef.afterClosed().subscribe(result => {
+            if (result)
+                this.oss.deleteTag(tag).then( () => console.log(tag.name + " deleted") );
+          });    
     }
 
-    tagsAvailable() {
-        return this.tags.filter( t => t.available);
+    newTag() {
+        const tagName = this.currentTag.name.toLocaleUpperCase();
+        const tag:Tag = new Tag({ id:tagName, name: tagName, count: 0, color: this.currentTag.color, icon: 'bookmark' }); 
+        this.oss.putTag(tag);
+    }
+    
+    selectTag(tag:Tag) {
+        this.oss.selectTag(tag);
     }
 
-    tagsSelected() {
-        return this.tags.filter( t => !t.available);
+    unselectTag(tag:Tag) {
+        if (!tag.id.endsWith("_TYPE")) this.oss.unselectTag(tag);
     }
 
-    selectTag(name) {
-        this.tags = this.tags.map( t => ({...t, available: t.name === name ? false : t.available}) )
-        this.onSelectTag.emit(this.tags.filter(t => !t.available).map( t => t.name) );
-    }
-
-    unselectTag(name) {
-        this.tags = this.tags.map( t => ({...t, available: t.name === name ? true : t.available}) )
-        this.onSelectTag.emit(this.tags.filter(t => !t.available).map( t => t.name) );
-    }
-
-    colorChoice($event) {
-        this.tagColor = $event.detail.value;
+    colorChoice($event:any) {
+        this.currentTag.color = $event.detail.value;
     }
 
     ngOnDestroy() {
-        this.subs.unsubscribe();
     }
 
 }

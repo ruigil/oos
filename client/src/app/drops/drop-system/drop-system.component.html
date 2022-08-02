@@ -1,0 +1,15 @@
+<mat-expansion-panel class="{{drop.color}}">
+
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <mat-icon class="system-icon">brightness_7</mat-icon>
+            <span> {{drop.title}}</span>
+        </mat-panel-title>
+        <mat-panel-description class="description">
+            {{drop.date | formatDate}}
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <p [innerHTML]="drop.system?.content | markdown" ></p>
+
+</mat-expansion-panel >

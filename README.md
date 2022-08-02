@@ -1,3 +1,8 @@
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/ruigil/oos) 
+# OceanOS
 
-# oos
+OceanOS is a Personal Operating System.
+
+You can see it as a mix of productivity app, note taking, expense tracker and much more...
+It uses the concept of [lifestreaming](https://en.wikipedia.org/wiki/Lifestreaming) to organize your life.
+
+It is a great tool for habit formation, tracking objectives, and stay organized.

@@ -1,0 +1,36 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Goal</span>
+</mat-toolbar>
+<form class="form-elements" #dropForm="ngForm">
+    <mat-form-field>
+        <input name="name" [(ngModel)]="drop.title" matInput placeholder="Name..." required autofocus>
+        <mat-error *ngIf="field.errors?.['required']">
+            Name is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <textarea name="text" matInput placeholder="Please describe your goal in a clear, measurable form..." rows="15" [(ngModel)]="drop.goal!.content"  autofocus required></textarea>
+        <mat-error *ngIf="field.errors?.['required']">
+            Description <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <input name="date" matInput type="datetime-local" [(ngModel)]="dateISO"required>
+        <mat-error *ngIf="field.errors?.['required']">
+            Date is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Recurrence</mat-label>
+        <mat-select name="recurrence" [(ngModel)]="drop.recurrence">
+            <mat-option *ngFor="let rec of recurrences" [value]="rec.key">{{rec.value}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop.id ? 'update' : 'add'}}</mat-icon>{{drop.id ? 'Update' : 'Add' }} Goal
+    </button>
+    <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
+</form>

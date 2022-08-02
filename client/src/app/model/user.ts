@@ -1,7 +1,7 @@
 
 export class User {
-    uid: string;
-    email: string;
+    uid: string = "";
+    email: string = "";
     displayName?: string;
     
     public constructor(init?:Partial<User>) {

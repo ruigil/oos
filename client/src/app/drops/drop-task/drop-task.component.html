@@ -1,0 +1,36 @@
+<mat-expansion-panel class="{{drop.color}}">
+
+    <mat-expansion-panel-header>
+        <mat-panel-title><mat-icon class="task-icon">folder</mat-icon>
+            <mat-icon *ngIf="drop.recurrence != 'none'">loop</mat-icon>
+            <mat-chip-list [selectable]="true">
+                <mat-chip [ngClass]="{'task-completed' : drop.task?.completed }" (click)="complete($event)">
+                    <mat-icon>{{drop.task?.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>
+                    <span>&nbsp;{{drop.title}}</span>
+                </mat-chip>
+            </mat-chip-list>
+        </mat-panel-title>
+        <mat-panel-description class="description">
+            {{drop.date | formatDate }}
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <p>{{drop.task!.description}}</p>
+    
+    <mat-divider></mat-divider>
+    
+    <div class="drop-footer">
+        <button mat-icon-button (click)="edit()">
+            <mat-icon aria-label="Menu">edit</mat-icon>
+        </button>
+        <div class="spacer"></div>
+        <mat-chip-list>
+            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
+        </mat-chip-list>
+    
+        <button mat-icon-button (click)="delete()">
+            <mat-icon aria-label="Menu">delete</mat-icon>
+        </button>
+    </div>
+</mat-expansion-panel >
+

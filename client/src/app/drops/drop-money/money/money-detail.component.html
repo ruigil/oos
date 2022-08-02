@@ -1,0 +1,42 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Transaction</span>
+</mat-toolbar>
+
+<form class="form-elements" #dropForm="ngForm">
+    <mat-form-field>
+        <mat-label>{{settings.transaction?.currency}}</mat-label>
+        <input matInput type="number" [(ngModel)]="drop.money!.value" name="value" required autofocus>
+        <mat-error *ngIf="field.hasError('required')">
+            Amount is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Transaction Type</mat-label>
+        <mat-select name="type" [(ngModel)]="drop.money!.type">
+            <mat-option [value]="'expense'">Expense</mat-option>
+            <mat-option [value]="'income'">Income</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <input name="date" matInput type="datetime-local" [(ngModel)]="dateISO"required>
+        <mat-error *ngIf="field.hasError('required')">
+            Date is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Recurrence</mat-label>
+        <mat-select [(ngModel)]="drop.recurrence" name="recurrence">
+            <mat-option *ngFor="let rec of recurrences" [value]="rec.key">{{rec.value}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <textarea  name="description" matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.title"></textarea>
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop.id ? 'update' : 'add'}}</mat-icon>{{drop.id ? 'Update' : 'Add' }} Transaction
+    </button>
+    <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
+</form>

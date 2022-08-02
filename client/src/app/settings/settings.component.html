@@ -1,5 +1,5 @@
 <mat-toolbar class="toolbar" color="primary">
-    <button mat-icon-button (click)="goBack()">
+    <button mat-icon-button routerLink="/home">
         <mat-icon aria-label="Back">arrow_back</mat-icon>
     </button>
   <span>Settings</span>
@@ -26,17 +26,13 @@
             </mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field>
-        <mat-label>Timezone</mat-label>
-        <input matInput [(ngModel)]="settings.home.timezone"/>
-    </mat-form-field>
+    
     <mat-label class="section-title"><b>System drops</b></mat-label>
+    
     <mat-divider class="section"></mat-divider>
     <mat-slide-toggle class="slide" [(ngModel)]="settings.system.day">Current Day is {{ settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
-    <mat-slide-toggle class="slide" [(ngModel)]="settings.system.analytics">Monthly Analytics is {{ settings.system.analytics ? 'Active' : 'Inactive' }}</mat-slide-toggle>
 
     <button mat-flat-button color="primary" [disabled]="btnDisabled" (click)="saveSettings()">
-        <mat-icon>save</mat-icon>
-        Save Settings
-        </button>
-    </div>
+        <mat-icon>save</mat-icon> Save Settings
+    </button>
+</div>

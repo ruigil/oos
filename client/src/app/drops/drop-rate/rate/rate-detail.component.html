@@ -1,0 +1,40 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Rate</span>
+</mat-toolbar>
+<form class="form-elements" #dropForm="ngForm">
+    <mat-form-field>
+        <!--[(ngModel)]="''"-->
+        <input type="text" matInput name="name" [(ngModel)]="drop.title" placeholder="What are you rating?" required autofocus>
+        <mat-error *ngIf="field.hasError('required')">
+            Rate name is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="number" placeholder="Rate" min="0" max="5" step="1" name="value" [(ngModel)]="drop.rate!.value">
+    </mat-form-field>
+    <mat-form-field>
+        <input matInput type="datetime-local" placeholder="Choose a date" name="date" [(ngModel)]="dateISO" required>
+        <mat-error *ngIf="field.hasError('required')">
+            Date is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Recurrence</mat-label>
+        <mat-select [(ngModel)]="drop.recurrence" name="recurrence">
+            <mat-option *ngFor="let rec of recurrences" [value]="rec.key">{{rec.value}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.rate!.description" name="description"></textarea>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop.id ? 'update' : 'add'}}</mat-icon>{{drop.id ? 'Update' : 'Add' }} Rate
+    </button>
+    <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
+</form>
+

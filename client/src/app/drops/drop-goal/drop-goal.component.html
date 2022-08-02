@@ -1,0 +1,37 @@
+<mat-expansion-panel class="{{drop.color}}">
+
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <mat-icon class="goal-icon">center_focus_strong</mat-icon>
+            <mat-icon *ngIf="drop.recurrence !== 'none'">loop</mat-icon>
+            {{drop.title}}
+        </mat-panel-title>
+        <mat-panel-description class="description">
+            {{drop.date | formatDate}}
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div [innerHTML]="drop.goal?.content | markdown" ></div>
+
+    <mat-divider></mat-divider>
+    
+    <mat-chip-list class="mat-chip-list-stacked tag-summary">
+        <mat-chip *ngFor="let tag of tags()"><mat-icon class="{{tag.color}}">bookmark</mat-icon>{{tag.name}}</mat-chip> 
+    </mat-chip-list>
+
+    <mat-divider></mat-divider>
+
+    <div class="drop-footer">
+        <button mat-icon-button (click)="edit()">
+            <mat-icon aria-label="Menu">edit</mat-icon>
+        </button>
+        <div class="spacer"></div>
+        <mat-chip-list>
+            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon>{{t.name}}</mat-chip> 
+        </mat-chip-list>
+        <button mat-icon-button (click)="delete()">
+            <mat-icon aria-label="Menu">delete</mat-icon>
+        </button>
+    </div>
+</mat-expansion-panel >
+    

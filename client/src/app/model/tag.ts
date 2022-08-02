@@ -1,9 +1,13 @@
 export class Tag {
-    id: string;
-    name: string;
-    color: string;
-    count: number;
-    uid: string;
+    id: string = "";
+    name: string = "";
+    color: string = "";
+    icon: string = "";
+    count: number = 0;
+    selected?: boolean = false;
+    filtered?: boolean = false;
+    available?: boolean = true;
+    uid: string = "";
     createdAt: any;
     updatedAt: any;
 

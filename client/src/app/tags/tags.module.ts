@@ -2,24 +2,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OOSCommonModule } from '../common/common.module';
 
-import { RouterModule } from '@angular/router';
-
-
 import { TagsComponent } from './tags.component';
-import { TagsPageComponent } from './tags-page.component';
+import { DeleteTagDialog } from './DeleteTagDialog';
 
 @NgModule({
   imports: [
     CommonModule,
-    OOSCommonModule,
-    RouterModule.forChild([
-      {
-        path: 'edit',
-        component: TagsPageComponent
-      }
-    ])
+    OOSCommonModule
   ],
-  declarations: [TagsComponent, TagsPageComponent],
-  exports: [ TagsComponent, OOSCommonModule ]
+  declarations: [TagsComponent, DeleteTagDialog],
+  exports: [ TagsComponent ]
 })
 export class TagsModule {}

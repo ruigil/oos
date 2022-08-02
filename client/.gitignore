@@ -45,3 +45,5 @@ Thumbs.db
 # Environment Firestore API Key
 environment.ts
 environment.prod.ts
+
+/client/.angular

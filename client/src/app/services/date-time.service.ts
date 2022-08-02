@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as firebase from 'firebase/app';
-import * as moment from "moment";
+import { Interval, addDays, addMonths, addWeeks, addYears, endOfDay, endOfMonth, endOfWeek, endOfYear, formatISO, subDays, isWithinInterval, startOfToday, format, isToday, subWeeks, subMonths, subYears } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -9,36 +8,70 @@ export class DateTimeService {
 
     constructor() { }
 
-    getDateTime(date) {
-        return { date: date, time: date.getHours()+":"+date.getMinutes() }
-    }
-
-    getDate(dateTime) {
-        let hm = dateTime.time.split(":");
-        return moment(dateTime.date).hours(hm[0]).minutes(hm[1]).toDate();
-    }
-
     getRecurrences() {
-    return [ 
-        { value: "none", text: "None"}, 
-        { value: "day", text: "Daily"}, 
-        { value: "week", text: "Weekly"}, 
-        { value: "month", text: "Monthly"}, 
-        { value: "year", text: "Yearly"},
-        { value: "weekday", text: "Weekdays"},
-        { value: "weekend", text: "Weekends"}
-    ]
+        return [ 
+            { key: "none", value: "None"}, 
+            { key: "day", value: "Daily"}, 
+            { key: "week", value: "Weekly"}, 
+            { key: "month", value: "Monthly"}, 
+            { key: "year", value: "Yearly"},
+            { key: "weekday", value: "Weekdays"},
+            { key: "weekend", value: "Weekends"}
+        ]
     }
 
-    getTimestamp(time: string): any {
-        let m = moment().endOf('day');
-        return time == "week" ? this.date2ts(moment(m).add(1,"weeks").toDate()) :
-        time == "month" ? this.date2ts(moment(m).add(1,"months").toDate()) :
-        time == "year" ? this.date2ts(moment(m).add(1,"years").toDate()) :this.date2ts(m.toDate()); // today 
+    getTimestamp(date: Date | string): number {
+        if (typeof date === 'string') {
+            return new Date(date).getTime();
+        } else {
+            return date.getTime();
+        }
     }
 
-    date2ts(date): firebase.firestore.Timestamp {
-        return firebase.firestore.Timestamp.fromDate(date);
+    getDateISO(timestamp:number) {
+        return formatISO(timestamp).substring(0,16);
+    }
+
+    addDay(date: number, count = 1): number {
+        return addDays(date, count).getTime();
+    }
+    addWeek(date: number, count = 1): number {
+        return addWeeks(date, count).getTime();
+    }
+    addMonth(date: number, count = 1): number {
+        return addMonths(date, count).getTime();
+    }
+    addYear(date: number, count = 1): number {
+        return addYears(date, count).getTime();
+    }
+
+    subDay(date: number, count = 1): number {
+        return subDays(date, count).getTime();
+    }
+    subWeek(date: number, count = 1): number {
+        return subWeeks(date, count).getTime();
+    }
+    subMonth(date: number, count = 1): number {
+        return subMonths(date, count).getTime();
+    }
+    subYear(date: number, count = 1): number {
+        return subYears(date, count).getTime();
+    }
+
+    isWithin(d:number, interval: Interval):boolean {
+        return isWithinInterval(d, interval);
+    }
+
+    isToday(date:number) {
+        return isToday(date);
+    }
+
+    startOfToday():number {
+        return startOfToday().getTime();
+    }
+
+    format(date:number, options:string):string {
+        return format(date, options);
     }
 
 

@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { LoginComponent } from './login/login.component';
 import { StartComponent } from './start/start.component';
-import { AuthGuard } from './services/auth.guard';
 
 const routes: Routes = [
   {
@@ -15,48 +13,32 @@ const routes: Routes = [
     component: StartComponent,
   },
   {
-    path: 'login',
-    component: LoginComponent,
-  },
-  {
     path: 'home',
-    canActivate: [ AuthGuard ],
-    loadChildren: './home/home.module#HomePageModule'
-  },
-  {
-    path: 'tags',
-    canActivate: [ AuthGuard ],
-    loadChildren: './tags/tags.module#TagsModule'
+    loadChildren: () => import('./home/home.module').then( m => m.HomePageModule )
   },
   {
     path: 'settings',
-    canActivate: [ AuthGuard ],
-    loadChildren: './settings/settings.module#SettingsModule'
+    loadChildren: () => import('./settings/settings.module').then( m => m.SettingsModule )
   },
   {
     path: 'note',
-    canActivate: [ AuthGuard ],
-    loadChildren: './note/note.module#NoteModule'
+    loadChildren: () => import('./drops/drop-note/note/note.module').then( m => m.NoteModule )
   },
   {
-    path: 'transaction',
-    canActivate: [ AuthGuard ],
-    loadChildren: './transaction/transaction.module#TransactionModule'
+    path: 'money',
+    loadChildren: () => import('./drops/drop-money/money/money.module').then( m => m.MoneyModule )
   },
   {
     path: 'task',
-    canActivate: [ AuthGuard ],
-    loadChildren: './task/task.module#TaskModule'
+    loadChildren: () => import('./drops/drop-task/task/task.module').then( m => m.TaskModule )
   },
   {
     path: 'rate',
-    canActivate: [ AuthGuard ],
-    loadChildren: './rate/rate.module#RateModule'
+    loadChildren: () => import('./drops/drop-rate/rate/rate.module').then( m => m.RateModule )
   },
   {
     path: 'goal',
-    canActivate: [ AuthGuard ],
-    loadChildren: './goal/goal.module#GoalModule'
+    loadChildren: () => import('./drops/drop-goal/goal/goal.module').then( m => m.GoalModule )
   }
 ];
 

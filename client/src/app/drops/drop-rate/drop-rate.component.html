@@ -1,0 +1,35 @@
+<mat-expansion-panel class="{{drop.color}}">
+
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <mat-icon class="rate-icon">star_rate</mat-icon>
+            <mat-icon *ngIf="drop.recurrence != 'none'">loop</mat-icon>
+            <mat-chip-list [selectable]="true">
+                <mat-chip class="rate-bg">
+                    {{drop.title}}
+                    <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate-icon" (click)="rate(key, $event)">{{ key <= drop.rate!.value ? 'star_rate' : 'star_border'}}</mat-icon> 
+                </mat-chip>
+            </mat-chip-list>
+        </mat-panel-title>
+        <mat-panel-description class="description">
+            {{drop.date | formatDate}}
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <p>{{drop.rate!.description}}</p>
+
+    <mat-divider></mat-divider>
+
+    <div class="drop-footer">
+        <button mat-icon-button (click)="edit()">
+            <mat-icon aria-label="Menu">edit</mat-icon>
+        </button>
+        <div class="spacer"></div>
+        <mat-chip-list>
+            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
+        </mat-chip-list>    
+        <button mat-icon-button (click)="delete()">
+            <mat-icon aria-label="Menu">delete</mat-icon>
+        </button>
+    </div>
+</mat-expansion-panel >

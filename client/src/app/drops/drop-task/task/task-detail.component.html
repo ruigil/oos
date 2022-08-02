@@ -1,0 +1,35 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Task</span>
+</mat-toolbar>
+<form class="form-elements" #dropForm="ngForm">
+    <mat-form-field>
+        <input name="name" [(ngModel)]="drop.title" matInput placeholder="Name..." required autofocus>
+        <mat-error *ngIf="field.hasError('required')">
+            Name is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <input name="date" matInput type="datetime-local" placeholder="Choose a date" [(ngModel)]="dateISO" required>
+        <mat-error *ngIf="field.hasError('required')">
+            Date is <strong>required</strong>
+        </mat-error> 
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Recurrence</mat-label>
+        <mat-select name="recurrence" [(ngModel)]="drop.recurrence">
+        <mat-option *ngFor="let rec of recurrences" [value]="rec.key">{{rec.value}}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea name="description" matInput placeHolder="Enter you text here..." rows="7" [(ngModel)]="drop.task!.description"></textarea>
+    </mat-form-field>
+    
+    <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop.id ? 'update' : 'add'}}</mat-icon>{{drop.id ? 'Update' : 'Add' }} Task
+    </button>
+    <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags> 
+</form>
