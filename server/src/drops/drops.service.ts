@@ -67,7 +67,7 @@ export class DropsService {
             dtype === 'GOAL' ? [ tm.get("GOAL_TYPE"), tm.get("BYE") ] :
             dtype === 'MONEY' ? [ tm.get("MONEY_TYPE"), tm.get("HELLO") ] : []
           ,
-          date: subHours(endOfYear(Date.now()), i*12 ),
+          date: subHours(endOfYear(Date.now()), i*12 ).getTime(),
           ...d
         };
         drops.push(new Drop(dd));
@@ -103,7 +103,9 @@ export class DropsService {
       })
     }
 
-    delete(id:string):Promise<DeleteResult> {
+    async delete(id:string):Promise<DeleteResult> {
+      const drop = await this.get(id);
+      await this.drepo.save({...drop, tags:[]});
       return this.drepo.delete(id);
     }
 

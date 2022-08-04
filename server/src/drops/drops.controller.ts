@@ -5,7 +5,7 @@ import { Drop } from '../models/drop';
 import { DropEntity } from './drop.entity';
 import { DropsService } from './drops.service';
 
-@Controller('drops')
+@Controller('api/drops')
 export class DropsController {
 
     constructor(private ds: DropsService) {}

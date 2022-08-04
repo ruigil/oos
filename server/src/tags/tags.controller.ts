@@ -4,7 +4,7 @@ import { Tag } from '../models/tag';
 import { TagEntity } from './tag.entity';
 import { TagsService } from './tags.service';
 
-@Controller('tags')
+@Controller('api/tags')
 export class TagsController {
 
     constructor(private ts: TagsService) {}
