@@ -51,7 +51,7 @@ export class MoneyDetailComponent implements OnInit, AfterViewInit {
                         value: 0.0,
                         type: "expense",
                         currency: ''
-                    } })) : of(this.oos.getDrop(id));
+                    } })) : this.oos.getDrop(id);
             })
         ).subscribe( d => {
             console.log(d);

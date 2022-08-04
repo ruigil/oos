@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -17,7 +17,8 @@ import { Tag } from '../../../model/tag';
 })
 export class NoteDetailComponent implements OnInit, OnDestroy {
 
-    drop: Drop = new Drop();
+    dropObs: Observable<Drop>;
+    drop:Drop = new Drop({ note: { content: ""}});
     recurrences: Array<{ key: string, value: string }> = [];
     btnDisabled: boolean = false; 
     dateISO: string = "";
@@ -31,11 +32,9 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
         private router: Router, 
         private dts: DateTimeService,
         private snackbar: MatSnackBar) { 
-    }
 
-    ngOnInit() {
         this.recurrences = this.dts.getRecurrences();
-        this.route.paramMap.pipe(
+        this.dropObs = this.route.paramMap.pipe(
             switchMap( params => {
                 let id:string = params.get("id") || "";
                 const tag:Tag = this.oos.getTag("NOTE_TYPE");
@@ -47,12 +46,16 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
                         tags: [ tag ],
                         note: { content: "" },
                         date: Date.now()
-                    }) ) : of(this.oos.getDrop(id));
+                    }) ) : this.oos.getDrop(id);
             })
-        ).subscribe( (d:Drop) => {
+        );
+    }
+
+    ngOnInit() {
+        this.dropObs.subscribe( (d:Drop) => {
             this.drop = d;
-            this.dateISO = this.dts.getDateISO(this.drop.date);
-        })
+            this.dateISO = this.dts.getDateISO(d.date);
+        });
     }
 
     dropData(id:string) {

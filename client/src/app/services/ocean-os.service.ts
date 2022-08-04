@@ -1,25 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable, tap, range, timeInterval, filter, map } from 'rxjs';
+import { Subject, Observable, tap, range, timeInterval, filter, map, firstValueFrom, of } from 'rxjs';
 import { Drop } from "../model/drop";
 import { Tag } from "../model/tag";
 import { DateTimeService } from './date-time.service';
 import { subHours, addHours, startOfDay, endOfToday, endOfMonth, endOfWeek, endOfYear, endOfDay } from 'date-fns';
 import { Settings } from '../model/settings';
 import { Stream } from '../model/stream';
+import { HttpClient } from '@angular/common/http';
 
 
-const TAGS = [
-  new Tag({ id:"NOTE_TYPE", name:"NOTE", count: 0 , color: "note-icon", icon: 'note' }),
-  new Tag({ id:"RATE_TYPE", name:"RATE", count: 0 , color: "rate-icon", icon: 'star_rate'  }),
-  new Tag({ id:"TASK_TYPE", name:"TASK", count: 0 , color: "task-icon", icon: 'folder' }),
-  new Tag({ id:"GOAL_TYPE", name:"GOAL", count: 0 , color: "goal-icon", icon: 'center_focus_strong' }),
-  new Tag({ id:"MONEY_TYPE", name:"MONEY", count: 0 , color: "money-icon", icon: 'monetization_on' }),
-  new Tag({ id:"SYS_TYPE", name:"SYSTEM", count: 0 , color: "system-icon", icon: 'brightness_7'}),
-  new Tag({ id: "HELLO", name:"HELLO", count: 0, color: "red", icon: 'bookmark'}),
-  new Tag({ id: "YES", name:"YES", count: 0, color: "blue", icon: 'bookmark'}),
-  new Tag({ id: "BYE", name:"BYE", count: 0, color: "green", icon: 'bookmark'}),
-  new Tag({ id: "OOH", name:"OHH", count: 0, color: "yellow", icon: 'bookmark'})
-]
 @Injectable({
   providedIn: 'root'
 })
@@ -36,75 +25,70 @@ export class OceanOSService {
 
   previewAt: number = 0;
 
-  constructor(private dts:DateTimeService) {
+  constructor(private dts:DateTimeService, private http:HttpClient) {
+    this.http.get<Tag[]>("http://localhost:4200/api/tags").subscribe( ts => {
+      this.tagsV = new Map( ts.map( t => new Tag({...t, available: true, filtered: false, selected: false})).map( t => [t.id,t]) );
+    });
 
-    this.tagsV = new Map( TAGS.map( t => [t.id,t] ) );
-
-    for (let i=0; i<1000; i++) {
-
-      let d:any = 
-        i%6 == 1 ? { money: { value: 10.3, type: "expense", currency: "CHF" } } :
-        i%6 == 2 ? { task: { description: "Task To Do Something", date: 0, completed: false } } :
-        i%6 == 3 ? { system: { content: "SYSTEM"  } } :
-        i%6 == 4 ? { rate: { description: "GOOD thing to Rate", value:  3 } } :
-        i%6 == 5 ? { goal: { content: "__This is a Goal__", system: false, completed: false, totals: [2,3,4] } } :
-        { note: { content: "__This is a text note__" } };
-
-      let dtype =   
-        i%6 == 1 ? "MONEY" :
-        i%6 == 2 ? "TASK" :
-        i%6 == 3 ? "SYS" :
-        i%6 == 4 ? "RATE" :
-        i%6 == 5 ? "GOAL" : "NOTE";
-
-      let dd = {
-        id: this.generateID(),
-        type: dtype,
-        title: dtype === 'TASK'? `Do Something`: dtype === 'RATE' ? `GOOD` : `This is a ${dtype} drop`,
-        recurrence: "day",
-        tags: 
-          dtype === 'NOTE' ? [ this.tagsV.get("NOTE_TYPE"), this.tagsV.get("HELLO") ] :
-          dtype === 'RATE' ? [ this.tagsV.get("RATE_TYPE"), this.tagsV.get("BYE") ] :
-          dtype === 'TASK' ? [ this.tagsV.get("TASK_TYPE"), this.tagsV.get("HELLO") ] :
-          dtype === 'GOAL' ? [ this.tagsV.get("GOAL_TYPE"), this.tagsV.get("BYE") ] :
-          dtype === 'MONEY' ? [ this.tagsV.get("MONEY_TYPE"), this.tagsV.get("HELLO") ] : []
-        ,
-        date: subHours(endOfYear(Date.now()), i*12 ),
-        deleted: false,
-        ...d
-      };
-      let drop = new Drop(dd);
-      this.dropsV.set(drop.id, drop);
-    }
-
+    this.http.get<Drop[]>("http://localhost:4200/api/drops").subscribe( ds => {
+      this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
+      this.fromTime( { preview: 'day', startAt:this.dts.startOfToday() });
+    });
   }
 
 
-  putTag(tag : Tag ): Promise<boolean> {
-    this.tagsV.set(tag.id, tag);
-    this.getTags();
-    return Promise.resolve(true);
+  putTag(tag : Tag ): Promise<Object> {
+    return new Promise( (resolve,reject) => {
+      this.http.post(`http://localhost:4200/api/tags`, tag).subscribe( r => {
+        if (r) {
+          this.tagsV.set( tag.id, tag );
+          this.getTags();
+          resolve(r);
+        } else reject();
+      });
+    });
   }
 
-  putDrop(drop:Drop):Promise<boolean> {
+  putDrop(drop:Drop):Promise<object> {
     if (!drop.id) {
       drop.id = this.generateID();
     }
-    this.dropsV.set(drop.id, drop );
-    this.getDrops();
-    return Promise.resolve(false);
+    return new Promise( (resolve,reject) => {
+      this.http.post(`http://localhost:4200/api/drops`, drop).subscribe( r => {
+        if (r) {
+          this.dropsV.set(drop.id, drop );
+          this.getDrops();
+          resolve(r);
+        } else reject();
+      });
+    });
   }
 
-  deleteTag(tag : Tag ): Promise<boolean> {
-    this.tagsV.delete( tag.id );
-    this.getTags();
-    return Promise.resolve(true);
+  deleteTag(tag : Tag ): Promise<object> {
+    return new Promise( (resolve,reject) => {
+      this.http.delete(`http://localhost:4200/api/tags/${tag.id}`).subscribe( r => {
+        if (r) {
+          this.tagsV.delete( tag.id );
+          for (let d of this.dropsV.values()) {
+            d.tags = d.tags.filter( t => t.id !== tag.id);
+          }
+          this.getTags();
+          resolve(r);
+        } else reject();
+      });
+    });
   }
 
-  deleteDrop(drop:Drop): Promise<boolean> {
-    this.dropsV.delete(drop.id);
-    this.getDrops();
-    return Promise.resolve(true);
+  deleteDrop(drop:Drop): Promise<object> {
+    return new Promise( (resolve,reject) => {
+      this.http.delete(`http://localhost:4200/api/drops/${drop.id}`).subscribe( r => {
+        if (r) {
+          this.dropsV.delete(drop.id);
+          this.getDrops();
+          resolve(r);
+        } else reject();
+      });
+    });
   }
 
   tags():Observable<Tag[]> {
@@ -195,8 +179,11 @@ export class OceanOSService {
     this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
   }
 
-  getDrop(did:string):Drop {
-    return this.dropsV.get(did) || new Drop();
+  getDrop(did:string):Observable<Drop> {
+    let drop = this.dropsV.get(did);
+    
+    return drop ? of(drop) : this.http.get<Drop>(`http://localhost:4200/api/drops/${did}`) 
+    
   }
 
   getTag(tid:string):Tag {

@@ -18,7 +18,7 @@
 
     <mat-form-field>
         <mat-label>Recurrence</mat-label>
-        <mat-select name="recurrence" [(ngModel)]="drop.recurrence">
+        <mat-select name="recurrence" [(ngModel)]="drop.recurrence ">
             <mat-option *ngFor="let rec of recurrences" [value]="rec.key">{{rec.value}}</mat-option>
         </mat-select>
     </mat-form-field>

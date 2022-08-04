@@ -51,7 +51,7 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
                         description: "",
                         date: null,
                         completed: false
-                    } })) : of(this.oos.getDrop(id));
+                    } })) : this.oos.getDrop(id);
             })
         ).subscribe( d => {
             this.drop = d;

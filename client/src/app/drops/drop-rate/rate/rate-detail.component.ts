@@ -50,7 +50,7 @@ export class RateDetailComponent implements OnInit, OnDestroy {
                     rate: {
                         description: "",
                         value: 3,
-                    } })) : of(this.oos.getDrop(id));
+                    } })) : this.oos.getDrop(id);
             })
         ).subscribe( d => {
             this.drop = d;

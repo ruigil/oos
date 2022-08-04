@@ -46,7 +46,7 @@ export class GoalDetailComponent implements OnInit {
                         recurrence: "none",
                         tags: [this.oos.getTag('GOAL_TYPE')],
                         date: this.dts.getTimestamp(new Date())
-                    }) ) : of(this.oos.getDrop(id));
+                    }) ) : this.oos.getDrop(id);
             })
         ).subscribe( d => {
             this.drop = d;
