@@ -13,8 +13,7 @@ export class Drop {
     recurrence: string = "";
     tags: Array<Tag> = [];
     date: number = 0;
-    updatedAt: any;
-    createdAt: any;
+    uid: string = "";
     
     public constructor(init?:Partial<Drop>) {
         Object.assign(this, init);

@@ -1,29 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { Tag } from 'src/models/tag';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DeleteResult, In, Repository } from 'typeorm';
+import { Tag } from '../models/tag';
+import { TagEntity } from './tag.entity';
 
 @Injectable()
 export class TagsService {
-    constructor() {}
+    constructor(
+        @InjectRepository(TagEntity) private trepo: Repository<TagEntity>,
+    ) {}
 
-    create(tag:Tag) {
-        
+    create(tag:Tag):Promise<TagEntity> {
+        return this.trepo.save(new TagEntity( {...tag}));
     }
 
-    update(id:string, tag:Tag){
-
+    update(tag:Tag): Promise<TagEntity> {
+        return this.trepo.save(new TagEntity( {...tag}));
     }
 
-    
-
-    get(id:string) {
-
+    get(id:string):Promise<TagEntity> {
+        return this.trepo.findOneBy({ id:id })
     }
 
-    delete(id:string) {
-
+    delete(id:string):Promise<DeleteResult> {
+        return this.trepo.delete(id);
     }
 
-    findAll(query:string) {
+    findAll():Promise<TagEntity[]> {
+        return this.trepo.find();
+    }
 
-    }    
+    findByIds(ids:string[]):Promise<TagEntity[]> {
+        return this.trepo.findBy({
+            id: In(ids)
+        })
+    }
 }

@@ -1,5 +1,7 @@
 import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { DeleteResult } from 'typeorm';
 import { Tag } from '../models/tag';
+import { TagEntity } from './tag.entity';
 import { TagsService } from './tags.service';
 
 @Controller('tags')
@@ -8,27 +10,27 @@ export class TagsController {
     constructor(private ts: TagsService) {}
 
     @Post()
-    async create(@Body() createDrop: Tag) {
-        return this.ts.create(createDrop);
+    async create(@Body() tag: Tag):Promise<TagEntity> {
+        return this.ts.create(tag);
     }
 
     @Get()
-    async findAll(@Query() query: string) {
-        return this.ts.findAll(query);
+    async findAll():Promise<TagEntity[]> {
+        return this.ts.findAll();
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string) {
+    async findOne(@Param('id') id: string):Promise<TagEntity> {
         return this.ts.get(id);
     }
 
     @Put(':id')
-    async update(@Param('id') id: string, @Body() updateTag: Tag) {
-        return this.ts.update(id, updateTag);
+    async update(@Body() tag: Tag):Promise<TagEntity> {
+        return this.ts.update(tag);
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string) {
+    async remove(@Param('id') id: string):Promise<DeleteResult> {
         return this.ts.delete(id);
     }
 }

@@ -1,5 +1,8 @@
-import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Query, Post, Body, Put, Param, Delete, Res, StreamableFile, Header } from '@nestjs/common';
+import { id } from 'date-fns/locale';
+import { DeleteResult } from 'typeorm';
 import { Drop } from '../models/drop';
+import { DropEntity } from './drop.entity';
 import { DropsService } from './drops.service';
 
 @Controller('drops')
@@ -8,27 +11,36 @@ export class DropsController {
     constructor(private ds: DropsService) {}
 
     @Post()
-    async create(@Body() createDrop: Drop) {
+    async create(@Body() createDrop: Drop):Promise<DropEntity> {
         return this.ds.create(createDrop);
     }
 
     @Get()
-    async findAll(@Query() query: string) {
-        return this.ds.findAll(query);
+    //@Header('Content-Type', 'application/json')
+    async findAll(): Promise<DropEntity[]> {
+        //@Query() query: string
+        return this.ds.findAll();        
+    }
+
+    @Get('sample')
+    //@Header('Content-Type', 'application/json')
+    async testSample(): Promise<{result:boolean}> {
+        //@Query() query: string
+        return this.ds.testSample();
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string) {
+    async findOne(@Param('id') id: string):Promise<DropEntity> {
         return this.ds.get(id);
     }
 
     @Put(':id')
-    async update(@Param('id') id: string, @Body() updateDrop: Drop) {
-        return this.ds.update(id, updateDrop);
+    async update(@Body() updateDrop: Drop):Promise<DropEntity> {
+        return this.ds.update(updateDrop);
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string) {
+    async remove(@Param('id') id: string):Promise<DeleteResult> {
         return this.ds.delete(id);
     }
 }
