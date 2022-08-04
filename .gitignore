@@ -1,4 +1,6 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+#
+/client/.angular
+/client/node_modules
 
 # compiled output
 /dist
@@ -6,7 +8,7 @@
 /out-tsc
 
 # dependencies
-/node_modules
+/server/node_modules
 
 # IDEs and editors
 /.idea
@@ -38,8 +40,24 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Environment Firestore API Key
-environment.ts
-environment.prod.ts
+# compiled output
+/server/dist
+/server/node_modules
 
-/.angular
+# database
+/server/oos-db
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+/server/coverage
+/server/.nyc_output
