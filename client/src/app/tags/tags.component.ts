@@ -18,7 +18,6 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     update:boolean = false;
     unselectedTags: Observable<Tag[]>;
     selectedTags: Observable<Tag[]>;
-    tagset: boolean = false;
 
     public colors:Array<any> = [ 
         {name: "Dark", value:"dark"},
@@ -30,7 +29,6 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     ];
 
     constructor(private oos: OceanOSService, private dialog:MatDialog) {
-        this.oos.tags().pipe(first(), map( () => true)).subscribe( v => this.tagset = v)
 
         this.selectedTags = this.oos.selectedTags();
         this.unselectedTags = this.oos.unselectedTags();
@@ -41,7 +39,7 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     ngOnChanges(changes: SimpleChanges) {
         const previous = changes['selected'].previousValue || [];
         const current = changes['selected'].currentValue;
-        if ((current.length != previous.length) && (this.tagset)) {
+        if ((!changes['selected'].firstChange) && ((current.length != previous.length))) {
             this.oos.clearTagSelection();
             this.selected.map( (t:Tag) => this.oos.selectTag(t) )
         }        
@@ -51,6 +49,8 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
+        this.oos.clearTagSelection();
+        this.selected.map( (t:Tag) => this.oos.selectTag(t) )
     }
 
     deleteTag(tag:Tag) {
