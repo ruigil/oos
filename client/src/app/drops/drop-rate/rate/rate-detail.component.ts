@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { of} from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { combineLatest, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 
@@ -16,7 +15,7 @@ import { Tag } from '../../../model/tag';
   templateUrl: './rate-detail.component.html',
   styleUrls: ['./rate-detail.component.scss']
 })
-export class RateDetailComponent implements OnInit, OnDestroy {
+export class RateDetailComponent implements AfterViewInit {
 
     drop: Drop = new Drop({ rate: { description: "", value: 0 } } );
     btnDisabled: boolean = false;
@@ -35,27 +34,27 @@ export class RateDetailComponent implements OnInit, OnDestroy {
         private snackbar: MatSnackBar) { 
 
         this.recurrences = dts.getRecurrences();
+        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+
+            let id:string = v[1].get("id") || "new";
+            
+            this.drop = id === 'new' ? new Drop({ 
+                id: "new",
+                title: "", 
+                type: "GOAL",
+                rate: { description: "", value: 0 },
+                recurrence: "day",
+                tags: [this.oos.getTag("RATE_TYPE")],
+                date: this.dts.getTimestamp(new Date())
+            }) : this.oos.getDrop(id);
+
+            this.dateISO = this.dts.getDateISO(this.drop.date);
+            
+        });
     }
 
-    ngOnInit() {
-        this.route.paramMap.pipe(
-            switchMap( params => {
-                let id:string = params.get("id") || "0";
-                return id === "new" ? of(new Drop({ 
-                    title: "",
-                    type: "RATE",
-                    tags: [ this.oos.getTag('RATE_TYPE') ], 
-                    date: this.dts.getTimestamp(new Date()),
-                    recurrence: 'none',
-                    rate: {
-                        description: "",
-                        value: 3,
-                    } })) : this.oos.getDrop(id);
-            })
-        ).subscribe( d => {
-            this.drop = d;
-            this.dateISO = this.dts.getDateISO(this.drop.date); 
-        });
+    ngAfterViewInit(): void {
+        this.oos.getDrops();
     }
 
     dropData(id:string) {
@@ -79,9 +78,6 @@ export class RateDetailComponent implements OnInit, OnDestroy {
 
     selectedTags(tags: Array<Tag>) {
         this.drop.tags = tags;
-    }
-
-    ngOnDestroy() {
     }
 
 }

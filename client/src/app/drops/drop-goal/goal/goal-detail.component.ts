@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { combineLatest, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { DateTimeService } from '../../../services/date-time.service';
@@ -15,12 +14,13 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
   templateUrl: './goal-detail.component.html',
   styleUrls: ['./goal-detail.component.scss']
 })
-export class GoalDetailComponent implements OnInit {
+export class GoalDetailComponent implements AfterViewInit {
 
     drop: Drop = new Drop({ goal: { content: "", completed: false, totals: [] } });
     dateISO: string = "";
     recurrences: Array<{ key: string, value: string }>;
     btnDisabled: boolean = false;
+
     field = new FormControl('', [
         Validators.required,
     ]);    
@@ -32,26 +32,29 @@ export class GoalDetailComponent implements OnInit {
         private dts: DateTimeService,
         private snackbar: MatSnackBar) {
         this.recurrences = dts.getRecurrences();
+
+        
+        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+
+            let id:string = v[1].get("id") || "new";
+            
+            this.drop = id === 'new' ? new Drop({ 
+                id: "new",
+                title: "", 
+                type: "GOAL",
+                goal: { content: "", completed: false, totals: [0,0,0,0,0,0,0] }, 
+                recurrence: "day",
+                tags: [this.oos.getTag("GOAL_TYPE")],
+                date: this.dts.getTimestamp(new Date())
+            }) : this.oos.getDrop(id);
+
+            this.dateISO = this.dts.getDateISO(this.drop.date);
+            
+        });
     }
 
-    ngOnInit() {
-        this.route.paramMap.pipe(
-            switchMap( params => {
-                let id:string = params.get("id") || "";
-                return id === "new" ? of(new Drop(
-                    { 
-                        title: "", 
-                        type: "GOAL",
-                        goal: { content: "", completed: false, totals: [0,0,0,0,0,0,0] }, 
-                        recurrence: "none",
-                        tags: [this.oos.getTag('GOAL_TYPE')],
-                        date: this.dts.getTimestamp(new Date())
-                    }) ) : this.oos.getDrop(id);
-            })
-        ).subscribe( d => {
-            this.drop = d;
-            this.dateISO = this.dts.getDateISO(this.drop.date); 
-        });
+    ngAfterViewInit(): void {
+        this.oos.getDrops();
     }
 
     dropData(id:string) {

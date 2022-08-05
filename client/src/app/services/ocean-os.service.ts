@@ -26,12 +26,16 @@ export class OceanOSService {
   private previewAt: number = 0;
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
+    
+    // TODO: Combine the two obervers before calling fromtime
     this.http.get<Tag[]>("http://localhost:4200/api/tags").subscribe( ts => {
       this.tagsV = new Map( ts.map( t => new Tag({...t, available: true, filtered: false, selected: false})).map( t => [t.id,t]) );
+      //console.log("tags set")
     });
 
     this.http.get<Drop[]>("http://localhost:4200/api/drops").subscribe( ds => {
       this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
+      //console.log("drops set")
       this.fromTime( { preview: 'day', startAt:this.dts.startOfToday() });
     });
   }
@@ -184,19 +188,19 @@ export class OceanOSService {
   }
 
   getTags() {
-    this.tags$.next( [...this.tagsV.values()] );
+    if (this.tagsV.size != 0)
+      this.tags$.next( [...this.tagsV.values()] );
   }
 
   getDrops() {
-    this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
+    if (this.dropsV.size != 0)
+      this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
   }
 
-  getDrop(did:string):Observable<Drop> {
-    let drop = this.dropsV.get(did);
-    console.log(`getdrop ${drop}`)
-    
-    return drop ? of(drop) : this.http.get<Drop>(`http://localhost:4200/api/drops/${did}`) 
-    
+  getDrop(did:string):Drop {
+    //console.log(`get drop ${did}`)
+    let drop = this.dropsV.get(did) || new Drop();
+    return new Drop({...drop});
   }
 
   getTag(tid:string):Tag {

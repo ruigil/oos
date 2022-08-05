@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { combineLatest, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Location } from '@angular/common';
 
@@ -16,7 +15,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
   templateUrl: './task-detail.component.html',
   styleUrls: ['./task-detail.component.scss']
 })
-export class TaskDetailComponent implements OnInit, OnDestroy {
+export class TaskDetailComponent implements AfterViewInit {
 
     drop: Drop = new Drop({task: { description: "", date: 0, completed: false } });
     recurrences: Array<{ key: string, value: string }>;
@@ -35,28 +34,26 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
         private location: Location) { 
         
         this.recurrences = dts.getRecurrences();
+        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+            let id:string = v[1].get("id") || "new";
+            
+            this.drop = id === 'new' ? new Drop({ 
+                id: "new",
+                title: "", 
+                type: "GOAL",
+                task: { description: "", date: 0, completed: false },
+                recurrence: "day",
+                tags: [this.oos.getTag("TASK_TYPE")],
+                date: this.dts.getTimestamp(new Date())
+            }) : this.oos.getDrop(id);
+
+            this.dateISO = this.dts.getDateISO(this.drop.date);
+         
+        });
     }
 
-    ngOnInit() {
-        this.route.paramMap.pipe(
-            switchMap( params => {
-                let id:string = params.get("id") || "0";
-                return id === "new" ? of(new Drop({ 
-                    title: "", 
-                    type: "TASK",
-                    tags: [ this.oos.getTag('TASK_TYPE') ],
-                    date: this.dts.getTimestamp(new Date()),
-                    recurrence: 'none',
-                    task: {
-                        description: "",
-                        date: null,
-                        completed: false
-                    } })) : this.oos.getDrop(id);
-            })
-        ).subscribe( d => {
-            this.drop = d;
-            this.dateISO = this.dts.getDateISO(this.drop.date); 
-        });
+    ngAfterViewInit(): void {
+        this.oos.getDrops();
     }
 
     dropData(id:string) {
@@ -78,13 +75,8 @@ export class TaskDetailComponent implements OnInit, OnDestroy {
         );
     }
 
-
-
     selectedTags(tags: Array<Tag>) {
         this.drop.tags = tags;
-    }
-
-    ngOnDestroy() {
     }
 
 }

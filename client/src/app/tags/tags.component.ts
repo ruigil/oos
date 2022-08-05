@@ -49,8 +49,6 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngAfterViewInit() {
-        this.oos.clearTagSelection();
-        this.selected.map( (t:Tag) => this.oos.selectTag(t) )
     }
 
     deleteTag(tag:Tag) {

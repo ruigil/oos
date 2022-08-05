@@ -1,8 +1,7 @@
-import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
-import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { combineLatest, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { DateTimeService } from '../../../services/date-time.service';
@@ -15,7 +14,7 @@ import { Tag } from '../../../model/tag';
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss']
 })
-export class NoteDetailComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NoteDetailComponent implements AfterViewInit {
 
     drop:Drop = new Drop({ note: { content: ""}});
     recurrences: Array<{ key: string, value: string }> = [];
@@ -33,32 +32,28 @@ export class NoteDetailComponent implements OnInit, AfterViewInit, OnDestroy {
         private snackbar: MatSnackBar) { 
 
         this.recurrences = this.dts.getRecurrences();
-        this.route.paramMap.pipe(
-            switchMap( params => {
-                let id:string = params.get("id") || "";
-                const tag:Tag = this.oos.getTag("NOTE_TYPE");
-                return id === "new" ? of(new Drop(
-                    { 
-                        title: "", 
-                        type: "NOTE",
-                        recurrence: "none",
-                        tags: [ tag ],
-                        note: { content: "" },
-                        date: Date.now()
-                    }) ) : this.oos.getDrop(id);
-            })
-        ).subscribe( (d:Drop) => {
-            this.drop = d;
-            this.dateISO = this.dts.getDateISO(d.date);
+        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+            let id:string = v[1].get("id") || "new";
+            
+            this.drop = id === 'new' ? new Drop({ 
+                id: "new",
+                title: "", 
+                type: "GOAL",
+                note: { content: "" },
+                recurrence: "day",
+                tags: [this.oos.getTag("NOTE_TYPE")],
+                date: this.dts.getTimestamp(new Date())
+            }) : this.oos.getDrop(id);
+
+            this.dateISO = this.dts.getDateISO(this.drop.date);
+
         });
     }
+
+    ngAfterViewInit(): void {
+        this.oos.getDrops();
+    }
     
-    ngAfterViewInit() {
-    }
-
-    ngOnInit() {
-    }
-
     dropData(id:string) {
         const op = id ? "updated" :"added";
         const type = "note";
@@ -81,9 +76,6 @@ export class NoteDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
     selectedTags(tags: Array<Tag>) {
         this.drop.tags = tags;
-    }
-
-    ngOnDestroy() {
     }
 
 }
