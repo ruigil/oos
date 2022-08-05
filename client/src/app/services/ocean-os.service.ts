@@ -54,7 +54,7 @@ export class OceanOSService {
   }
 
   putDrop(drop:Drop):Promise<object> {
-    if (!drop.id) {
+    if (drop.id === 'new') {
       drop.id = this.generateID();
     }
     return new Promise( (resolve,reject) => {
