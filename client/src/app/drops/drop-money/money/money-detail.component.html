@@ -36,7 +36,7 @@
         <textarea  name="description" matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.title"></textarea>
     </mat-form-field>
     <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
-        <mat-icon>{{drop.id ? 'update' : 'add'}}</mat-icon>{{drop.id ? 'Update' : 'Add' }} Transaction
+        <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Transaction
     </button>
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </form>
