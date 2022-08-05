@@ -18,7 +18,7 @@ import { Drop } from '../../../model/drop';
 })
 export class MoneyDetailComponent implements OnInit, AfterViewInit {
 
-    drop: Drop = new Drop();
+    drop: Drop = new Drop({money: { value: 0, type: "", currency: "" } });
     settings: Settings = new Settings();
     btnDisabled: boolean = false;
     dateISO:string = "";
@@ -54,7 +54,6 @@ export class MoneyDetailComponent implements OnInit, AfterViewInit {
                     } })) : this.oos.getDrop(id);
             })
         ).subscribe( d => {
-            console.log(d);
             this.drop = d; 
             this.dateISO = this.dts.getDateISO(this.drop.date);
         });

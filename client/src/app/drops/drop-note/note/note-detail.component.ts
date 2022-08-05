@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { Observable, of } from 'rxjs';
@@ -15,9 +15,8 @@ import { Tag } from '../../../model/tag';
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss']
 })
-export class NoteDetailComponent implements OnInit, OnDestroy {
+export class NoteDetailComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    dropObs: Observable<Drop>;
     drop:Drop = new Drop({ note: { content: ""}});
     recurrences: Array<{ key: string, value: string }> = [];
     btnDisabled: boolean = false; 
@@ -34,7 +33,7 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
         private snackbar: MatSnackBar) { 
 
         this.recurrences = this.dts.getRecurrences();
-        this.dropObs = this.route.paramMap.pipe(
+        this.route.paramMap.pipe(
             switchMap( params => {
                 let id:string = params.get("id") || "";
                 const tag:Tag = this.oos.getTag("NOTE_TYPE");
@@ -48,14 +47,16 @@ export class NoteDetailComponent implements OnInit, OnDestroy {
                         date: Date.now()
                     }) ) : this.oos.getDrop(id);
             })
-        );
-    }
-
-    ngOnInit() {
-        this.dropObs.subscribe( (d:Drop) => {
+        ).subscribe( (d:Drop) => {
             this.drop = d;
             this.dateISO = this.dts.getDateISO(d.date);
         });
+    }
+    
+    ngAfterViewInit() {
+    }
+
+    ngOnInit() {
     }
 
     dropData(id:string) {

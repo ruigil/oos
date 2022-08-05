@@ -18,7 +18,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
 })
 export class TaskDetailComponent implements OnInit, OnDestroy {
 
-    drop: Drop = new Drop();
+    drop: Drop = new Drop({task: { description: "", date: 0, completed: false } });
     recurrences: Array<{ key: string, value: string }>;
     dateISO: string = "";
     btnDisabled: boolean = false; 

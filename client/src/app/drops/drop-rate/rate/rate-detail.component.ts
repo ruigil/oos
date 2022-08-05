@@ -18,7 +18,7 @@ import { Tag } from '../../../model/tag';
 })
 export class RateDetailComponent implements OnInit, OnDestroy {
 
-    drop: Drop = new Drop();
+    drop: Drop = new Drop({ rate: { description: "", value: 0 } } );
     btnDisabled: boolean = false;
     dateISO: string = ""; 
     field = new FormControl('', [

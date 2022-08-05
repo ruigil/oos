@@ -17,7 +17,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
 })
 export class GoalDetailComponent implements OnInit {
 
-    drop: Drop = new Drop();
+    drop: Drop = new Drop({ goal: { content: "", completed: false, totals: [] } });
     dateISO: string = "";
     recurrences: Array<{ key: string, value: string }>;
     btnDisabled: boolean = false;
