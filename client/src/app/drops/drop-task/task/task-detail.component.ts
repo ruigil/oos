@@ -30,19 +30,19 @@ export class TaskDetailComponent implements AfterViewInit {
         private route: ActivatedRoute, 
         private router: Router,
         private dts: DateTimeService,
-        private snackbar: MatSnackBar,
-        private location: Location) { 
+        private snackbar: MatSnackBar) { 
         
         this.recurrences = dts.getRecurrences();
+        // TODO: Add completed field to the form and the date
         combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
             let id:string = v[1].get("id") || "new";
             
             this.drop = id === 'new' ? new Drop({ 
                 id: "new",
                 title: "", 
-                type: "GOAL",
+                type: "TASK",
                 task: { description: "", date: 0, completed: false },
-                recurrence: "day",
+                recurrence: "none",
                 tags: [this.oos.getTag("TASK_TYPE")],
                 date: this.dts.getTimestamp(new Date())
             }) : this.oos.getDrop(id);

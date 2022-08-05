@@ -43,14 +43,15 @@ export class MoneyDetailComponent implements AfterViewInit {
             this.drop = id === 'new' ? new Drop({
                 id: "new",
                 title: "", 
-                type: "GOAL",
+                type: "MONEY",
                 money: { value: 0, type: "expense", currency: "" },
-                recurrence: "day",
+                recurrence: "none",
                 tags: [this.oos.getTag("MONEY_TYPE")],
                 date: this.dts.getTimestamp(new Date())
             }) : this.oos.getDrop(id);
 
             this.dateISO = this.dts.getDateISO(this.drop.date);
+
         });
     }
 

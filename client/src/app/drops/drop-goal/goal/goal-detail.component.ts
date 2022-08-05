@@ -37,13 +37,13 @@ export class GoalDetailComponent implements AfterViewInit {
         combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
 
             let id:string = v[1].get("id") || "new";
-            
+            // add a gamification to the goal in teh complete field
             this.drop = id === 'new' ? new Drop({ 
                 id: "new",
                 title: "", 
                 type: "GOAL",
                 goal: { content: "", completed: false, totals: [0,0,0,0,0,0,0] }, 
-                recurrence: "day",
+                recurrence: "none",
                 tags: [this.oos.getTag("GOAL_TYPE")],
                 date: this.dts.getTimestamp(new Date())
             }) : this.oos.getDrop(id);

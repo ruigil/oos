@@ -41,9 +41,9 @@ export class RateDetailComponent implements AfterViewInit {
             this.drop = id === 'new' ? new Drop({ 
                 id: "new",
                 title: "", 
-                type: "GOAL",
+                type: "RATE",
                 rate: { description: "", value: 0 },
-                recurrence: "day",
+                recurrence: "none",
                 tags: [this.oos.getTag("RATE_TYPE")],
                 date: this.dts.getTimestamp(new Date())
             }) : this.oos.getDrop(id);

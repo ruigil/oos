@@ -29,7 +29,7 @@ export class DateTimeService {
     }
 
     getDateISO(timestamp:number) {
-        return formatISO(timestamp).substring(0,16);
+        return formatISO(timestamp).substring(0,19);
     }
 
     addDay(date: number, count = 1): number {
@@ -44,7 +44,7 @@ export class DateTimeService {
     addYear(date: number, count = 1): number {
         return addYears(date, count).getTime();
     }
-
+/*
     subDay(date: number, count = 1): number {
         return subDays(date, count).getTime();
     }
@@ -57,7 +57,7 @@ export class DateTimeService {
     subYear(date: number, count = 1): number {
         return subYears(date, count).getTime();
     }
-
+*/
     isWithin(d:number, interval: Interval):boolean {
         return isWithinInterval(d, interval);
     }

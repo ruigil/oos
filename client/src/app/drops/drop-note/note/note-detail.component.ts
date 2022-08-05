@@ -38,9 +38,9 @@ export class NoteDetailComponent implements AfterViewInit {
             this.drop = id === 'new' ? new Drop({ 
                 id: "new",
                 title: "", 
-                type: "GOAL",
+                type: "NOTE",
                 note: { content: "" },
-                recurrence: "day",
+                recurrence: "none",
                 tags: [this.oos.getTag("NOTE_TYPE")],
                 date: this.dts.getTimestamp(new Date())
             }) : this.oos.getDrop(id);
