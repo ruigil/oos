@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit, SimpleChanges } from '@angular/core';
+import { Observable, first, mapTo, map } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteTagDialog } from './DeleteTagDialog';
 
@@ -18,6 +18,8 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     update:boolean = false;
     unselectedTags: Observable<Tag[]>;
     selectedTags: Observable<Tag[]>;
+    tagset: boolean = false;
+
     public colors:Array<any> = [ 
         {name: "Dark", value:"dark"},
         {name: "Light", value:"light"},
@@ -27,19 +29,28 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
         {name: "Yellow", value:"yellow"}
     ];
 
-    constructor(private oss: OceanOSService, private dialog:MatDialog) {
-        this.selectedTags = this.oss.selectedTags();
-        this.unselectedTags = this.oss.unselectedTags();
+    constructor(private oos: OceanOSService, private dialog:MatDialog) {
+        this.oos.tags().pipe(first(), map( () => true)).subscribe( v => this.tagset = v)
+
+        this.selectedTags = this.oos.selectedTags();
+        this.unselectedTags = this.oos.unselectedTags();
 
         this.selectedTags.subscribe( (ts:Tag[]) => this.onSelectTag.emit(ts ) );
+    }
+    
+    ngOnChanges(changes: SimpleChanges) {
+        const previous = changes['selected'].previousValue || [];
+        const current = changes['selected'].currentValue;
+        if ((current.length != previous.length) && (this.tagset)) {
+            this.oos.clearTagSelection();
+            this.selected.map( (t:Tag) => this.oos.selectTag(t) )
+        }        
     }
 
     ngOnInit() {
     }
 
     ngAfterViewInit() {
-        this.oss.clearTagSelection();
-        this.selected.map( (t:Tag) => this.oss.selectTag(t) )
     }
 
     deleteTag(tag:Tag) {
@@ -50,22 +61,22 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
       
           dialogRef.afterClosed().subscribe(result => {
             if (result)
-                this.oss.deleteTag(tag).then( () => console.log(tag.name + " deleted") );
+                this.oos.deleteTag(tag).then( () => console.log(tag.name + " deleted") );
           });    
     }
 
     newTag() {
         const tagName = this.currentTag.name.toLocaleUpperCase();
         const tag:Tag = new Tag({ id:tagName, name: tagName, count: 0, color: this.currentTag.color, icon: 'bookmark' }); 
-        this.oss.putTag(tag);
+        this.oos.putTag(tag);
     }
     
     selectTag(tag:Tag) {
-        this.oss.selectTag(tag);
+        if (tag) this.oos.selectTag(tag);
     }
 
     unselectTag(tag:Tag) {
-        if (!tag.id.endsWith("_TYPE")) this.oss.unselectTag(tag);
+        if (!tag.id.endsWith("_TYPE")) this.oos.unselectTag(tag);
     }
 
     colorChoice($event:any) {

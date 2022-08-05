@@ -14,16 +14,16 @@ import { HttpClient } from '@angular/common/http';
 })
 export class OceanOSService {
 
-  tagsV: Map<string,Tag> = new Map();
-  tags$: Subject<Tag[]> = new Subject<Tag[]>();
+  private tagsV: Map<string,Tag> = new Map();
+  private tags$: Subject<Tag[]> = new Subject<Tag[]>();
 
-  dropsV: Map<string,Drop> = new Map();
-  drops$: Subject<Drop[]> = new Subject<Drop[]>();
+  private dropsV: Map<string,Drop> = new Map();
+  private drops$: Subject<Drop[]> = new Subject<Drop[]>();
 
-  settingsV: Settings = new Settings({ transaction: { currency: "CHF"}, home: { preview: 'day'}, system: { day: true } } );
-  settings$: Subject<Settings> = new Subject<Settings>();
+  private settingsV: Settings = new Settings({ transaction: { currency: "CHF"}, home: { preview: 'day'}, system: { day: true } } );
+  private settings$: Subject<Settings> = new Subject<Settings>();
 
-  previewAt: number = 0;
+  private previewAt: number = 0;
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
     this.http.get<Tag[]>("http://localhost:4200/api/tags").subscribe( ts => {
@@ -120,23 +120,35 @@ export class OceanOSService {
   }
 
   selectTag(tag: Tag) {
-    this.tagsV.get(tag.id)!.selected = true;
-    this.getTags();
+    const t = this.tagsV.get(tag.id) 
+    if (t) {
+      t.selected = true;
+      this.getTags();
+    }
   }
 
   unselectTag(tag: Tag) {
-    this.tagsV.get(tag.id)!.selected = false;
-    this.getTags();
+    const t = this.tagsV.get(tag.id) 
+    if (t) {
+      t.selected = false;
+      this.getTags();
+    }
   }
 
   filterTag(tag: Tag) {
-    this.tagsV.get(tag.id)!.filtered = true;
-    this.filterTagsDrops();
+    const t = this.tagsV.get(tag.id) 
+    if (t) {
+      t.filtered = true;
+      this.filterTagsDrops();
+    }
   }
 
   unfilterTag(tag: Tag) {
-    this.tagsV.get(tag.id)!.filtered = false;
-    this.filterTagsDrops();
+    const t = this.tagsV.get(tag.id) 
+    if (t) {
+      t.filtered = false;
+      this.filterTagsDrops();
+    }
   }
 
   clearTagSelection() {
