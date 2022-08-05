@@ -193,6 +193,7 @@ export class OceanOSService {
 
   getDrop(did:string):Observable<Drop> {
     let drop = this.dropsV.get(did);
+    console.log(`getdrop ${drop}`)
     
     return drop ? of(drop) : this.http.get<Drop>(`http://localhost:4200/api/drops/${did}`) 
     

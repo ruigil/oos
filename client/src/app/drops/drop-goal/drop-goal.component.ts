@@ -1,10 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Drop } from 'src/app/model/drop';
-import { Settings } from 'src/app/model/settings';
-import { Tag } from 'src/app/model/tag';
-import { DateTimeService } from 'src/app/services/date-time.service';
+
 import { OceanOSService } from 'src/app/services/ocean-os.service';
+import { Drop } from 'src/app/model/drop';
+import { Tag } from 'src/app/model/tag';
 
 @Component({
   selector: 'oos-drop-goal',
@@ -16,8 +15,7 @@ export class DropGoalComponent implements OnInit {
 
   constructor(
     private oos:OceanOSService, 
-    private router:Router, 
-    private dts:DateTimeService) { 
+    private router:Router) { 
 
     }
 

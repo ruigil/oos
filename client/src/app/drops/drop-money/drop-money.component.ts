@@ -1,8 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Drop } from 'src/app/model/drop';
-import { DateTimeService } from 'src/app/services/date-time.service';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
+import { Drop } from 'src/app/model/drop';
 
 @Component({
   selector: 'oos-drop-money',
@@ -14,8 +13,7 @@ export class DropMoneyComponent implements OnInit {
 
   constructor(
     private router: Router, 
-    private oos:OceanOSService,
-    private dts:DateTimeService) { }
+    private oos:OceanOSService) { }
 
   ngOnInit(): void {
   }

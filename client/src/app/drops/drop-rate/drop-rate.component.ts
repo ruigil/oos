@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Drop } from 'src/app/model/drop';
-import { DateTimeService } from 'src/app/services/date-time.service';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
 
 @Component({
@@ -14,8 +13,7 @@ export class DropRateComponent implements OnInit {
 
   constructor(
     private oos: OceanOSService, 
-    private router: Router,
-    private dts: DateTimeService) { }
+    private router: Router) { }
 
   ngOnInit(): void {
   }
