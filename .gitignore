@@ -45,7 +45,9 @@ Thumbs.db
 /server/node_modules
 
 # database
-/server/oos-db
+/server/db
+/server/client
+
 # Logs
 logs
 *.log
