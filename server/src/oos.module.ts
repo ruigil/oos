@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { OOSController } from './oos.controller';
+import { OOSService } from './oos.service';
 import { DropsController } from './drops/drops.controller';
 import { TagsController } from './tags/tags.controller';
 import { TagsService } from './tags/tags.service';
@@ -16,13 +16,19 @@ import { UserModule } from './user/user.module';
 import { DropEntity } from './drops/drop.entity';
 import { TagEntity } from './tags/tag.entity';
 import { UserEntity } from './user/user.entity';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     AuthModule, 
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname,'..', 'client'),
+      exclude: ['/api*'],
+    }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'oos-db',
+      database: 'db/oos.data',
       autoLoadEntities: true,
       synchronize: true
     }),
@@ -30,7 +36,7 @@ import { UserEntity } from './user/user.entity';
     TagsModule,
     UserModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [OOSController],
+  providers: [OOSService],
 })
-export class AppModule {}
+export class OOSModule {}
