@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { combineLatest, take } from 'rxjs';
@@ -14,7 +14,7 @@ import { Tag } from '../../../model/tag';
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss']
 })
-export class NoteDetailComponent implements AfterViewInit {
+export class NoteDetailComponent {
 
     drop:Drop = new Drop({ note: { content: ""}});
     recurrences: Array<{ key: string, value: string }> = [];
@@ -32,9 +32,8 @@ export class NoteDetailComponent implements AfterViewInit {
         private snackbar: MatSnackBar) { 
 
         this.recurrences = this.dts.getRecurrences();
-        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
-            let id:string = v[1].get("id") || "new";
-            
+        combineLatest([this.oos.tags(),this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+            let id:string = v[2].get("id") || "new";
             this.drop = id === 'new' ? new Drop({ 
                 id: "new",
                 title: "", 
@@ -50,10 +49,6 @@ export class NoteDetailComponent implements AfterViewInit {
         });
     }
 
-    ngAfterViewInit(): void {
-        this.oos.getDrops();
-    }
-    
     dropData(id:string) {
         const op = id ? "updated" :"added";
         const type = "note";

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable, tap, range, timeInterval, filter, map, firstValueFrom, of } from 'rxjs';
+import { Subject, Observable, tap, range, timeInterval, filter, map, firstValueFrom, of, combineLatest, ReplaySubject } from 'rxjs';
 import { Drop } from "../model/drop";
 import { Tag } from "../model/tag";
 import { DateTimeService } from './date-time.service';
@@ -16,30 +16,29 @@ import { environment } from 'src/environments/environment';
 export class OceanOSService {
 
   private tagsV: Map<string,Tag> = new Map();
-  private tags$: Subject<Tag[]> = new Subject<Tag[]>();
+  private tags$: Subject<Tag[]> = new ReplaySubject<Tag[]>(1);
 
   private dropsV: Map<string,Drop> = new Map();
-  private drops$: Subject<Drop[]> = new Subject<Drop[]>();
+  private drops$: Subject<Drop[]> = new ReplaySubject<Drop[]>(1);
 
   private settingsV: Settings = new Settings({ transaction: { currency: "CHF"}, home: { preview: 'day'}, system: { day: true } } );
-  private settings$: Subject<Settings> = new Subject<Settings>();
+  private settings$: Subject<Settings> = new ReplaySubject<Settings>(1);
 
   private previewAt: number = 0;
   private apiUrl: string = environment.apiUrl;
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
-    
-    // TODO: Combine the two obervers before calling fromtime
-    this.http.get<Tag[]>(`${this.apiUrl}/api/tags`).subscribe( ts => {
-      this.tagsV = new Map( ts.map( t => new Tag({...t, available: true, filtered: false, selected: false})).map( t => [t.id,t]) );
-      //console.log("tags set")
-    });
 
-    this.http.get<Drop[]>(`${this.apiUrl}/api/drops`).subscribe( ds => {
-      this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
-      //console.log("drops set")
-      this.fromTime( { preview: 'day', startAt:this.dts.startOfToday() });
-    });
+    // TODO: implement remote settings
+    combineLatest([
+      this.http.get<Tag[]>(`${this.apiUrl}/api/tags`),
+      this.http.get<Drop[]>(`${this.apiUrl}/api/drops`)])
+      .subscribe( ([ts,ds]) => {
+        this.tagsV = new Map( ts.map( t => new Tag({...t, available: true, filtered: false, selected: false})).map( t => [t.id,t]) );
+        this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
+        this.fromTime( { preview: 'day', startAt:this.dts.startOfToday() });
+      });
+      this.getSettings();
   }
 
 
@@ -132,7 +131,6 @@ export class OceanOSService {
       this.getTags();
     }
   }
-
   unselectTag(tag: Tag) {
     const t = this.tagsV.get(tag.id) 
     if (t) {
@@ -140,6 +138,14 @@ export class OceanOSService {
       this.getTags();
     }
   }
+
+  initTagSelection(tags: Tag[]) {
+    for (let t of this.tagsV.values()) {
+      t.selected = tags.some(st => st.id === t.id)
+    }
+    this.getTags();
+  }
+
 
   filterTag(tag: Tag) {
     const t = this.tagsV.get(tag.id) 
@@ -157,10 +163,6 @@ export class OceanOSService {
     }
   }
 
-  clearTagSelection() {
-    for (let t of this.tagsV.values()) t.selected = false;
-    this.getTags();
-  }
 
   fromTime(stream:Stream) {
     // from time start at, preview a time
@@ -190,13 +192,14 @@ export class OceanOSService {
   }
 
   getTags() {
+    //console.log(`get tags ${this.tagsV.size}`)
     if (this.tagsV.size != 0)
       this.tags$.next( [...this.tagsV.values()] );
   }
 
   getDrops() {
-    if (this.dropsV.size != 0)
-      this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
+    //console.log(`get drops ${this.dropsV.size}`)
+    this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
   }
 
   getDrop(did:string):Drop {

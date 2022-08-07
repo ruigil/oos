@@ -1,8 +1,5 @@
-import { Component, HostBinding, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable, Subject, fromEvent, from, combineLatest, Subscription, interval } from 'rxjs';
-import { takeUntil, tap,map,flatMap,pairwise,exhaustMap, filter, take, first, debounceTime, scan, withLatestFrom, distinctUntilChanged, share } from 'rxjs/operators';
-import { ScrollDispatcher } from '@angular/cdk/overlay';
+import { Component } from '@angular/core';
+import { Observable, interval, map, distinctUntilChanged } from 'rxjs';
 import { DateTimeService } from '../services/date-time.service';
 import { OceanOSService } from '../services/ocean-os.service';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
@@ -12,7 +9,6 @@ import { Tag } from '../model/tag';
 import { Stream } from '../model/stream';
 
 import { trigger, state, style, transition, animate } from '@angular/animations';
-
 
 @Component({
     selector: 'oos-home',
@@ -37,7 +33,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
     ],
     styleUrls: ['home.component.scss'],
 })
-export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class HomeComponent {
 
   stream: Stream = { startAt: 0, preview: 'day' }
   //separatorKeysCodes: number[] = [ENTER, COMMA];
@@ -61,18 +57,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.dts.format(Date.now(),"eeee, dd, MMMM @ HH:mm") : 
                 this.dts.format(this.stream.startAt, "eeee, dd, MMMM") )
     );
-  }
-
-  ngOnInit(): void {
+    
     this.oos.settings().pipe( distinctUntilChanged() ).subscribe( s => {
-        this.stream.preview = s.home.preview;
-        this.stream.startAt = this.dts.startOfToday();
+      this.stream.preview = s.home.preview;
+      this.stream.startAt = this.dts.startOfToday();
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.oos.getSettings();
-    this.oos.fromTime(this.stream);
   }
 
   setStartAt(event:any) {
@@ -91,9 +80,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   unfilterTag(tag:Tag) {
     this.oos.unfilterTag(tag);
-  }
-
-  ngOnDestroy() {
   }
 
 }

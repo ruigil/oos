@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, AfterViewInit, SimpleChanges } from '@angular/core';
-import { Observable, first, mapTo, map } from 'rxjs';
+import { Component, Input, Output, EventEmitter, SimpleChanges } from '@angular/core';
+import { Observable } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteTagDialog } from './DeleteTagDialog';
 
@@ -11,7 +11,7 @@ import { Tag } from '../model/tag';
   templateUrl: './tags.component.html',
   styleUrls: ['./tags.component.scss']
 })
-export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TagsComponent {
     @Output() onSelectTag = new EventEmitter<Tag[]>();
     @Input() selected: Array<Tag> = [];
     currentTag: Tag = new Tag( { id: "", name: "", icon: 'bookmark', color: 'dark'});
@@ -37,18 +37,16 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     
     ngOnChanges(changes: SimpleChanges) {
+        //console.log("changes...")
+        //console.log(changes)
         const previous = changes['selected'].previousValue || [];
         const current = changes['selected'].currentValue;
-        if ((!changes['selected'].firstChange) && ((current.length != previous.length))) {
-            this.oos.clearTagSelection();
-            this.selected.map( (t:Tag) => this.oos.selectTag(t) )
-        }        
-    }
-
-    ngOnInit() {
-    }
-
-    ngAfterViewInit() {
+        // TODO: This is a flickery mechanism to show the selected tags
+        // it assumes the array with the same length are equal, and because the tag selection
+        // sends a new event it has the potential of an infine loop
+        if (((current.length != previous.length))) {
+            this.selected.map( (t:Tag) => this.oos.initTagSelection(current) )
+        } 
     }
 
     deleteTag(tag:Tag) {
@@ -70,7 +68,7 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     
     selectTag(tag:Tag) {
-        if (tag) this.oos.selectTag(tag);
+        this.oos.selectTag(tag);
     }
 
     unselectTag(tag:Tag) {
@@ -80,8 +78,4 @@ export class TagsComponent implements OnInit, AfterViewInit, OnDestroy {
     colorChoice($event:any) {
         this.currentTag.color = $event.detail.value;
     }
-
-    ngOnDestroy() {
-    }
-
 }

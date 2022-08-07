@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { combineLatest, take } from 'rxjs';
@@ -15,7 +15,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
   templateUrl: './task-detail.component.html',
   styleUrls: ['./task-detail.component.scss']
 })
-export class TaskDetailComponent implements AfterViewInit {
+export class TaskDetailComponent {
 
     drop: Drop = new Drop({task: { description: "", date: 0, completed: false } });
     recurrences: Array<{ key: string, value: string }>;
@@ -34,8 +34,8 @@ export class TaskDetailComponent implements AfterViewInit {
         
         this.recurrences = dts.getRecurrences();
         // TODO: Add completed field to the form and the date
-        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
-            let id:string = v[1].get("id") || "new";
+        combineLatest([this.oos.tags(),this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+            let id:string = v[2].get("id") || "new";
             
             this.drop = id === 'new' ? new Drop({ 
                 id: "new",
@@ -50,10 +50,6 @@ export class TaskDetailComponent implements AfterViewInit {
             this.dateISO = this.dts.getDateISO(this.drop.date);
          
         });
-    }
-
-    ngAfterViewInit(): void {
-        this.oos.getDrops();
     }
 
     dropData(id:string) {

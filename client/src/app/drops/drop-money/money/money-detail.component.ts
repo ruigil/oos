@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { combineLatest, take } from 'rxjs';
@@ -16,7 +16,7 @@ import { Drop } from '../../../model/drop';
   templateUrl: './money-detail.component.html',
   styleUrls: ['./money-detail.component.scss']
 })
-export class MoneyDetailComponent implements AfterViewInit {
+export class MoneyDetailComponent {
 
     drop: Drop = new Drop({money: { value: 0, type: "", currency: "" } });
     settings: Settings = new Settings();
@@ -37,8 +37,8 @@ export class MoneyDetailComponent implements AfterViewInit {
         // TODO: combine the two observer with settings and add option in the form
         this.recurrences = this.dts.getRecurrences();
         this.oos.settings().pipe(distinctUntilChanged()).subscribe( s =>  this.settings = s );
-        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
-            let id:string = v[1].get("id") || "new";
+        combineLatest([this.oos.tags(), this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+            let id:string = v[2].get("id") || "new";
             
             this.drop = id === 'new' ? new Drop({
                 id: "new",
@@ -53,11 +53,6 @@ export class MoneyDetailComponent implements AfterViewInit {
             this.dateISO = this.dts.getDateISO(this.drop.date);
 
         });
-    }
-
-    ngAfterViewInit(): void {
-        this.oos.getDrops();
-        this.oos.getSettings();
     }
 
     dropData(id:string) {

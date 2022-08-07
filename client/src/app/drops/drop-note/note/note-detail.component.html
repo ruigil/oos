@@ -6,7 +6,10 @@
 </mat-toolbar>
 <form class="form-elements" #dropForm="ngForm">
     <mat-form-field>
-        <textarea name="text" matInput placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.note!.content"></textarea>
+        <textarea name="text" matInput required autofocus placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.note!.content"></textarea>
+        <mat-error *ngIf="field.hasError('required')">
+            A text is <strong>required</strong>
+        </mat-error> 
     </mat-form-field>
     
     <mat-form-field>

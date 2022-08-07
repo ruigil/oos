@@ -1,4 +1,4 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { combineLatest, take } from 'rxjs';
@@ -14,7 +14,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
   templateUrl: './goal-detail.component.html',
   styleUrls: ['./goal-detail.component.scss']
 })
-export class GoalDetailComponent implements AfterViewInit {
+export class GoalDetailComponent {
 
     drop: Drop = new Drop({ goal: { content: "", completed: false, totals: [] } });
     dateISO: string = "";
@@ -32,11 +32,10 @@ export class GoalDetailComponent implements AfterViewInit {
         private dts: DateTimeService,
         private snackbar: MatSnackBar) {
         this.recurrences = dts.getRecurrences();
-
         
-        combineLatest([this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
+        combineLatest([this.oos.tags(),this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
 
-            let id:string = v[1].get("id") || "new";
+            let id:string = v[2].get("id") || "new";
             // add a gamification to the goal in teh complete field
             this.drop = id === 'new' ? new Drop({ 
                 id: "new",
@@ -51,10 +50,6 @@ export class GoalDetailComponent implements AfterViewInit {
             this.dateISO = this.dts.getDateISO(this.drop.date);
             
         });
-    }
-
-    ngAfterViewInit(): void {
-        this.oos.getDrops();
     }
 
     dropData(id:string) {
