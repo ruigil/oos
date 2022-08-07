@@ -28,7 +28,7 @@ import { join } from 'path';
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db/oos.data',
+      database: '../db/oos.data',
       autoLoadEntities: true,
       synchronize: true
     }),

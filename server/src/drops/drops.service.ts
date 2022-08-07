@@ -8,18 +8,6 @@ import { DeleteResult, Repository } from 'typeorm';
 import { Tag } from 'src/models/tag';
 import { TagEntity } from 'src/tags/tag.entity';
 
-const TAGS = [
-  new Tag({ id:"NOTE_TYPE", name:"NOTE", count: 0 , color: "note-icon", icon: 'note' }),
-  new Tag({ id:"RATE_TYPE", name:"RATE", count: 0 , color: "rate-icon", icon: 'star_rate'  }),
-  new Tag({ id:"TASK_TYPE", name:"TASK", count: 0 , color: "task-icon", icon: 'folder' }),
-  new Tag({ id:"GOAL_TYPE", name:"GOAL", count: 0 , color: "goal-icon", icon: 'center_focus_strong' }),
-  new Tag({ id:"MONEY_TYPE", name:"MONEY", count: 0 , color: "money-icon", icon: 'monetization_on' }),
-  new Tag({ id:"SYS_TYPE", name:"SYSTEM", count: 0 , color: "system-icon", icon: 'brightness_7'}),
-  new Tag({ id: "HELLO", name:"HELLO", count: 0, color: "red", icon: 'bookmark'}),
-  new Tag({ id: "YES", name:"YES", count: 0, color: "blue", icon: 'bookmark'}),
-  new Tag({ id: "BYE", name:"BYE", count: 0, color: "green", icon: 'bookmark'}),
-  new Tag({ id: "OOH", name:"OHH", count: 0, color: "yellow", icon: 'bookmark'})
-]
 
 @Injectable()
 export class DropsService {
@@ -31,10 +19,6 @@ export class DropsService {
     }
 
     async testSample():Promise<{result:boolean}> {
-
-      const tags = await Promise.all(TAGS.map( t => this.ts.create(t) ));
-            
-      const tm = new Map( TAGS.map( t => [t.id,t]) );
 
       const drops:Drop[] = [];
       
@@ -61,11 +45,11 @@ export class DropsService {
           title: dtype === 'TASK'? `Do Something`: dtype === 'RATE' ? `GOOD` : `This is a ${dtype} drop`,
           recurrence: "day",
           tags: 
-            dtype === 'NOTE' ? [ tm.get("NOTE_TYPE"), tm.get("HELLO") ] :
-            dtype === 'RATE' ? [ tm.get("RATE_TYPE"), tm.get("BYE") ] :
-            dtype === 'TASK' ? [ tm.get("TASK_TYPE"), tm.get("HELLO") ] :
-            dtype === 'GOAL' ? [ tm.get("GOAL_TYPE"), tm.get("BYE") ] :
-            dtype === 'MONEY' ? [ tm.get("MONEY_TYPE"), tm.get("HELLO") ] : []
+            dtype === 'NOTE' ? [ this.ts.get("NOTE_TYPE"), this.ts.get("HELLO") ] :
+            dtype === 'RATE' ? [ this.ts.get("RATE_TYPE"), this.ts.get("BYE") ] :
+            dtype === 'TASK' ? [ this.ts.get("TASK_TYPE"), this.ts.get("HELLO") ] :
+            dtype === 'GOAL' ? [ this.ts.get("GOAL_TYPE"), this.ts.get("BYE") ] :
+            dtype === 'MONEY' ? [ this.ts.get("MONEY_TYPE"), this.ts.get("HELLO") ] : []
           ,
           date: subHours(endOfYear(Date.now()), i*12 ).getTime(),
           ...d
