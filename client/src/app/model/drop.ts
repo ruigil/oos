@@ -13,6 +13,7 @@ export class Drop {
     recurrence: string = "";
     tags: Array<Tag> = [];
     date: number = 0;
+    uid: string = "";
     color?: string = "";
     filtered?: boolean = false;
     available?: boolean = true;

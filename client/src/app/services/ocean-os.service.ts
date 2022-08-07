@@ -56,6 +56,7 @@ export class OceanOSService {
   }
 
   putTag(tag : Tag ): Promise<Object> {
+    tag.uid = this.settingsV.id;
     return new Promise( (resolve,reject) => {
       this.http.post(`${this.apiUrl}/api/tags`, tag).subscribe( r => {
         if (r) {
@@ -68,6 +69,7 @@ export class OceanOSService {
   }
 
   putDrop(drop:Drop):Promise<object> {
+    drop.uid = this.settingsV.id;
     if (drop.id === 'new') {
       drop.id = this.generateID();
     }
