@@ -3,7 +3,17 @@
 /client/node_modules
 
 # compiled output
-/dist
+/client/dist
+/server/dist
+
+/server/node_modules
+
+# database
+/db
+
+# client
+/server/client
+
 /tmp
 /out-tsc
 
@@ -39,14 +49,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-
-# compiled output
-/server/dist
-/server/node_modules
-
-# database
-/server/db
-/server/client
 
 # Logs
 logs
