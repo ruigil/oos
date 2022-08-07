@@ -4,10 +4,12 @@ import { DeleteResult } from 'typeorm';
 import { UserEntity } from './user.entity';
 import { UserService } from './user.service';
 
-@Controller('user')
+@Controller('api/user')
 export class UserController {
 
-    constructor(private us: UserService) {}
+    constructor(private us: UserService) {
+        
+    }
 
     @Post()
     async create(@Body() user: User):Promise<UserEntity> {

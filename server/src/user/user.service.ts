@@ -8,10 +8,21 @@ import { UserEntity } from './user.entity';
 export class UserService {
     constructor(
         @InjectRepository(UserEntity) private urepo: Repository<UserEntity>,
-    ) {}
+    ) {
+        this.urepo.findOneBy( { id: "oos" }).then( user => {
+            if (user == null) {
+                console.log("insert user")
+                this.urepo.save(new UserEntity({
+                    id: "oos",
+                    username: "oos",
+                    settings: { transaction: { currency: "CHF"}, home: { preview: 'day' }, system: { day: true} }
+                }));
+            } 
+        });
+    }
 
-    create(user:User):UserEntity {
-        return this.urepo.create(new UserEntity( {...user}));
+    create(user:User):Promise<UserEntity> {
+        return this.urepo.save(new UserEntity( {...user}));
     }
 
     update(user:User): Promise<UserEntity> {
@@ -27,6 +38,7 @@ export class UserService {
     }
 
     findAll():Promise<UserEntity[]> {
+        console.log("find users")
         return this.urepo.find();
     }
 }

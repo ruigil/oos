@@ -9,7 +9,7 @@
     <mat-divider class="section"></mat-divider>
     <mat-form-field>
         <mat-label>Currency</mat-label>
-        <mat-select [(ngModel)]="settings.transaction.currency">
+        <mat-select [(ngModel)]="user.settings.transaction.currency">
             <mat-option *ngFor="let currency of currencies" [value]="currency.value">
             {{currency.name}}
             </mat-option>
@@ -20,7 +20,7 @@
     <mat-divider class="section"></mat-divider>
     <mat-form-field>
         <mat-label>Default Preview</mat-label>
-        <mat-select [(ngModel)]="settings.home.preview">
+        <mat-select [(ngModel)]="user.settings.home.preview">
             <mat-option *ngFor="let preview of previews" [value]="preview.value">
             {{preview.name}}
             </mat-option>
@@ -30,7 +30,7 @@
     <mat-label class="section-title"><b>System drops</b></mat-label>
     
     <mat-divider class="section"></mat-divider>
-    <mat-slide-toggle class="slide" [(ngModel)]="settings.system.day">Current Day is {{ settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
+    <mat-slide-toggle class="slide" [(ngModel)]="user.settings.system.day">Current Day is {{ user.settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
 
     <button mat-flat-button color="primary" [disabled]="btnDisabled" (click)="saveSettings()">
         <mat-icon>save</mat-icon> Save Settings

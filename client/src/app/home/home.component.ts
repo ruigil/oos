@@ -58,8 +58,8 @@ export class HomeComponent {
                 this.dts.format(this.stream.startAt, "eeee, dd, MMMM") )
     );
     
-    this.oos.settings().pipe( distinctUntilChanged() ).subscribe( s => {
-      this.stream.preview = s.home.preview;
+    this.oos.settings().pipe( distinctUntilChanged() ).subscribe( u => {
+      this.stream.preview = u.settings.home.preview;
       this.stream.startAt = this.dts.startOfToday();
     });
   }

@@ -10,8 +10,8 @@ export class UserEntity {
    @Column()
    username: string
 
-   @Column()
-   role: string
+   @Column({ type: 'simple-json', nullable: true } )
+   settings: { transaction: { currency: string }, home: { preview: string }, system: { day: boolean } };
 
    @CreateDateColumn()
    createdAt : String
@@ -22,6 +22,7 @@ export class UserEntity {
    @OneToMany(() => DropEntity, drop => drop.user)
    @JoinColumn()
    drops: DropEntity[];
+   
    @OneToMany(() => TagEntity, tag => tag.user)
    @JoinColumn()
    tags: TagEntity[];

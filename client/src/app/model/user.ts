@@ -1,8 +1,9 @@
 
 export class User {
-    uid: string = "";
-    email: string = "";
-    displayName?: string;
+    id: string = "";
+    username: string = "";
+    settings: { transaction: { currency: string }, home: { preview: string }, system: { day: boolean } } = 
+                { transaction: { currency: "CHF"}, home: { preview: 'day'}, system: { day: true } } 
     
     public constructor(init?:Partial<User>) {
         Object.assign(this, init);

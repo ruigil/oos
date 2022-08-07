@@ -1,7 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Settings } from '../model/settings';
+import { User } from '../model/user';
 import { OceanOSService } from '../services/ocean-os.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { OceanOSService } from '../services/ocean-os.service';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements AfterViewInit {
+export class SettingsComponent {
 
     public currencies:Array<any> = [ 
         {name: "Swiss Franc", value:"CHF"},
@@ -23,7 +23,7 @@ export class SettingsComponent implements AfterViewInit {
         {name: "Month", value:"month"},
         {name: "Year", value:"year"}
     ];
-    settings: Settings = new Settings();
+    user: User = new User({ id: "oos", username: "oos"});
     btnDisabled: boolean = false;
 
     constructor(
@@ -31,12 +31,12 @@ export class SettingsComponent implements AfterViewInit {
         private router: Router,
         private snackbar: MatSnackBar) { 
         
-        this.oos.settings().subscribe( s => this.settings = s);
+        this.oos.settings().subscribe( s => this.user = s);
     }
 
     saveSettings() {
         this.btnDisabled = true;
-        this.oos.saveSettings(this.settings).then(
+        this.oos.putSettings(this.user).then(
             (value) => {
                 this.snackbar
                 .open(`The settings were successfully saved`,"OK")
@@ -48,10 +48,6 @@ export class SettingsComponent implements AfterViewInit {
                 .afterDismissed().subscribe( s => this.btnDisabled = false );
             }
         );
-    }
-
-    ngAfterViewInit() {
-        this.oos.getSettings();
     }
 
 }

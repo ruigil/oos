@@ -7,9 +7,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { DateTimeService } from '../../../services/date-time.service';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
-import { Settings } from '../../../model/settings';
+
 import { Tag } from '../../../model/tag';
 import { Drop } from '../../../model/drop';
+import { User } from 'src/app/model/user';
 
 @Component({
   selector: 'oos-money-detail',
@@ -19,7 +20,7 @@ import { Drop } from '../../../model/drop';
 export class MoneyDetailComponent {
 
     drop: Drop = new Drop({money: { value: 0, type: "", currency: "" } });
-    settings: Settings = new Settings();
+    user: User = new User();
     btnDisabled: boolean = false;
     dateISO:string = "";
     recurrences: Array<{key:string, value:string}> = [];
@@ -36,7 +37,7 @@ export class MoneyDetailComponent {
         
         // TODO: combine the two observer with settings and add option in the form
         this.recurrences = this.dts.getRecurrences();
-        this.oos.settings().pipe(distinctUntilChanged()).subscribe( s =>  this.settings = s );
+        this.oos.settings().pipe(distinctUntilChanged()).subscribe( s =>  this.user = s );
         combineLatest([this.oos.tags(), this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
             let id:string = v[2].get("id") || "new";
             
@@ -60,7 +61,7 @@ export class MoneyDetailComponent {
         const type = "transaction";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
-        this.drop.money!.currency = this.settings.transaction.currency;
+        this.drop.money!.currency = this.user.settings.transaction.currency;
         this.oos.putDrop(this.drop).then(
             (value) => {
                 this.snackbar

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable, tap, range, timeInterval, filter, map, firstValueFrom, of, combineLatest, ReplaySubject } from 'rxjs';
+import { Subject, Observable, map, combineLatest, ReplaySubject } from 'rxjs';
 import { Drop } from "../model/drop";
 import { Tag } from "../model/tag";
 import { DateTimeService } from './date-time.service';
-import { subHours, addHours, startOfDay, endOfToday, endOfMonth, endOfWeek, endOfYear, endOfDay } from 'date-fns';
-import { Settings } from '../model/settings';
+
 import { Stream } from '../model/stream';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
+import { User } from '../model/user';
 
 
 @Injectable({
@@ -21,8 +21,8 @@ export class OceanOSService {
   private dropsV: Map<string,Drop> = new Map();
   private drops$: Subject<Drop[]> = new ReplaySubject<Drop[]>(1);
 
-  private settingsV: Settings = new Settings({ transaction: { currency: "CHF"}, home: { preview: 'day'}, system: { day: true } } );
-  private settings$: Subject<Settings> = new ReplaySubject<Settings>(1);
+  private settingsV: User = new User();
+  private settings$: Subject<User> = new ReplaySubject<User>(1);
 
   private previewAt: number = 0;
   private apiUrl: string = environment.apiUrl;
@@ -32,15 +32,28 @@ export class OceanOSService {
     // TODO: implement remote settings
     combineLatest([
       this.http.get<Tag[]>(`${this.apiUrl}/api/tags`),
-      this.http.get<Drop[]>(`${this.apiUrl}/api/drops`)])
-      .subscribe( ([ts,ds]) => {
+      this.http.get<Drop[]>(`${this.apiUrl}/api/drops`),
+      this.http.get<User>(`${this.apiUrl}/api/user/oos`)])
+      .subscribe( ([ts,ds,us]) => {
         this.tagsV = new Map( ts.map( t => new Tag({...t, available: true, filtered: false, selected: false})).map( t => [t.id,t]) );
         this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
+        this.settingsV = us;
+        this.settings$.next(this.settingsV);
         this.fromTime( { preview: 'day', startAt:this.dts.startOfToday() });
       });
-      this.getSettings();
   }
 
+  putSettings(settings: User):Promise<Object> {
+    return new Promise( (resolve,reject) => {
+      this.http.post(`${this.apiUrl}/api/user`, settings).subscribe( u => {
+        if (u) {
+          this.settingsV = new User({...settings});
+          this.settings$.next(this.settingsV);
+          resolve(u);
+        } else reject();
+      });
+    });
+  }
 
   putTag(tag : Tag ): Promise<Object> {
     return new Promise( (resolve,reject) => {
@@ -120,7 +133,7 @@ export class OceanOSService {
     return this.tags$.pipe( map( tags => tags.filter(t => !t.selected && !t.id.endsWith("_TYPE") ) ) );
   }
 
-  settings():Observable<Settings> {
+  settings():Observable<User> {
     return this.settings$;
   }
 
@@ -214,12 +227,6 @@ export class OceanOSService {
 
   getSettings() {
     this.settings$.next(this.settingsV);
-  }
-
-  saveSettings(settings: Settings):Promise<boolean> {
-    this.settingsV = settings;
-    this.settings$.next(this.settingsV);
-    return Promise.resolve(true);
   }
 
   private filterTagsDrops() { 
