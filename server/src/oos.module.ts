@@ -18,6 +18,7 @@ import { TagEntity } from './tags/tag.entity';
 import { UserEntity } from './user/user.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { join } from 'path';
       autoLoadEntities: true,
       synchronize: true
     }),
+    ScheduleModule.forRoot(),    
     DropsModule, 
     TagsModule,
     UserModule
