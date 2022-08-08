@@ -18,7 +18,6 @@ export class TagEntity {
     icon: string = "";
 
     @ManyToMany(() => DropEntity, drop => drop.tags)
-    @JoinTable()
     drops: DropEntity[]
     
     @ManyToOne(() => UserEntity, user => user.tags)

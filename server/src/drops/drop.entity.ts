@@ -30,7 +30,7 @@ export class DropEntity {
     rate?: { description: string, value: number };
 
     @Column({ type: 'simple-json', nullable: true } )
-    goal?: { content: string, completed: boolean, totals: Array<number> };
+    goal?: { content: string, completed: boolean, tags: Array<{id: string, totals: Array<number>}> };
     
     @Column()
     recurrence: string = "";
@@ -45,6 +45,7 @@ export class DropEntity {
     updatedAt: String
  
     @ManyToMany( () => TagEntity, tag => tag.drops)
+    @JoinTable()
     tags: TagEntity[]
 
     @ManyToOne(() => UserEntity, user => user.drops)

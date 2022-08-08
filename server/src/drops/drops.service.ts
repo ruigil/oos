@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Drop } from 'src/models/drop';
-import { subHours, endOfYear, addMinutes, addDays, addWeeks, addMonths, addYears, addBusinessDays, format } from 'date-fns';
+import { subHours, endOfYear, addMinutes, addDays, addWeeks, addMonths, addYears, addBusinessDays, format, parseISO, isWithinInterval, parse } from 'date-fns';
 import { TagsService } from 'src/tags/tags.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DropEntity } from './drop.entity';
@@ -16,6 +16,7 @@ export class DropsService {
 
     constructor(
       @InjectRepository(DropEntity) private drepo: Repository<DropEntity>,
+      @InjectRepository(TagEntity) private trepo:Repository<TagEntity>,
       private ts: TagsService) {
     }
 
@@ -64,20 +65,26 @@ export class DropsService {
     }
 
     async create(drop:Drop):Promise<DropEntity> {
+ 
 
       //const tags:TagEntity[] = await this.ts.findByIds( drop.tags.map( t=> t.id));
 
       const tags:TagEntity[] = drop.tags.map( t => new TagEntity({...t}) );
-      return this.drepo.save(new DropEntity( {...drop, tags:tags }));
+      const dropEnt = await this.drepo.save(new DropEntity( {...drop, tags:tags }));
+      this.updateGoals(drop);
+      return Promise.resolve(dropEnt);
     }
 
     async update(drop:Drop): Promise<DropEntity> {
       //const tags:TagEntity[] = await this.ts.findByIds( drop.tags.map( t=> t.id));
       const tags:TagEntity[] = drop.tags.map( t => new TagEntity({...t}) );
-      return this.drepo.save(new DropEntity( {...drop, tags:tags }));
+      const dropEnt = await this.drepo.save(new DropEntity( {...drop, tags:tags }));
+      this.updateGoals(drop);
+      return Promise.resolve(dropEnt);
     }
 
     get(id:string):Promise<DropEntity> {
+      this.updateGoals(new Drop());
       return this.drepo.findOne({ 
         where: {
           id:id
@@ -100,11 +107,77 @@ export class DropsService {
           tags: true
         }
       });
+      
+    }
+
+    private async updateGoals(drop:Drop) {
+      const now = Date.now();
+      const ddate = drop.date;
+
+      const out = (d:DropEntity) => {
+        console.log(`drop [${d.type}] [${d.title}]`)
+        if (d.tags) console.log(`tags [${ d.tags.map(t => t.id+',' ) }]`)
+        if (d.goal?.tags) console.log(`tags [${ d.goal.tags.map(t => t.id+',' ) }]`)
+      }
+      
+      const goals:DropEntity[] = await this.drepo.createQueryBuilder("drop")
+      .where("drop.date >= :now", { now })
+      .andWhere("drop.type = :type", { type: "GOAL" })
+      .getMany();
+
+      //console.log("goals")
+      //goals.forEach( g => out(g) );
+
+      for (let g of goals) {
+        const goalDate = g.date;
+        const goalCreated:number = new Date(g.createdAt.toString()).getTime();
+        const goalTags = g.goal.tags.map( t => t.id);
+        const drops = await this.drepo.createQueryBuilder("drop")
+        .leftJoinAndSelect("drop.tags","tag")
+        .where("drop.type <> 'GOAL'")
+        .andWhere("drop.date >= :goalCreated", { goalCreated })
+        .andWhere("drop.date < :goalDate", { goalDate })
+        .andWhere("tag.id IN(:...ids)", { ids: goalTags })
+        .getMany()
+        
+        const totals = new Map( goalTags.map( t => [ t, [0,0,0,0,0,0,0] ]) )
+
+        //console.log("drops")
+        //drops.forEach(d => out(d));
+
+        const countTotalType = (drop:DropEntity, tag:TagEntity) => {
+          const tot = totals.get(tag.id);
+          switch(drop.type) {
+            case "NOTE" : tot[6]++; break;
+            case "RATE" : tot[4]++; tot[5] += drop.rate.value; break;
+            case "MONEY" : drop.money.type == 'expense' ? tot[2] += drop.money.value : tot[3] += drop.money.value; break;
+            case "TASK" : tot[0]++; tot[1] += drop.task.completed ? 1 : 0; break;
+          }
+          totals.set(tag.id,tot);
+        }
+
+        drops.forEach( d=> d.tags.forEach( t => countTotalType(d,t) ) )
+
+        g.goal.tags = [...totals.entries()].map( e => ({ id: e[0], totals: e[1]}))
+        //console.log(g.goal.tags);
+        this.drepo.save(g);
+      }
     }
 
     private generateID(): string {
         return Date.now().toString(36).concat(Math.random().toString(36).substring(2,8));
     }
+
+        /*
+         0 -> totals tasks, 
+         1 -> total task completed
+         2 -> total expenses
+         3 -> total incomes
+         4 -> total rates
+         5 -> total rate values
+         6 -> total notes
+        */
+
 
     @Cron('0 0 0 * * *')
     private async dayDrop() {

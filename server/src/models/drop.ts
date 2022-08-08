@@ -9,7 +9,7 @@ export class Drop {
     task?: { description: string, date: any, completed: boolean };
     system?: { content: string };
     rate?: { description: string, value: number };
-    goal?: { content: string, completed: boolean, totals: Array<number> };
+    goal?: { content: string, completed: boolean, tags: Array<{id: string, totals: Array<number>}> };
     recurrence: string = "";
     tags: Array<Tag> = [];
     date: number = 0;
