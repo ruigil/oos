@@ -59,6 +59,7 @@ export class HomeComponent {
     );
     
     this.oos.settings().pipe( distinctUntilChanged() ).subscribe( u => {
+      console.log(u.settings.home.preview)
       this.stream.preview = u.settings.home.preview;
       this.stream.startAt = this.dts.startOfToday();
     });

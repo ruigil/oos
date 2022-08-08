@@ -39,7 +39,7 @@ export class OceanOSService {
         this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
         this.settingsV = us;
         this.settings$.next(this.settingsV);
-        this.fromTime( { preview: 'day', startAt:this.dts.startOfToday() });
+        this.fromTime( { preview: this.settingsV.settings.home.preview, startAt:this.dts.startOfToday() });
       });
   }
 
