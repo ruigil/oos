@@ -21,6 +21,7 @@ export class DropRateComponent implements OnInit {
   rate(value:number, event: MouseEvent) {
     this.drop.rate!.value = value;
     event.stopPropagation();
+    this.oos.putDrop(this.drop);
   }  
 
   edit() {
