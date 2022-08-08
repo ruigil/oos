@@ -1,6 +1,6 @@
 
 
-.tag-summary {
+.tag-totals {
     width: 100%;
     display: flex;
     font-size: 12px;
@@ -11,6 +11,18 @@
 }
 
 
-mat-chip {
-    max-width: 200px;
+.tag-summary {
+    width: 150px;
+}
+.expense {
+    background-color: #ff6666
+}
+
+.income {
+    background-color: #66ff66;
+    color: #000;
+}
+
+.goal-summary {
+    background-color: #222;
 }

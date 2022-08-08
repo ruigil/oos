@@ -15,8 +15,22 @@
 
     <mat-divider></mat-divider>
     
-    <mat-chip-list class="mat-chip-list-stacked tag-summary">
-        <mat-chip *ngFor="let tag of tags()"><mat-icon class="{{tag.color}}">bookmark</mat-icon>{{tag.name}}</mat-chip> 
+    <mat-chip-list *ngFor="let tag of tags()" class="tag-totals">
+        <mat-chip class="tag-summary"><mat-icon class="{{tag.color}}">bookmark</mat-icon>{{ tag.name}}</mat-chip>
+        <mat-chip *ngIf="summary('task',tag)" class="goal-summary"><mat-icon class="task-icon">folder</mat-icon>{{summary('task',tag)}}</mat-chip>
+        <mat-chip *ngIf="summary('expense',tag)" class="expense"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('expense',tag)}}</mat-chip>
+        <mat-chip *ngIf="summary('income',tag)" class="income"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('income',tag)}}</mat-chip>
+        <mat-chip *ngIf="summary('rate',tag)" class="goal-summary"><mat-icon class="rate-icon">star_rate</mat-icon>{{summary('rate',tag)}}</mat-chip>
+        <mat-chip *ngIf="summary('note',tag)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('note',tag)}}</mat-chip>
+    </mat-chip-list>
+    <mat-divider></mat-divider>
+    <mat-chip-list class="tag-totals">
+        <mat-chip class="tag-summary"><mat-icon class="light">summarize</mat-icon>Totals</mat-chip>
+        <mat-chip *ngIf="summary('task',null)" class="goal-summary"><mat-icon class="task-icon">folder</mat-icon>{{summary('task',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('expense',null)" class="expense"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('expense',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('income',null)" class="income"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('income',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('rate',null)" class="goal-summary"><mat-icon class="rate-icon">star_rate</mat-icon>{{summary('rate',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('note',null)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('note',null)}}</mat-chip>
     </mat-chip-list>
 
     <mat-divider></mat-divider>
@@ -27,7 +41,7 @@
         </button>
         <div class="spacer"></div>
         <mat-chip-list>
-            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon>{{t.name}}</mat-chip> 
+            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon>{{t.name}}</mat-chip>
         </mat-chip-list>
         <button mat-icon-button (click)="delete()">
             <mat-icon aria-label="Menu">delete</mat-icon>

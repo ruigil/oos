@@ -8,6 +8,8 @@ import { DateTimeService } from '../../../services/date-time.service';
 import { Drop } from '../../../model/drop';
 import { Tag } from '../../../model/tag';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
+import { throwDialogContentAlreadyAttachedError } from '@angular/cdk/dialog';
+import { G } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'oos-goal-detail',
@@ -16,7 +18,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
 })
 export class GoalDetailComponent {
 
-    drop: Drop = new Drop({ goal: { content: "", completed: false, totals: [] } });
+    drop: Drop = new Drop({ goal: { content: "", completed: false, tags: [] } });
     dateISO: string = "";
     recurrences: Array<{ key: string, value: string }>;
     btnDisabled: boolean = false;
@@ -41,7 +43,7 @@ export class GoalDetailComponent {
                 id: "new",
                 title: "", 
                 type: "GOAL",
-                goal: { content: "", completed: false, totals: [0,0,0,0,0,0,0] }, 
+                goal: { content: "", completed: false, tags: [] }, 
                 recurrence: "none",
                 tags: [this.oos.getTag("GOAL_TYPE")],
                 date: this.dts.getTimestamp(new Date())
@@ -51,12 +53,28 @@ export class GoalDetailComponent {
             
         });
     }
+        /*
+         0 -> totals tasks, 
+         1 -> total task completed
+         2 -> total expenses
+         3 -> total incomes
+         4 -> total rates
+         5 -> total rate values
+         6 -> total notes
+        */
 
     dropData(id:string) {
         const op = id ? "updated" : "added";
         const type = "goal";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
+        const gtags = new Map( this.drop.goal!.tags.map( t => [t.id,t]) );
+        console.log(gtags);
+        this.drop.goal!.tags = 
+            this.drop.tags
+            .filter( t => !t.id.endsWith('_TYPE'))
+            .map( t =>  (gtags.get(t.id)) ? { id: t.id, totals: gtags.get(t.id)!.totals }: { id: t.id, totals: [0,0,0,0,0,0,0]} );
+        
         this.oos.putDrop(this.drop).then(
             (value) => {
                 this.snackbar
