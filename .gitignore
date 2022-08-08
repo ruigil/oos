@@ -65,3 +65,4 @@ lerna-debug.log*
 # Tests
 /server/coverage
 /server/.nyc_output
+client/src/environments/environment.prod.ts
