@@ -9,6 +9,6 @@ npm install
 npm run dist
 cd ..
 
-docker build -t oos .
+docker build -t oceanos/oos:latest .
 
 echo "Done."

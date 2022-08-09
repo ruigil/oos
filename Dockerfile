@@ -1,19 +1,22 @@
 #comment
-FROM node:latest
+FROM node:alpine
 
 ENV HOME=/oos
 ENV NODE_ENV production
 
-#RUN apk update && apk upgrade
-#RUN apk add --no-cache sqlite~=3.38.5-r0
+RUN apk update && apk upgrade
+RUN apk add --no-cache sqlite~=3.38.5-r0
 
 COPY client/dist $HOME
 COPY server/dist $HOME/server
-COPY server/node_modules $HOME/node_modules
+COPY server/package*.json $HOME/server
 
-VOLUME $HOME/db
+WORKDIR $HOME/server
+run npm ci
 
 WORKDIR $HOME
+
+VOLUME $HOME/db
 
 EXPOSE 3000/tcp
 
