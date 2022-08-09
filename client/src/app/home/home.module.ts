@@ -7,6 +7,8 @@ import { DropsModule } from '../drops/drops.module';
 import { TagsModule } from '../tags/tags.module';
 
 import { HomeComponent } from './home.component';
+import { DateTimeService } from '../services/date-time.service';
+
 
 @NgModule({
   imports: [
@@ -21,6 +23,7 @@ import { HomeComponent } from './home.component';
       }
     ])
   ],
+  providers: [],
   declarations: [ HomeComponent ]
 })
 export class HomePageModule {}

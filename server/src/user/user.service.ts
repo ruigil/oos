@@ -11,11 +11,10 @@ export class UserService {
     ) {
         this.urepo.findOneBy( { id: "oos" }).then( user => {
             if (user == null) {
-                console.log("insert user")
                 this.urepo.save(new UserEntity({
                     id: "oos",
                     username: "oos",
-                    settings: { transaction: { currency: "CHF"}, home: { preview: 'day' }, system: { day: true} }
+                    settings: { transaction: { currency: "CHF"}, home: { preview: 'day' }, system: { day: true, timezone: "Europe/Zurich"} }
                 }));
             } 
         });

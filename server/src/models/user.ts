@@ -4,6 +4,6 @@ export class User {
     settings: {
         transaction: { currency: string  };
         home: { preview: string };
-        system: { day: boolean };        
+        system: { day: boolean, timezone: string };        
     }
 }

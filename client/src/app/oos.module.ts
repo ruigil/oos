@@ -10,6 +10,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { OOSRoutingModule } from './oos-routing.module';
 import { OOSComponent } from './oos.component';
 import { StartComponent } from './start/start.component';
+import { OceanOSService } from './services/ocean-os.service';
+import { DateTimeService } from './services/date-time.service';
 
 /*
 */
@@ -30,8 +32,6 @@ import { StartComponent } from './start/start.component';
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     })
-  ],
-  providers: [
   ],
   bootstrap: [ OOSComponent ],
   schemas: [ ]

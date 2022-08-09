@@ -13,6 +13,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 @Component({
     selector: 'oos-home',
     templateUrl: 'home.component.html',
+    providers: [],
     animations: [
         trigger('openClose', [
             state('fab-buttons-on', style({
@@ -46,6 +47,7 @@ export class HomeComponent {
   
 
   constructor(private oos: OceanOSService, private dts: DateTimeService) {
+    console.log("home component")
     this.tags = this.oos.tags();
     this.drops = this.oos.drops();
 
@@ -59,7 +61,6 @@ export class HomeComponent {
     );
     
     this.oos.settings().pipe( distinctUntilChanged() ).subscribe( u => {
-      console.log(u.settings.home.preview)
       this.stream.preview = u.settings.home.preview;
       this.stream.startAt = this.dts.startOfToday();
     });

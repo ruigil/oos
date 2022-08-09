@@ -27,9 +27,19 @@
         </mat-select>
     </mat-form-field>
     
-    <mat-label class="section-title"><b>System drops</b></mat-label>
+    <mat-label class="section-title"><b>System</b></mat-label>
     
     <mat-divider class="section"></mat-divider>
+    <mat-form-field>
+        <mat-label>Timezone</mat-label>
+        <mat-select [(ngModel)]="user.settings.system.timezone">
+            <mat-option *ngFor="let tz of timezones" [value]="tz">
+            {{tz}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+
     <mat-slide-toggle class="slide" [(ngModel)]="user.settings.system.day">Current Day is {{ user.settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
 
     <button mat-flat-button color="primary" [disabled]="btnDisabled" (click)="saveSettings()">

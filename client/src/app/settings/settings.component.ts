@@ -23,6 +23,7 @@ export class SettingsComponent {
         {name: "Month", value:"month"},
         {name: "Year", value:"year"}
     ];
+    public timezones:Array<any> = ["Europe/Zurich","Europe/Lisbon","Europe/Paris","Europe/Berlin"];
     user: User = new User({ id: "oos", username: "oos"});
     btnDisabled: boolean = false;
 
@@ -31,7 +32,9 @@ export class SettingsComponent {
         private router: Router,
         private snackbar: MatSnackBar) { 
         
-        this.oos.settings().subscribe( s => this.user = s);
+        this.oos.settings().subscribe( s => {
+            this.user = s
+        });
     }
 
     saveSettings() {

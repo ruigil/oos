@@ -1,12 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Interval, addDays, addMonths, addWeeks, addYears, endOfDay, endOfMonth, endOfWeek, endOfYear, formatISO, subDays, isWithinInterval, startOfToday, format, isToday, subWeeks, subMonths, subYears } from 'date-fns';
+import { User } from '../model/user';
+import { OceanOSService } from './ocean-os.service';
+import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class DateTimeService {
 
-    constructor() { }
+    user: User = new User( {
+        settings: { 
+            system: { day:true, timezone: "Europe/Zurich"},
+            transaction: { currency: "CHF" },
+            home: { preview: 'day' }
+        }
+    })
+
+    constructor() { 
+    }
+
+    setSettings(user:User) {
+        this.user = user;
+    }
 
     getRecurrences() {
         return [ 
@@ -21,15 +37,17 @@ export class DateTimeService {
     }
 
     getTimestamp(date: Date | string): number {
+        // zone to utc
         if (typeof date === 'string') {
-            return new Date(date).getTime();
+            return zonedTimeToUtc(new Date(date),this.user.settings.system.timezone).getTime();
         } else {
-            return date.getTime();
+            return zonedTimeToUtc(date,this.user.settings.system.timezone).getTime();
         }
     }
 
     getDateISO(timestamp:number) {
-        return formatISO(timestamp).substring(0,19);
+        // utc to timezone
+        return formatISO(utcToZonedTime(timestamp,this.user.settings.system.timezone).getTime()).substring(0,19);
     }
 
     addDay(date: number, count = 1): number {

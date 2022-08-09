@@ -118,6 +118,10 @@ export class OceanOSService {
   drops():Observable<Drop[]> {
     return this.drops$;
   }
+  
+  settings():Observable<User> {
+    return this.settings$;
+  }
 
   filteredTags() {
     return this.tags$.pipe( map( tags => tags.filter( t => t.filtered) ) );
@@ -135,9 +139,6 @@ export class OceanOSService {
     return this.tags$.pipe( map( tags => tags.filter(t => !t.selected && !t.id.endsWith("_TYPE") ) ) );
   }
 
-  settings():Observable<User> {
-    return this.settings$;
-  }
 
   selectTag(tag: Tag) {
     const t = this.tagsV.get(tag.id) 

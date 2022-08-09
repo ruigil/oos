@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild  } from '@angular/core';
 import { AuthService } from './services/auth.service';
+import { DateTimeService } from './services/date-time.service';
+import { OceanOSService } from './services/ocean-os.service';
 
 @Component({
   selector: 'oos-root',
@@ -8,7 +10,9 @@ import { AuthService } from './services/auth.service';
 })
 export class OOSComponent implements OnInit {
 
-    constructor( public auth: AuthService) { }
+    constructor( private oos:OceanOSService, private dts:DateTimeService) { 
+      this.oos.settings().subscribe( u => this.dts.setSettings(u) );
+    }
 
     ngOnInit() {
     }

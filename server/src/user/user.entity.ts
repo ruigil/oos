@@ -11,7 +11,7 @@ export class UserEntity {
    username: string
 
    @Column({ type: 'simple-json', nullable: true } )
-   settings: { transaction: { currency: string }, home: { preview: string }, system: { day: boolean } };
+   settings: { transaction: { currency: string }, home: { preview: string }, system: { day: boolean, timezone:string } };
 
    @CreateDateColumn()
    createdAt : String

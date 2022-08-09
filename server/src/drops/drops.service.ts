@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Drop } from 'src/models/drop';
-import { subHours, endOfYear, addMinutes, addDays, addWeeks, addMonths, addYears, addBusinessDays, format, parseISO, isWithinInterval, parse } from 'date-fns';
+import { subHours, endOfYear, addMinutes, addDays, addWeeks, addMonths, addYears, addBusinessDays, parseISO, isWithinInterval, parse } from 'date-fns';
 import { TagsService } from 'src/tags/tags.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DropEntity } from './drop.entity';
@@ -8,6 +8,8 @@ import { DeleteResult, Repository } from 'typeorm';
 import { TagEntity } from 'src/tags/tag.entity';
 import { Cron } from '@nestjs/schedule';
 import { subMinutes } from 'date-fns';
+import { UserEntity } from 'src/user/user.entity';
+import { utcToZonedTime, zonedTimeToUtc, format } from 'date-fns-tz';
 
 
 @Injectable()
@@ -17,6 +19,7 @@ export class DropsService {
     constructor(
       @InjectRepository(DropEntity) private drepo: Repository<DropEntity>,
       @InjectRepository(TagEntity) private trepo:Repository<TagEntity>,
+      @InjectRepository(UserEntity) private urepo:Repository<UserEntity>,
       private ts: TagsService) {
     }
 
@@ -179,18 +182,23 @@ export class DropsService {
         */
 
 
-    @Cron('0 0 0 * * *')
+    @Cron('0 0 * * * *')
     private async dayDrop() {
-      const now = Date.now();
-      const tag = await this.ts.get("SYS_TYPE");
-      await this.drepo.save(new DropEntity({
-        id: this.generateID(),
-        type: "SYS",
-        title: format(now,"eeee, dd, MMMM"),
-        system: { content: format(now,"eeee, dd, MMMM")},
-        tags: [ tag ],
-        date: now
-      }));
+      const now = new Date().getTime();
+      const user = await this.urepo.findOneBy({ id: 'oos'});
+      const d = utcToZonedTime(now,user.settings.system.timezone);
+      if (d.getHours() == 0) {
+        const tag = await this.ts.get("SYS_TYPE");
+        await this.drepo.save(new DropEntity({
+          id: this.generateID(),
+          type: "SYS",
+          title: format(now,"eeee, dd, MMMM"),
+          system: { content: format(now,"eeee, dd, MMMM")},
+          tags: [ tag ],
+          date: now,
+          recurrence: 'none'
+        }));  
+      }
     }
 
     // s m h d m wd
