@@ -192,8 +192,8 @@ export class DropsService {
         await this.drepo.save(new DropEntity({
           id: this.generateID(),
           type: "SYS",
-          title: format(now,"eeee, dd, MMMM"),
-          system: { content: format(now,"eeee, dd, MMMM")},
+          title: format(d,"eeee dd MMMM"),
+          system: { content: format(d,"eeee dd MMMM")},
           tags: [ tag ],
           date: now,
           recurrence: 'none'
