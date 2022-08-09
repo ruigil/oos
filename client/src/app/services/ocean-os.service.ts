@@ -25,6 +25,7 @@ export class OceanOSService {
   private settings$: Subject<User> = new ReplaySubject<User>(1);
 
   private previewAt: number = 0;
+  private startAt: number = 0;
   private apiUrl: string = environment.apiUrl;
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
@@ -70,6 +71,7 @@ export class OceanOSService {
 
   putDrop(drop:Drop):Promise<object> {
     drop.uid = this.settingsV.id;
+    drop.color = this.previewColor(drop,this.startAt);
     if (drop.id === 'new') {
       drop.id = this.generateID();
     }
@@ -179,29 +181,32 @@ export class OceanOSService {
     }
   }
 
+  private previewColor(drop:Drop, startAt:number): string {    
+      //if (drop.type === 'SYS') return 'system';
+      const color = 
+        this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addDay(startAt) }) ? 'day' :
+        this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addWeek(startAt) }) ? 'week' :
+        this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addMonth(startAt) }) ? 'month' :
+        this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addYear(startAt) }) ? 'year' : "";
+      
+      return color;
+  }
 
   fromTime(stream:Stream) {
+    console.log("from time...")
     // from time start at, preview a time
     // start + time 
+    this.startAt = stream.startAt;
     this.previewAt = 
       stream.preview === 'day' ? this.dts.addDay(stream.startAt) :
       stream.preview === 'week' ? this.dts.addWeek(stream.startAt) :
       stream.preview === 'month' ? this.dts.addMonth(stream.startAt) :
       stream.preview === 'year' ? this.dts.addYear(stream.startAt) : stream.startAt;
     
-    const previewColor = (drop:Drop, startAt:number): string  => {    
-        //if (drop.type === 'SYS') return 'system';
-        const color = 
-          this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addDay(startAt) }) ? 'day' :
-          this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addWeek(startAt) }) ? 'week' :
-          this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addMonth(startAt) }) ? 'month' :
-          this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addYear(startAt) }) ? 'year' : "";
-        
-        return color;
-    }
+
     
     for (let d of this.dropsV.values()) {
-      d.color = previewColor(d, stream.startAt);        
+      d.color = this.previewColor(d, stream.startAt);        
       d.available = (d.date < this.previewAt ) && (!d.available) || !(d.date > this.previewAt) && (d.available);
     }
     this.filterTagsDrops();

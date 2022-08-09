@@ -47,7 +47,6 @@ export class HomeComponent {
   
 
   constructor(private oos: OceanOSService, private dts: DateTimeService) {
-    console.log("home component")
     this.tags = this.oos.tags();
     this.drops = this.oos.drops();
 
@@ -56,7 +55,7 @@ export class HomeComponent {
 
     this.currentDate$ = interval(1000).pipe( 
       map( t => this.dts.isToday(this.stream.startAt) ? 
-                this.dts.format(Date.now(),"eeee, dd, MMMM @ HH:mm") : 
+                this.dts.format(Date.now(),"dd, MMMM @ HH:mm") : 
                 this.dts.format(this.stream.startAt, "eeee, dd, MMMM") )
     );
     
