@@ -1,613 +1,101 @@
-<!-- START PRELOADER 
-<div class="preloader">
-    <div class="status">
-        <div class="status-mes"></div>
-    </div>
+<div class="start">
+<button mat-icon-button class="home" aria-label="home" routerLink="/home">
+  <mat-icon>home</mat-icon>
+</button>
+<svg id="svg" viewBox="0 0 1440 400" xmlns="http://www.w3.org/2000/svg" class="transition duration-300 ease-in-out delay-150"><style>
+  .path-0{
+    animation:pathAnim-0 40s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes pathAnim-0{
+    0%{
+      d: path("M 0,400 C 0,400 0,100 0,100 C 60.584615384615375,110.66666666666667 121.16923076923075,121.33333333333334 211,116 C 300.83076923076925,110.66666666666666 419.9076923076923,89.33333333333334 500,76 C 580.0923076923077,62.666666666666664 621.1999999999999,57.33333333333333 698,76 C 774.8000000000001,94.66666666666667 887.2923076923078,137.33333333333334 968,136 C 1048.7076923076922,134.66666666666666 1097.6307692307691,89.33333333333334 1171,76 C 1244.3692307692309,62.666666666666664 1342.1846153846154,81.33333333333333 1440,100 C 1440,100 1440,400 1440,400 Z");
+    }
+    25%{
+      d: path("M 0,400 C 0,400 0,100 0,100 C 95.5025641025641,119.25128205128205 191.0051282051282,138.5025641025641 257,133 C 322.9948717948718,127.4974358974359 359.4820512820513,97.24102564102564 438,81 C 516.5179487179487,64.75897435897436 637.0666666666667,62.53333333333333 739,65 C 840.9333333333333,67.46666666666667 924.251282051282,74.62564102564103 998,77 C 1071.748717948718,79.37435897435897 1135.928205128205,76.96410256410256 1208,80 C 1280.071794871795,83.03589743589744 1360.0358974358974,91.51794871794871 1440,100 C 1440,100 1440,400 1440,400 Z");
+    }
+    50%{
+      d: path("M 0,400 C 0,400 0,100 0,100 C 99.4769230769231,84.63076923076923 198.9538461538462,69.26153846153846 279,62 C 359.0461538461538,54.738461538461536 419.6615384615384,55.584615384615375 483,63 C 546.3384615384616,70.41538461538462 612.4,84.4 700,98 C 787.6,111.6 896.7384615384617,124.8153846153846 992,130 C 1087.2615384615383,135.1846153846154 1168.6461538461538,132.33846153846156 1241,126 C 1313.3538461538462,119.66153846153846 1376.6769230769232,109.83076923076922 1440,100 C 1440,100 1440,400 1440,400 Z");
+    }
+    75%{
+      d: path("M 0,400 C 0,400 0,100 0,100 C 91.22820512820513,112.95384615384614 182.45641025641027,125.9076923076923 253,123 C 323.54358974358973,120.0923076923077 373.40256410256416,101.32307692307693 460,95 C 546.5974358974358,88.67692307692307 669.9333333333334,94.80000000000001 749,102 C 828.0666666666666,109.19999999999999 862.8641025641025,117.47692307692307 933,113 C 1003.1358974358975,108.52307692307693 1108.6102564102564,91.2923076923077 1199,87 C 1289.3897435897436,82.7076923076923 1364.6948717948717,91.35384615384615 1440,100 C 1440,100 1440,400 1440,400 Z");
+    }
+    100%{
+      d: path("M 0,400 C 0,400 0,100 0,100 C 60.584615384615375,110.66666666666667 121.16923076923075,121.33333333333334 211,116 C 300.83076923076925,110.66666666666666 419.9076923076923,89.33333333333334 500,76 C 580.0923076923077,62.666666666666664 621.1999999999999,57.33333333333333 698,76 C 774.8000000000001,94.66666666666667 887.2923076923078,137.33333333333334 968,136 C 1048.7076923076922,134.66666666666666 1097.6307692307691,89.33333333333334 1171,76 C 1244.3692307692309,62.666666666666664 1342.1846153846154,81.33333333333333 1440,100 C 1440,100 1440,400 1440,400 Z");
+    }
+  }</style><path d="M 0,400 C 0,400 0,100 0,100 C 60.584615384615375,110.66666666666667 121.16923076923075,121.33333333333334 211,116 C 300.83076923076925,110.66666666666666 419.9076923076923,89.33333333333334 500,76 C 580.0923076923077,62.666666666666664 621.1999999999999,57.33333333333333 698,76 C 774.8000000000001,94.66666666666667 887.2923076923078,137.33333333333334 968,136 C 1048.7076923076922,134.66666666666666 1097.6307692307691,89.33333333333334 1171,76 C 1244.3692307692309,62.666666666666664 1342.1846153846154,81.33333333333333 1440,100 C 1440,100 1440,400 1440,400 Z" stroke="none" stroke-width="0" fill="#ff690066" class="transition-all duration-300 ease-in-out delay-150 path-0" transform="rotate(-180 720 200)"></path><style>
+  .path-1{
+    animation:pathAnim-1 40s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes pathAnim-1{
+    0%{
+      d: path("M 0,400 C 0,400 0,200 0,200 C 96.55128205128204,178.22051282051282 193.1025641025641,156.44102564102565 258,164 C 322.8974358974359,171.55897435897435 356.14102564102564,208.45641025641027 439,222 C 521.8589743589744,235.54358974358973 654.3333333333334,225.73333333333335 739,227 C 823.6666666666666,228.26666666666665 860.525641025641,240.6102564102564 940,228 C 1019.474358974359,215.3897435897436 1141.5641025641025,177.825641025641 1232,169 C 1322.4358974358975,160.174358974359 1381.2179487179487,180.0871794871795 1440,200 C 1440,200 1440,400 1440,400 Z");
+    }
+    25%{
+      d: path("M 0,400 C 0,400 0,200 0,200 C 60.57435897435897,197.5205128205128 121.14871794871794,195.04102564102564 215,187 C 308.85128205128206,178.95897435897436 435.97948717948725,165.35641025641024 510,166 C 584.0205128205127,166.64358974358976 604.9333333333333,181.53333333333336 688,191 C 771.0666666666667,200.46666666666664 916.2871794871796,204.51025641025637 1003,200 C 1089.7128205128204,195.48974358974363 1117.9179487179488,182.42564102564106 1181,181 C 1244.0820512820512,179.57435897435894 1342.0410256410255,189.78717948717946 1440,200 C 1440,200 1440,400 1440,400 Z");
+    }
+    50%{
+      d: path("M 0,400 C 0,400 0,200 0,200 C 95.21282051282051,197.85384615384615 190.42564102564103,195.7076923076923 282,194 C 373.574358974359,192.2923076923077 461.5102564102565,191.0230769230769 518,188 C 574.4897435897435,184.9769230769231 599.5333333333333,180.20000000000002 680,177 C 760.4666666666667,173.79999999999998 896.3564102564103,172.17692307692306 992,177 C 1087.6435897435897,181.82307692307694 1143.0410256410255,193.09230769230768 1211,198 C 1278.9589743589745,202.90769230769232 1359.4794871794873,201.45384615384614 1440,200 C 1440,200 1440,400 1440,400 Z");
+    }
+    75%{
+      d: path("M 0,400 C 0,400 0,200 0,200 C 86.4974358974359,213.85897435897436 172.9948717948718,227.7179487179487 248,221 C 323.0051282051282,214.2820512820513 386.5179487179487,186.98717948717953 464,180 C 541.4820512820513,173.01282051282047 632.9333333333333,186.33333333333331 730,193 C 827.0666666666667,199.66666666666669 929.748717948718,199.67948717948718 1000,206 C 1070.251282051282,212.32051282051282 1108.0717948717947,224.94871794871793 1176,225 C 1243.9282051282053,225.05128205128207 1341.9641025641026,212.52564102564105 1440,200 C 1440,200 1440,400 1440,400 Z");
+    }
+    100%{
+      d: path("M 0,400 C 0,400 0,200 0,200 C 96.55128205128204,178.22051282051282 193.1025641025641,156.44102564102565 258,164 C 322.8974358974359,171.55897435897435 356.14102564102564,208.45641025641027 439,222 C 521.8589743589744,235.54358974358973 654.3333333333334,225.73333333333335 739,227 C 823.6666666666666,228.26666666666665 860.525641025641,240.6102564102564 940,228 C 1019.474358974359,215.3897435897436 1141.5641025641025,177.825641025641 1232,169 C 1322.4358974358975,160.174358974359 1381.2179487179487,180.0871794871795 1440,200 C 1440,200 1440,400 1440,400 Z");
+    }
+  }</style><path d="M 0,400 C 0,400 0,200 0,200 C 96.55128205128204,178.22051282051282 193.1025641025641,156.44102564102565 258,164 C 322.8974358974359,171.55897435897435 356.14102564102564,208.45641025641027 439,222 C 521.8589743589744,235.54358974358973 654.3333333333334,225.73333333333335 739,227 C 823.6666666666666,228.26666666666665 860.525641025641,240.6102564102564 940,228 C 1019.474358974359,215.3897435897436 1141.5641025641025,177.825641025641 1232,169 C 1322.4358974358975,160.174358974359 1381.2179487179487,180.0871794871795 1440,200 C 1440,200 1440,400 1440,400 Z" stroke="none" stroke-width="0" fill="#ff690088" class="transition-all duration-300 ease-in-out delay-150 path-1" transform="rotate(-180 720 200)"></path><style>
+  .path-2{
+    animation:pathAnim-2 40s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  @keyframes pathAnim-2{
+    0%{
+      d: path("M 0,400 C 0,400 0,300 0,300 C 60.0974358974359,321.7282051282051 120.1948717948718,343.45641025641027 203,337 C 285.8051282051282,330.54358974358973 391.31794871794875,295.9025641025641 486,291 C 580.6820512820512,286.0974358974359 664.5333333333333,310.9333333333333 747,316 C 829.4666666666667,321.0666666666667 910.5487179487179,306.3641025641026 974,292 C 1037.451282051282,277.6358974358974 1083.271794871795,263.6102564102564 1158,265 C 1232.728205128205,266.3897435897436 1336.3641025641025,283.1948717948718 1440,300 C 1440,300 1440,400 1440,400 Z");
+    }
+    25%{
+      d: path("M 0,400 C 0,400 0,300 0,300 C 74.25384615384615,318.9589743589744 148.5076923076923,337.9179487179487 215,333 C 281.4923076923077,328.0820512820513 340.223076923077,299.28717948717946 438,288 C 535.776923076923,276.71282051282054 672.6,282.93333333333334 752,297 C 831.4,311.06666666666666 853.376923076923,332.9794871794872 932,336 C 1010.623076923077,339.0205128205128 1145.8923076923077,323.14871794871794 1240,314 C 1334.1076923076923,304.85128205128206 1387.0538461538463,302.425641025641 1440,300 C 1440,300 1440,400 1440,400 Z");
+    }
+    50%{
+      d: path("M 0,400 C 0,400 0,300 0,300 C 85.34102564102565,297.46153846153845 170.6820512820513,294.92307692307696 259,299 C 347.3179487179487,303.07692307692304 438.61282051282046,313.7692307692308 513,319 C 587.3871794871795,324.2307692307692 644.8666666666667,324 711,325 C 777.1333333333333,326 851.920512820513,328.2307692307692 935,320 C 1018.079487179487,311.7692307692308 1109.451282051282,293.07692307692304 1195,288 C 1280.548717948718,282.92307692307696 1360.274358974359,291.46153846153845 1440,300 C 1440,300 1440,400 1440,400 Z");
+    }
+    75%{
+      d: path("M 0,400 C 0,400 0,300 0,300 C 53.16153846153844,281.0923076923077 106.32307692307688,262.18461538461537 200,267 C 293.6769230769231,271.81538461538463 427.86923076923074,300.3538461538461 521,301 C 614.1307692307693,301.6461538461539 666.2,274.4 726,266 C 785.8,257.6 853.3307692307692,268.04615384615386 935,270 C 1016.6692307692308,271.95384615384614 1112.476923076923,265.4153846153846 1199,269 C 1285.523076923077,272.5846153846154 1362.7615384615385,286.2923076923077 1440,300 C 1440,300 1440,400 1440,400 Z");
+    }
+    100%{
+      d: path("M 0,400 C 0,400 0,300 0,300 C 60.0974358974359,321.7282051282051 120.1948717948718,343.45641025641027 203,337 C 285.8051282051282,330.54358974358973 391.31794871794875,295.9025641025641 486,291 C 580.6820512820512,286.0974358974359 664.5333333333333,310.9333333333333 747,316 C 829.4666666666667,321.0666666666667 910.5487179487179,306.3641025641026 974,292 C 1037.451282051282,277.6358974358974 1083.271794871795,263.6102564102564 1158,265 C 1232.728205128205,266.3897435897436 1336.3641025641025,283.1948717948718 1440,300 C 1440,300 1440,400 1440,400 Z");
+    }
+  }</style><path d="M 0,400 C 0,400 0,300 0,300 C 60.0974358974359,321.7282051282051 120.1948717948718,343.45641025641027 203,337 C 285.8051282051282,330.54358974358973 391.31794871794875,295.9025641025641 486,291 C 580.6820512820512,286.0974358974359 664.5333333333333,310.9333333333333 747,316 C 829.4666666666667,321.0666666666667 910.5487179487179,306.3641025641026 974,292 C 1037.451282051282,277.6358974358974 1083.271794871795,263.6102564102564 1158,265 C 1232.728205128205,266.3897435897436 1336.3641025641025,283.1948717948718 1440,300 C 1440,300 1440,400 1440,400 Z" stroke="none" stroke-width="0" fill="#ff6900ff" class="transition-all duration-300 ease-in-out delay-150 path-2" transform="rotate(-180 720 200)"></path></svg>
+
+<!-- drop list -->
+
+<cdk-virtual-scroll-viewport #scroller itemSize="48" class="content">
+    <mat-accordion multi >
+      <mat-expansion-panel class="post" *cdkVirtualFor="let drop of drops; let i = index;" [expanded]=" i == 0">
+
+        <mat-expansion-panel-header >
+          <mat-panel-title>
+            <img src="https://material.angular.io/assets/img/examples/shiba1.jpg" class="avatar"/>&nbsp;
+            Something interesting...
+          </mat-panel-title>
+          <mat-panel-description>
+            <mat-icon>note</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>...is coming</p>
+        <mat-action-row>
+          <button mat-icon-button>
+            <mat-icon>favorite_outline</mat-icon>
+          </button>
+        </mat-action-row>
+      </mat-expansion-panel>
+
+    </mat-accordion>          
+</cdk-virtual-scroll-viewport>
+
+
+  
 </div>
-<!-- END PRELOADER -->
-
-<!-- START NAVBAR -->
-<div class="navbar navbar-default navbar-fixed-top menu-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a href="index.html" class="navbar-brand"><img src="assets/img/logo.png" alt="logo"></a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <nav>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a class="page-scroll" href="/home">Home</a></li>
-                    <li><a class="page-scroll" href="#feature">Features</a></li>						
-                    <li><a class="page-scroll" href="#screenshots">Screenshots</a></li>						
-                    <li><a class="page-scroll" href="#pricing">Pricing</a></li>						
-                    <li><a class="page-scroll" routerLink="/login">Login/Sign up</a></li>
-                    <li><a class="page-scroll" href="#contact">Contact</a></li>
-                </ul>
-            </nav>
-        </div> 
-    </div><!--- END CONTAINER -->
-</div> 
-<!-- END NAVBAR -->	
-
-<!-- START HOME -->
-<section data-stellar-background-ratio="0.3" id="home" class="home_bg" style="background-image: url(assets/img/bg/home-bg.jpg);  background-size:cover; background-position: center center;">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 col-sm-12 col-xs-12">
-            <div class="hero-text">
-                <h2>Make business easy with Beautiful landing page Approck</h2>
-                    <p>Best way to promote your app. With this amazing template</p>
-                <div class="home_btn">
-                    <a href="#" class="app-btn wow bounceIn" data-wow-delay=".6s" ><i class="fa fa-apple"></i>App Store</a>
-                    <a href="#" class="app-btn wow bounceIn" data-wow-delay=".8s" ><i class="fa fa-play"></i>Google Play</a>
-                </div>
-            </div> 
-            </div><!--- END COL -->	
-            <div class="col-md-4 col-sm-12 col-xs-12 text-center">
-            <div class="hero-text-img">
-                <img src="assets/img/iphone_img.jpg" alt="" />
-            </div>
-            </div><!--- END COL -->			  
-        </div><!--- END ROW -->
-    </div><!--- END CONTAINER -->
-</section>
-<!-- END  HOME -->	
-
-<!-- START ABOUT -->
-<section id="feature" class="about-content section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <div class="single_about">
-                    <i class="fa fa-check"></i>
-                    <h4>setup it</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore. </p>
-                </div>
-            </div><!-- END COL-->
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <div class="single_about">
-                    <i class="fa fa-diamond"></i>
-                    <h4>use it</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore. </p>
-                </div>
-            </div><!-- END COL-->
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <div class="single_about">
-                    <i class="fa fa-paper-plane-o"></i>
-                    <h4>enjoy it</h4>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore. </p>
-                </div>
-            </div><!-- END COL-->
-        </div><!-- END ROW-->
-    </div><!-- END CONTAINER-->
-</section>
-<!-- END ABOUT -->
-
-<!-- START FEATURED ONE -->
-<section class="feature-one section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-7 col-sm-7 col-xs-12">
-                <div class="single_feature_img">
-                    <img class="img-responsive wow bounceIn" data-wow-delay=".6s" src="assets/img/mockup3-phone.png" alt="">
-                </div>
-            </div><!-- END COL-->
-            <div class="col-md-5 col-sm-5 col-xs-12">
-                <div class="single_feature_one">
-                    <h3>Easy to  <br> <strong>Customize</strong></h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore. </p>
-                    <a class="single_feature_btn_light" href="#">Download Now</a>
-                </div>
-            </div><!-- END COL-->
-        </div><!-- END ROW-->
-    </div><!-- END CONTAINER-->
-</section>
-<!-- END FEATURED ONE -->
-
-<!-- START FEATURED TWO -->
-<section class="feature-two section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-5 col-sm-5 col-xs-12">
-                <div class="single_feature_two">
-                    <h3>Unique  &amp; Powerful <br> <strong>Template</strong></h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore. </p>
-                    <a class="single_feature_btn_light" href="#">Download Now</a>
-                </div>
-            </div><!-- END COL-->
-            <div class="col-md-7 col-sm-7 col-xs-12">
-                <div class="single_feature_two_img">
-                    <img class="img-responsive wow bounceIn" data-wow-delay=".6s" src="assets/img/2.jpg" alt="">
-                </div>
-            </div><!-- END COL-->
-        </div><!-- END ROW-->
-    </div><!-- END CONTAINER-->
-</section>
-<!-- END FEATURED ONE -->
-
-<!-- START MAIN FEATURES -->
-<section class="why_choose_us section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="section-title text-center wow zoomIn">
-                <h2>Features</h2>
-                <div class="line"></div>
-                <p>We've got a lot of amaing and cool features.</p>						
-            </div>					
-            <div class="col-md-6 col-sm-6 col-xs-12">
-                <div id="why_choose">
-                    <!-- Wrapper for slides -->
-                    <div class="row ">	
-                        <div class="col-sm-6">
-                            <div class="single_feature">
-                                <i class="fa fa-heart-o"></i>
-                                <h3>Made with Love</h3>
-                                <span></span>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras interdum ante vel aliquet euismod. </p>	
-                            </div>
-                        </div><!-- END COL-->								
-                        <div class="col-sm-6">
-                            <div class="single_feature">
-                                <i class="fa fa-magic"></i>
-                                <h3>Powerful</h3>
-                                <span></span>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras interdum ante vel aliquet euismod. </p>	
-                            </div>
-                        </div><!-- END COL-->					
-                        <div class="col-sm-6">
-                            <div class="single_feature">
-                                <i class="fa fa-paper-plane-o"></i>
-                                <h3>Send Messages</h3>
-                                <span></span>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras interdum ante vel aliquet euismod. </p>
-                            </div>
-                        </div><!-- END COL-->							
-                        <div class="col-sm-6">
-                            <div class="single_feature">
-                                <i class="fa fa-money"></i>
-                                <h3>Save Money</h3>
-                                <span></span>
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras interdum ante vel aliquet euismod. </p>
-                            </div>
-                        </div><!-- END COL-->
-                    </div><!-- END CAROUSEL INNER -->
-                </div><!-- END CAROUSEL SLIDE -->				
-            </div><!--- END COL -->
-            <div class="col-md-6 col-sm-6 col-xs-12"> 
-                <div class="feature_img">
-                    <img src="assets/img/mockup.jpg" alt="">
-                </div>
-            </div><!--- END COL -->						
-        </div><!--- END ROW -->			
-    </div><!--- END CONTAINER -->		
-</section>
-<!-- END MAIN FEATURES -->
-
-<!-- START APP SCREENSHOT  -->
-<section id="screenshots" class="app-screenshot section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="section-title text-center wow zoomIn">
-                <h2>Screenshots</h2>
-                <div class="line"></div>
-                <p>Our awesome app screenshot gallery here.</p>
-            </div>				
-            <div class="col-md-10 col-md-offset-1">
-                <div class="screenshot-carousel" data-carousel-3d>
-                    <img src="assets/img/screenshot/app1.jpg" alt="">
-                    <img src="assets/img/screenshot/app2.jpg" alt="">
-                    <img src="assets/img/screenshot/app3.jpg" alt="">
-                    <img src="assets/img/screenshot/app4.jpg" alt="">
-                    <img src="assets/img/screenshot/app5.jpg" alt="">
-                </div>
-            </div><!--- END COL -->
-        </div><!--- END ROW -->			
-    </div><!--- END CONTAINER -->	
-</section>
-<!-- END APP SCREENSHOT -->
-
-<!-- START HOW IT WORKS -->
-<section class="about_video" style="background-image: url(assets/img/bg/video-bg.jpg); background-size:cover; background-position: center center;background-attachment:fixed;">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12 col-sm-12 col-xs-12 text-center">
-                <div class="video-container">                  						
-                    <a data-toggle="modal" data-target="#video-modal" data-backdrop="true">
-                    <span class="play-video"><span class="fa fa-play"></span></span></a>
-                    <h3>Watch video</h3>
-                </div>
-                <!-- VIDEO POPUP -->
-                <div class="modal fade video-modal" id="video-modal" role="dialog">
-                    <div class="modal-content">
-                        <iframe width="712" height="400" src="https://www.youtube.com/embed/EWan2YcodSM"></iframe>
-                    </div>
-                </div>
-                <!-- END VIDEO POPUP -->	
-            </div><!--- END COL -->					
-        </div><!--- END ROW -->
-    </div><!--- END CONTAINER -->	
-</section>
-<!-- END HOW IT WORKS -->
-
-<!-- START MORE FEATURES -->
-<section class="more_features section_padding">
-    <div class="container">			
-        <div class="row">
-            <div class="section-title text-center wow zoomIn">
-                <h2>More Features</h2>
-                <div class="line"></div>
-                <p>We've got a lot of features, here are some more</p>
-            </div>					
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="single_more_feature">
-                    <div class="bg-icon">
-                        <span class="fa fa-heart"></span>
-                    </div>
-                    <div class="single_icon">
-                        <span class="fa fa-heart"></span>
-                    </div>
-                    <div class="single_text">
-                        <h3>Made with Love</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora, explicabo.</p>
-                    </div>
-                </div>
-            </div><!--- END COL -->	
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="single_more_feature">
-                    <div class="bg-icon">
-                        <span class="fa fa-paper-plane-o"></span>
-                    </div>
-                    <div class="single_icon">
-                        <span class="fa fa-paper-plane-o"></span>
-                    </div>
-                    <div class="single_text">
-                        <h3>Send Messages</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora, explicabo.</p>
-                    </div>
-                </div>
-            </div><!--- END COL -->	
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="single_more_feature">
-                    <div class="bg-icon">
-                        <span class="fa fa-trophy"></span>
-                    </div>
-                    <div class="single_icon">
-                        <span class="fa fa-trophy"></span>
-                    </div>
-                    <div class="single_text">
-                        <h3>Award Winning</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora, explicabo.</p>
-                    </div>
-                </div>
-            </div><!--- END COL -->	
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="single_more_feature">
-                    <div class="bg-icon">
-                        <span class="fa fa-money"></span>
-                    </div>
-                    <div class="single_icon">
-                        <span class="fa fa-money"></span>
-                    </div>
-                    <div class="single_text">
-                        <h3>Save Money</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora, explicabo.</p>
-                    </div>
-                </div>
-            </div><!--- END COL -->	
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="single_more_feature">
-                    <div class="bg-icon">
-                        <span class="fa fa-cog"></span>
-                    </div>
-                    <div class="single_icon">
-                        <span class="fa fa-cog"></span>
-                    </div>
-                    <div class="single_text">
-                        <h3>Customizable</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora, explicabo.</p>
-                    </div>
-                </div>
-            </div><!--- END COL -->	
-            <div class="col-md-4 col-sm-6 col-xs-12">
-                <div class="single_more_feature">
-                    <div class="bg-icon">
-                        <span class="fa fa-database"></span>
-                    </div>
-                    <div class="single_icon">
-                        <span class="fa fa-database"></span>
-                    </div>
-                    <div class="single_text">
-                        <h3>Data Report</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Tempora, explicabo.</p>
-                    </div>
-                </div>
-            </div><!--- END COL -->		
-        </div><!--- END ROW -->
-    </div><!--- END CONTAINER -->
-</section>
-<!-- END MORE FEATURES -->
-
-<!-- START PRICING TABLE -->
-<section id="pricing" class="our_pricing section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="section-title text-center wow zoomIn">
-                <h2>Pricing plan</h2>
-                <div class="line"></div>
-                <p>Get start your business with our awesome pricing plan.</p>
-            </div>					
-            <div class="col-md-3 col-sm-3 col-xs-12">
-                <div class="single-pricing">
-                    <div class="pricing-title">
-                        <p>Starter</p>
-                    </div>
-                    <div class="pricing-price">
-                        <p><sup>$ </sup>8.00</p>
-                    </div>
-                    <div class="pricing-features">
-                        <p>Fully Responsive</p>
-                        <p>Clean and modern</p>
-                        <p>Simple and professional</p>
-                        <p>24/7 support</p>
-                    </div>
-                    <div class="pricing_btn">
-                        <p><a href="#"> Buy Now</a></p>
-                    </div>							
-                </div>					
-            </div><!--- END COL -->	
-            <div class="col-md-3 col-sm-3 col-xs-12">
-                <div class="single-pricing">
-                    <div class="pricing-title">
-                        <p>Popular</p>
-                    </div>
-                    <div class="pricing-price">
-                        <p><sup>$ </sup>12.00</p>
-                    </div>
-                    <div class="pricing-features">
-                        <p>Fully Responsive</p>
-                        <p>Clean and modern</p>
-                        <p>Simple and professional</p>
-                        <p>24/7 support</p>
-                    </div>
-                    <div class="pricing_btn">
-                        <p><a href="#"> Buy Now</a></p>
-                    </div>							
-                </div>					
-            </div><!--- END COL -->	
-            <div class="col-md-3 col-sm-3 col-xs-12">
-                <div class="single-pricing">
-                    <div class="pricing-title">
-                        <p>Business</p>
-                    </div>
-                    <div class="pricing-price">
-                        <p><sup>$ </sup>16.00</p>
-                    </div>
-                    <div class="pricing-features">
-                        <p>Fully Responsive</p>
-                        <p>Clean and modern</p>
-                        <p>Simple and professional</p>
-                        <p>24/7 support</p>
-                    </div>
-                    <div class="pricing_btn">
-                        <p><a href="#"> Buy Now</a></p>
-                    </div>							
-                </div>					
-            </div><!--- END COL -->	
-            <div class="col-md-3 col-sm-3 col-xs-12">
-                <div class="single-pricing">
-                    <div class="pricing-title">
-                        <p>Enterprise</p>
-                    </div>
-                    <div class="pricing-price">
-                        <p><sup>$ </sup>20.00</p>
-                    </div>
-                    <div class="pricing-features">
-                        <p>Fully Responsive</p>
-                        <p>Clean and modern</p>
-                        <p>Simple and professional</p>
-                        <p>24/7 support</p>
-                    </div>
-                    <div class="pricing_btn">
-                        <p><a href="#"> Buy Now</a></p>
-                    </div>							
-                </div>					
-            </div><!--- END COL -->		
-        </div><!--- END ROW -->
-    </div><!--- END CONTAINER -->
-</section>
-<!-- END PRICING TABLE -->
-
-<!-- START TESTIMONIAL -->
-<section class="testimonial section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-10 col-sm-offset-1 col-xs-12">
-                <div id="team__carousel" class="carousel slide" data-ride="carousel" data-interval="9999999">
-                    <!-- Indicators -->
-                    <ol class="carousel-indicators">
-                        <li data-target="#team__carousel" data-slide-to="0" class="active"></li>
-                        <li data-target="#team__carousel" data-slide-to="1"></li>
-                        <li data-target="#team__carousel" data-slide-to="2"></li>
-                        <li data-target="#team__carousel" data-slide-to="3"></li>
-                    </ol>
-                    <div class="carousel-inner text-center">
-                        <div class="item active">
-                            <div class="testimonial-text">
-                                <i class="fa fa-quote-left"></i>
-                                <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur..."</p>
-                                <img src="assets/img/testimonial/1.jpg" class="img-responsive" alt="" />
-                                <h4>Syed Ekram</h4>
-                                <h5>company name</h5>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="testimonial-text">
-                                <i class="fa fa-quote-left"></i>
-                                <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur..."</p>
-                                <img src="assets/img/testimonial/2.jpg" class="img-responsive" alt="" />
-                                <h4>Syed Ekram</h4>
-                                <h5>company name</h5>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="testimonial-text">
-                                <i class="fa fa-quote-left"></i>
-                                <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur..."</p>
-                                <img src="assets/img/testimonial/3.jpg" class="img-responsive" alt="" />
-                                <h4>Syed Ekram</h4>
-                                <h5>company name</h5>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <div class="testimonial-text">
-                                <i class="fa fa-quote-left"></i>
-                                <p>"Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et.Lorem ipsum dolor sit amet, consectetur..."</p>
-                                <img src="assets/img/testimonial/4.jpg" class="img-responsive" alt="" />
-                                <h4>Syed Ekram</h4>
-                                <h5>company name</h5>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!--- END COL -->				
-        </div><!--- END ROW -->
-    </div><!--- END CONTAINER -->	
-</section>
-<!-- END TESTIMONIAL -->
-
-<!-- START DOWNLOAD -->
-<section id="download" class="download section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12 text-center">
-                <div class="download_icon">
-                    <h2>Download this app now</h2>
-                    <a href="#"><img src="assets/img/apple.png" alt="" /></a>
-                    <a href="#"><img src="assets/img/android.png" alt="" /></a>
-                </div>
-            </div><!--- END COL -->				
-        </div><!--- END ROW -->
-    </div><!--- END CONTAINER -->		
-</section>
-<!-- END DOWNLOAD -->
-
-<!-- START NEWSLETTER -->
-<section class="newsletter section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 col-md-offset-2 col-sm-12 col-xs-12 text-center">
-                <div class="signup_form">
-                    <h3 class="section-title-white">Subscribe to stay update</h3>
-                        <!-- Replace the form action in the line below with your MailChimp embed action! -->
-                    <form novalidate="" target="_blank" class="validate" name="mc-embedded-subscribe-form" method="post" action="http://site90.us11.list-manage.com/subscribe/post?u=599a2153f4b86cb2f92d4af3a&amp;id=26d7c26287">
-                        <input type="email" placeholder="Enter Email" id="mce-email" class="form-control" name="EMAIL">
-                        <span><button class="btn btn-detault btn-light-bg" name="subscribe" type="submit">Subscribe</button></span>
-                        <div id="mce-responses">
-                            <div style="display:none" id="mce-error-response" class="response"></div>
-                            <div style="display:none" id="mce-success-response" class="response"></div>
-                        </div>
-                    </form>
-                </div>
-            </div><!--- END COL -->				
-        </div><!--- END ROW -->
-    </div><!--- END CONTAINER -->		
-</section>
-<!-- END NEWSLETTER -->
-
-<!-- START CONTACT FORM -->
-<section id="contact" class="contact_area section-padding">
-    <div class="container">
-        <div class="row">	
-            <div class="section-title text-center wow zoomIn">
-                <h2>get in touch</h2>
-                <div class="line"></div>
-                <p>If you have any question, get in touch here.</p>
-            </div>								
-            <div class="col-md-12 col-sm-12 col-xs-12">
-                <div class="contact">
-                    <form id="contact-form" method="post" enctype="multipart/form-data">
-                        <div class="row">
-                            <div class="form-group col-md-4">
-                                <input type="text" name="name" class="form-control" placeholder="Name" required="required">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <input type="email" name="email" class="form-control" placeholder="Email" required="required">
-                            </div>
-                            <div class="form-group col-md-4">
-                                <input type="text" name="subject" class="form-control" placeholder="Subject" required="required">
-                            </div>
-                            <div class="form-group col-md-12">
-                                <textarea rows="6" name="message" class="form-control" placeholder="Your Message" required="required"></textarea>
-                            </div>
-                            <div class="col-md-12 text-center">
-                                <button type="submit" value="Send message" name="submit" id="submitButton" class="btn btn-lg btn-contact-bg" title="Submit Your Message!">Send Message</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div><!-- END COL -->						
-        </div><!--- END ROW -->				
-    </div><!--- END CONTAINER -->	
-</section>
-<!-- END CONTACT FORM  -->
-
-<!-- START ADDRESS -->
-<section class="our-address section-padding">
-    <div class="container">
-        <div class="row text-center">			
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <div class="single_address">
-                    <i class="fa fa-map-marker"></i>
-                    <h4>Our Location</h4>
-                    <p>3481 Melrose Place, Beverly Hills CA 90210</p>
-                </div>
-            </div><!-- END COL -->
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <div class="single_address">
-                    <i class="fa fa-phone"></i>
-                    <h4>Telephone</h4>
-                    <p>(+1) 517 397 7100</p>
-                </div>
-            </div><!-- END COL -->
-            <div class="col-md-4 col-sm-4 col-xs-12">
-                <div class="single_address">
-                    <i class="fa fa-envelope-o"></i>
-                    <h4>Send email</h4>
-                    <p>Info@Approck.com</p>
-                </div>
-            </div><!-- END COL -->
-        </div><!-- END ROW -->						
-    </div><!--- END CONTAINER -->	
-</section>
-<!-- END ADDRESS -->
-
-<!-- START FOOTER -->
-<div class="footer">
-    <div class="container">
-        <div class="row">					
-            <div class="col-md-6 col-sm-6 col-xs-12 wow zoomIn">
-                <div class="copyright">
-                    <p>Copyright &copy; 2017 |    All Rights Reserved.</p>
-                </div><!--- END FOOTER COPYRIGHT -->
-            </div><!--- END COL -->		
-            <div class="col-md-6 col-sm-6 col-xs-12 wow zoomIn">
-                <div class="footer_social pull-right">
-                    <ul>
-                        <li><a class="f_facebook" href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li><a class="f_twitter" href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li><a class="f_google" href="#"><i class="fa fa-google-plus"></i></a></li>
-                        <li><a class="f_linkedin" href="#"><i class="fa fa-linkedin"></i></a></li>
-                        <li><a class="f_youtube" href="#"><i class="fa fa-youtube"></i></a></li>
-                        <li><a class="f_skype" href="#"><i class="fa fa-skype"></i></a></li>
-                    </ul>
-                </div>
-            </div><!--- END COL -->			
-        </div><!--- END ROW -->				
-    </div><!--- END CONTAINER -->
-</div>
-<!-- END FOOTER -->		
