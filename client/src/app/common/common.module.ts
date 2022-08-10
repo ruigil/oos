@@ -1,9 +1,8 @@
 import { NgModule } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-
+import { MatCardModule }  from '@angular/material/card'; 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatButtonModule } from '@angular/material/button';
@@ -62,6 +61,7 @@ import { MarkdownPipe } from '../pipes/markdown.pipe';
     MatMenuModule,
     MatAutocompleteModule,
     MatDialogModule,
+    MatCardModule
   ],
   declarations: [
     FormatDatePipe,  
@@ -93,7 +93,8 @@ import { MarkdownPipe } from '../pipes/markdown.pipe';
     MatSlideToggleModule,
     MatMenuModule,
     MatAutocompleteModule,
-    MatDialogModule  
+    MatDialogModule, 
+    MatCardModule
   ] 
 })
 export class OOSCommonModule { }

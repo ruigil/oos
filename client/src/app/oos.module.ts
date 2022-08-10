@@ -10,8 +10,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { OOSRoutingModule } from './oos-routing.module';
 import { OOSComponent } from './oos.component';
 import { StartComponent } from './start/start.component';
-import { OceanOSService } from './services/ocean-os.service';
-import { DateTimeService } from './services/date-time.service';
+import { OOSCommonModule } from './common/common.module';
 
 /*
 */
@@ -26,6 +25,7 @@ import { DateTimeService } from './services/date-time.service';
     BrowserAnimationsModule,
     HttpClientModule,
     OOSRoutingModule,
+    OOSCommonModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the application is stable
