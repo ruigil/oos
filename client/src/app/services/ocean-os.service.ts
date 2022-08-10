@@ -6,7 +6,6 @@ import { DateTimeService } from './date-time.service';
 
 import { Stream } from '../model/stream';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { User } from '../model/user';
 
 
@@ -26,15 +25,14 @@ export class OceanOSService {
 
   private previewAt: number = 0;
   private startAt: number = 0;
-  private apiUrl: string = environment.apiUrl;
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
 
     // TODO: implement remote settings
     combineLatest([
-      this.http.get<Tag[]>(`${this.apiUrl}/api/tags`),
-      this.http.get<Drop[]>(`${this.apiUrl}/api/drops`),
-      this.http.get<User>(`${this.apiUrl}/api/user/oos`)])
+      this.http.get<Tag[]>(`/api/tags`),
+      this.http.get<Drop[]>(`/api/drops`),
+      this.http.get<User>(`/api/user/oos`)])
       .subscribe( ([ts,ds,us]) => {
         this.tagsV = new Map( ts.map( t => new Tag({...t, available: true, filtered: false, selected: false})).map( t => [t.id,t]) );
         this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
@@ -46,7 +44,7 @@ export class OceanOSService {
 
   putSettings(settings: User):Promise<Object> {
     return new Promise( (resolve,reject) => {
-      this.http.post(`${this.apiUrl}/api/user`, settings).subscribe( u => {
+      this.http.post(`/api/user`, settings).subscribe( u => {
         if (u) {
           this.settingsV = new User({...settings});
           this.settings$.next(this.settingsV);
@@ -59,7 +57,7 @@ export class OceanOSService {
   putTag(tag : Tag ): Promise<Object> {
     tag.uid = this.settingsV.id;
     return new Promise( (resolve,reject) => {
-      this.http.post(`${this.apiUrl}/api/tags`, tag).subscribe( r => {
+      this.http.post(`/api/tags`, tag).subscribe( r => {
         if (r) {
           this.tagsV.set( tag.id, tag );
           this.getTags();
@@ -76,7 +74,7 @@ export class OceanOSService {
       drop.id = this.generateID();
     }
     return new Promise( (resolve,reject) => {
-      this.http.post(`${this.apiUrl}/api/drops`, drop).subscribe( r => {
+      this.http.post(`/api/drops`, drop).subscribe( r => {
         if (r) {
           this.dropsV.set(drop.id, drop );
           this.getDrops();
@@ -88,7 +86,7 @@ export class OceanOSService {
 
   deleteTag(tag : Tag ): Promise<object> {
     return new Promise( (resolve,reject) => {
-      this.http.delete(`${this.apiUrl}/api/tags/${tag.id}`).subscribe( r => {
+      this.http.delete(`/api/tags/${tag.id}`).subscribe( r => {
         if (r) {
           this.tagsV.delete( tag.id );
           for (let d of this.dropsV.values()) {
@@ -103,7 +101,7 @@ export class OceanOSService {
 
   deleteDrop(drop:Drop): Promise<object> {
     return new Promise( (resolve,reject) => {
-      this.http.delete(`${this.apiUrl}/api/drops/${drop.id}`).subscribe( r => {
+      this.http.delete(`/api/drops/${drop.id}`).subscribe( r => {
         if (r) {
           this.dropsV.delete(drop.id);
           this.getDrops();
