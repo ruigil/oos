@@ -24,6 +24,9 @@
             <button mat-menu-item routerLink="/settings">
                 <mat-icon aria-label="Setting">settings</mat-icon>Settings
             </button>
+            <button mat-menu-item routerLink="/start">
+                <mat-icon aria-label="Setting">water</mat-icon>Public
+            </button>
         </mat-menu>    
         <span style="margin-right: 10px;">Preview</span>
         <mat-select [(ngModel)]="stream.preview" (selectionChange)="futurePreview($event)">

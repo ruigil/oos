@@ -1,7 +1,22 @@
 /* You can add global styles to this file, and also import other style files */
 
-@use "@angular/material" as mat;
+@use '@angular/material' as mat;
+
 @include mat.core();
+
+
+$my-primary: mat.define-palette(mat.$blue-palette, 900);
+$my-accent: mat.define-palette(mat.$red-palette, A200, A100, A400);
+
+$my-theme: mat.define-dark-theme((
+ color: (
+   primary: $my-primary,
+   accent: $my-accent,
+ )
+));
+
+@include mat.all-component-themes($my-theme);
+
 
 html { 
     height: 100%; 
