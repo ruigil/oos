@@ -17,7 +17,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
 })
 export class TaskDetailComponent {
 
-    drop: Drop = new Drop({task: { description: "", date: 0, completed: false } });
+    drop: Drop = new Drop({task: { content: "", date: 0, completed: false } });
     recurrences: Array<{ key: string, value: string }>;
     dateISO: string = "";
     btnDisabled: boolean = false; 
@@ -41,7 +41,7 @@ export class TaskDetailComponent {
                 id: "new",
                 title: "", 
                 type: "TASK",
-                task: { description: "", date: 0, completed: false },
+                task: { content: "", date: 0, completed: false },
                 recurrence: "none",
                 tags: [this.oos.getTag("TASK_TYPE")],
                 date: this.dts.getTimestamp(new Date())

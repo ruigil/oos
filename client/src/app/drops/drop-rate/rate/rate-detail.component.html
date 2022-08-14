@@ -16,6 +16,10 @@
         <input matInput type="number" placeholder="Rate" min="0" max="5" step="1" name="value" [(ngModel)]="drop.rate!.value">
     </mat-form-field>
     <mat-form-field>
+        <mat-label>Description</mat-label>
+        <textarea matInput placeholder="Description..." rows="7" [(ngModel)]="drop.rate!.content" name="description"></textarea>
+    </mat-form-field>
+    <mat-form-field>
         <input matInput type="datetime-local" placeholder="Choose a date" name="date" [(ngModel)]="dateISO" required>
         <mat-error *ngIf="field.hasError('required')">
             Date is <strong>required</strong>
@@ -27,12 +31,10 @@
             <mat-option *ngFor="let rec of recurrences" [value]="rec.key">{{rec.value}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field>
-        <mat-label>Description</mat-label>
-        <textarea matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.rate!.description" name="description"></textarea>
-    </mat-form-field>
+    <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
 
-    <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
+
+    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
         <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Rate
     </button>
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>

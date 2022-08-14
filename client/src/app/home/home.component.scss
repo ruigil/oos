@@ -1,5 +1,4 @@
 
-
 .drop-headers .mat-expansion-panel-header-title,
 .drop-headers .mat-expansion-panel-header-description {
   flex-basis: 0;
@@ -14,10 +13,6 @@
   margin-left: 8px;
 }
   
-.main-content {
-    height: 100%;
-    background: #2d2d2d;
-}
 
 .content {
     display: block;
@@ -36,10 +31,13 @@
 
 .toolbar {
     position:fixed;
+    width: 100%;
+    /*
     z-index: 1000;
     display: flex;
     align-items:center;
-    justify-content: space-between;     
+    justify-content: space-between;
+    */     
 }
 
 .tag-list {

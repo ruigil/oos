@@ -8,7 +8,6 @@ import { DateTimeService } from '../../../services/date-time.service';
 import { Drop } from '../../../model/drop';
 import { Tag } from '../../../model/tag';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
-import { throwDialogContentAlreadyAttachedError } from '@angular/cdk/dialog';
 import { G } from '@angular/cdk/keycodes';
 
 @Component({

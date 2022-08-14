@@ -6,6 +6,10 @@
 </mat-toolbar>
 <form class="form-elements" #dropForm="ngForm">
     <mat-form-field>
+        <input name="name" [(ngModel)]="drop.title" matInput placeholder="Title..." autofocus>
+    </mat-form-field>
+    
+    <mat-form-field>
         <textarea name="text" matInput required autofocus placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.note!.content"></textarea>
         <mat-error *ngIf="field.hasError('required')">
             A text is <strong>required</strong>
@@ -26,7 +30,9 @@
         </mat-select>
     </mat-form-field>
 
-    <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
+    <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
+
+    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
         <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Note
     </button>
 

@@ -19,7 +19,7 @@ import { User } from 'src/app/model/user';
 })
 export class MoneyDetailComponent {
 
-    drop: Drop = new Drop({money: { value: 0, type: "", currency: "" } });
+    drop: Drop = new Drop({money: { content: "", value: 0, type: "", currency: "" } });
     user: User = new User();
     btnDisabled: boolean = false;
     dateISO:string = "";
@@ -45,7 +45,7 @@ export class MoneyDetailComponent {
                 id: "new",
                 title: "", 
                 type: "MONEY",
-                money: { value: 0, type: "expense", currency: "" },
+                money: { content: "", value: 0, type: "expense", currency: "" },
                 recurrence: "none",
                 tags: [this.oos.getTag("MONEY_TYPE")],
                 date: this.dts.getTimestamp(new Date())

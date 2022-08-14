@@ -1,6 +1,6 @@
-<mat-toolbar class="toolbar" color="primary">
+<div class="toolbar">
+<mat-toolbar  color="primary">
     <!-- preview -->
-    <mat-toolbar-row>  
         <button mat-icon-button class="new-drop-button" [matMenuTriggerFor]="types">
             <mat-icon aria-label="Add Drop" >menu</mat-icon>
         </button>
@@ -42,10 +42,9 @@
         <input matInput [matDatepicker]="picker" (dateChange)="setStartAt($event)" style="z-index: -100; width:0px;">
         <mat-datepicker #picker></mat-datepicker>
 
-    </mat-toolbar-row>
-
+    </mat-toolbar>
+    <mat-toolbar color="accent">
     <!-- filter -->
-    <mat-toolbar-row>
         <mat-form-field class="tag-list" >
             <mat-chip-list #chipList aria-label="Tag selection">
               <mat-chip
@@ -67,10 +66,9 @@
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
-    </mat-toolbar-row>
 </mat-toolbar>         
-
-<!-- drop list -->
+</div>
+<!-- drop list --> 
 <div class="main-content">
     <cdk-virtual-scroll-viewport #scroller itemSize="48" class="content">
         <mat-accordion class="drop-headers" multi>
@@ -78,7 +76,6 @@
         </mat-accordion>          
     </cdk-virtual-scroll-viewport>
 </div>
-
 <!-- fab buttons 
 <button class="fab" mat-fab aria-label="Add drop" (click)="toggleFab()">
     <mat-icon>add</mat-icon>

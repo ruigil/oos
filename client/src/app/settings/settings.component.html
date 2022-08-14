@@ -42,7 +42,7 @@
 
     <mat-slide-toggle class="slide" [(ngModel)]="user.settings.system.day">Current Day is {{ user.settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
 
-    <button mat-flat-button color="primary" [disabled]="btnDisabled" (click)="saveSettings()">
+    <button mat-flat-button color="accent" [disabled]="btnDisabled" (click)="saveSettings()">
         <mat-icon>save</mat-icon> Save Settings
     </button>
 </div>

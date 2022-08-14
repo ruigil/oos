@@ -54,7 +54,7 @@ export class NoteDetailComponent {
         const type = "note";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
-        this.drop.title = this.drop.note!.content.split('\n')[0];
+        this.drop.title = this.drop.title === "" ? this.drop.note!.content.split('\n')[0] : this.drop.title;
         this.oos.putDrop(this.drop).then(
             (value) => {
                 this.snackbar

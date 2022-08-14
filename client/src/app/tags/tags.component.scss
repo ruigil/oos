@@ -1,3 +1,4 @@
+@import '../../oos.scss';
 .tagcomponent {
     display: flex;
     flex-direction: column;
@@ -17,4 +18,5 @@
 .title {
   margin-top: 20px;
   font-weight: bold;
+  color: $light-primary-text;
 }

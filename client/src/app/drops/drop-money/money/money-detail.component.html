@@ -21,6 +21,9 @@
         </mat-select>
     </mat-form-field>
     <mat-form-field>
+        <textarea  name="description" matInput placeholder="Description..." rows="7" [(ngModel)]="drop.money!.content"></textarea>
+    </mat-form-field>
+    <mat-form-field>
         <input name="date" matInput type="datetime-local" [(ngModel)]="dateISO"required>
         <mat-error *ngIf="field.hasError('required')">
             Date is <strong>required</strong>
@@ -32,10 +35,10 @@
             <mat-option *ngFor="let rec of recurrences" [value]="rec.key">{{rec.value}}</mat-option>
         </mat-select>
     </mat-form-field>
-    <mat-form-field>
-        <textarea  name="description" matInput placeholder="Enter you text here..." rows="7" [(ngModel)]="drop.title"></textarea>
-    </mat-form-field>
-    <button mat-flat-button color="primary" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
+
+    <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
+    
+    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
         <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Transaction
     </button>
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
