@@ -225,7 +225,11 @@ export class DropsService {
                   d.recurrence === 'weekdays' ? addBusinessDays(d.date,1).getTime() :
                   d.date;
         d.id = this.generateID();
-        const nd = await this.drepo.save(d);
+        
+        if (d.type === 'RATE') d.rate.value = 0;
+        if (d.type === 'TASK') d.task.completed = false;
+
+        const nd = await this.drepo.save( new DropEntity( {...d, content: (d.clone ? d.content : "") }));
         ts.forEach( t => tagsRel.of(nd.id).add(t.id) );
       }
     }
