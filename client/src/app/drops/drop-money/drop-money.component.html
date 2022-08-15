@@ -8,7 +8,7 @@
                 <mat-chip class="{{drop.money?.type}}" >
                     <span *ngIf="drop.money!.type === 'expense'">-</span>{{drop.money?.value}} {{drop.money?.currency}}
                 </mat-chip> 
-                <span>{{drop.money!.content}}</span>
+                <span>{{drop.content}}</span>
             </mat-chip-list>
         </mat-panel-title>
         <mat-panel-description class="description">
@@ -16,7 +16,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p>{{drop.money!.content | markdown}}</p>
+    <p>{{drop.content | markdown}}</p>
 
     <mat-divider></mat-divider>
 

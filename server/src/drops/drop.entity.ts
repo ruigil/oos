@@ -13,27 +13,33 @@ export class DropEntity {
  
     @Column()
     title: string = "";
+
+    @Column({ nullable: true })
+    content: string = "";
  
     @Column({ type: 'simple-json', nullable: true } )
-    note?: { content: string };
+    note?: {  };
 
     @Column({ type: 'simple-json', nullable: true } )
     money?: { value: number, type: string, currency: string };
     
     @Column({ type: 'simple-json', nullable: true } )
-    task?: { description: string, date: any, completed: boolean };
+    task?: { date: any, completed: boolean };
 
     @Column({ type: 'simple-json', nullable: true } )
-    system?: { content: string };
+    system?: { };
 
     @Column({ type: 'simple-json', nullable: true } )
-    rate?: { description: string, value: number };
+    rate?: { value: number };
 
     @Column({ type: 'simple-json', nullable: true } )
-    goal?: { content: string, completed: boolean, tags: Array<{id: string, totals: Array<number>}> };
+    goal?: { completed: boolean, tags: Array<{id: string, totals: Array<number>}> };
     
     @Column()
     recurrence: string = "";
+
+    @Column()
+    clone: boolean = false;
 
     @Column()
     date: number = 0;

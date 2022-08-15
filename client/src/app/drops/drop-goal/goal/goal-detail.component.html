@@ -12,7 +12,7 @@
         </mat-error> 
     </mat-form-field>
     <mat-form-field>
-        <textarea name="text" matInput placeholder="Please describe your goal in a clear, measurable form..." rows="15" [(ngModel)]="drop.goal!.content"  autofocus required></textarea>
+        <textarea name="text" matInput placeholder="Please describe your goal in a clear, measurable form..." rows="15" [(ngModel)]="drop.content"  autofocus required></textarea>
         <mat-error *ngIf="field.errors?.['required']">
             Description <strong>required</strong>
         </mat-error> 

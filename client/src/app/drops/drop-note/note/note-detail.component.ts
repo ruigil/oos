@@ -16,7 +16,7 @@ import { Tag } from '../../../model/tag';
 })
 export class NoteDetailComponent {
 
-    drop:Drop = new Drop({ note: { content: ""}});
+    drop:Drop = new Drop({ note: { }});
     recurrences: Array<{ key: string, value: string }> = [];
     btnDisabled: boolean = false; 
     dateISO: string = "";
@@ -38,7 +38,7 @@ export class NoteDetailComponent {
                 id: "new",
                 title: "", 
                 type: "NOTE",
-                note: { content: "" },
+                note: { },
                 recurrence: "none",
                 tags: [this.oos.getTag("NOTE_TYPE")],
                 date: this.dts.getTimestamp(new Date())
@@ -54,7 +54,7 @@ export class NoteDetailComponent {
         const type = "note";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
-        this.drop.title = this.drop.title === "" ? this.drop.note!.content.split('\n')[0] : this.drop.title;
+        this.drop.title = this.drop.title === "" ? this.drop.content.split('\n')[0] : this.drop.title;
         this.oos.putDrop(this.drop).then(
             (value) => {
                 this.snackbar

@@ -10,7 +10,7 @@
     </mat-form-field>
     
     <mat-form-field>
-        <textarea name="text" matInput required autofocus placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.note!.content"></textarea>
+        <textarea name="text" matInput required autofocus placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.content"></textarea>
         <mat-error *ngIf="field.hasError('required')">
             A text is <strong>required</strong>
         </mat-error> 

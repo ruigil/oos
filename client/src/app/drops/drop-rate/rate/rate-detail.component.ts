@@ -17,7 +17,7 @@ import { Tag } from '../../../model/tag';
 })
 export class RateDetailComponent {
 
-    drop: Drop = new Drop({ rate: { content: "", value: 0 } } );
+    drop: Drop = new Drop({ rate: { value: 0 } } );
     btnDisabled: boolean = false;
     dateISO: string = ""; 
     field = new FormControl('', [
@@ -42,7 +42,7 @@ export class RateDetailComponent {
                 id: "new",
                 title: "", 
                 type: "RATE",
-                rate: { content: "", value: 0 },
+                rate: { value: 0 },
                 recurrence: "none",
                 tags: [this.oos.getTag("RATE_TYPE")],
                 date: this.dts.getTimestamp(new Date())

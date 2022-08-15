@@ -17,7 +17,7 @@ import { G } from '@angular/cdk/keycodes';
 })
 export class GoalDetailComponent {
 
-    drop: Drop = new Drop({ goal: { content: "", completed: false, tags: [] } });
+    drop: Drop = new Drop({ goal: { completed: false, tags: [] } });
     dateISO: string = "";
     recurrences: Array<{ key: string, value: string }>;
     btnDisabled: boolean = false;
@@ -42,7 +42,7 @@ export class GoalDetailComponent {
                 id: "new",
                 title: "", 
                 type: "GOAL",
-                goal: { content: "", completed: false, tags: [] }, 
+                goal: { completed: false, tags: [] }, 
                 recurrence: "none",
                 tags: [this.oos.getTag("GOAL_TYPE")],
                 date: this.dts.getTimestamp(new Date())
