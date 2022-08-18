@@ -6,6 +6,7 @@ export class Drop {
     title: string = "";
     content: string = "";
     note?: { };
+    photo?: { filename: string, mimetype: string, originalname: string};
     money?: { value: number, type: string, currency: string };
     task?: { date: any, completed: boolean };
     system?: { };

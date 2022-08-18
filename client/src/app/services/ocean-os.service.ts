@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, Observable, map, combineLatest, ReplaySubject } from 'rxjs';
+import { Subject, Observable, map, combineLatest, ReplaySubject, of } from 'rxjs';
 import { Drop } from "../model/drop";
 import { Tag } from "../model/tag";
 import { DateTimeService } from './date-time.service';
@@ -219,6 +219,13 @@ export class OceanOSService {
   getDrops() {
     //console.log(`get drops ${this.dropsV.size}`)
     this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
+  }
+
+  getStream(uid: string | null, name:string | null):Observable<Drop[]> {
+    if (uid && name) {
+      return this.http.post<Drop[]>(`/api/drops/stream/`, { uid: uid, tags: [name] });
+    }
+    return of([]);
   }
 
   getDrop(did:string):Drop {
