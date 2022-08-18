@@ -9,8 +9,8 @@ import { ServiceWorkerModule } from '@angular/service-worker';
  
 import { OOSRoutingModule } from './oos-routing.module';
 import { OOSComponent } from './oos.component';
-import { StartComponent } from './start/start.component';
-import { OOSCommonModule } from './common/common.module';
+import { StreamComponent } from './stream/stream.component';
+import { OOSCommonModule } from './common.module';
 
 /*
 */
@@ -18,7 +18,7 @@ import { OOSCommonModule } from './common/common.module';
 @NgModule({
   declarations: [
     OOSComponent,
-    StartComponent
+    StreamComponent
   ],
   imports: [
     BrowserModule,

@@ -26,10 +26,11 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
-import { FormatDatePipe } from '../pipes/format-date.pipe';
-import { MarkdownPipe } from '../pipes/markdown.pipe';
+import { FormatDatePipe } from './pipes/format-date.pipe';
+import { MarkdownPipe } from './pipes/markdown.pipe';
 
 @NgModule({
   providers: [
@@ -61,7 +62,8 @@ import { MarkdownPipe } from '../pipes/markdown.pipe';
     MatMenuModule,
     MatAutocompleteModule,
     MatDialogModule,
-    MatCardModule
+    MatCardModule,
+    MatProgressBarModule
   ],
   declarations: [
     FormatDatePipe,  
@@ -94,7 +96,8 @@ import { MarkdownPipe } from '../pipes/markdown.pipe';
     MatMenuModule,
     MatAutocompleteModule,
     MatDialogModule, 
-    MatCardModule
+    MatCardModule,
+    MatProgressBarModule
   ] 
 })
 export class OOSCommonModule { }

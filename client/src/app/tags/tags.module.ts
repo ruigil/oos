@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { OOSCommonModule } from '../common/common.module';
+import { OOSCommonModule } from '../common.module';
 
 import { TagsComponent } from './tags.component';
 import { DeleteTagDialog } from './DeleteTagDialog';
