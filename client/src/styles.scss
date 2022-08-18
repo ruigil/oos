@@ -9,10 +9,6 @@ html {
     flex: 1 1 auto;
 }
 
-.main-content {
-    height: 100%;
-    background: #{$dark-background};
-}
   
 body {
     height: 100vh;
@@ -67,7 +63,12 @@ body {
 .task-icon {
     color: #69dd2f;
 }
-
+.stream-icon {
+    color: #2f80dd;
+}
+.photo-icon {
+    color: #7361d9;
+}
 // tag colors
 .blue {
     color: #0066ff
