@@ -40,6 +40,7 @@ export class HomeComponent {
   //separatorKeysCodes: number[] = [ENTER, COMMA];
   availableTags$: Observable<Tag[]>;
   filteredTags$: Observable<Tag[]>;
+  streams$:Observable<Tag[]>;
   currentDate$: Observable<string>;
 
   drops: Observable<Drop[]>;
@@ -52,6 +53,7 @@ export class HomeComponent {
 
     this.filteredTags$ = this.oos.filteredTags();
     this.availableTags$ = this.oos.availableTags();
+    this.streams$ = this.oos.tags().pipe( map( ts => ts.filter( t => t.id.endsWith('_STREAM') )));
 
     this.currentDate$ = interval(1000).pipe( 
       map( t => this.dts.isToday(this.stream.startAt) ? 

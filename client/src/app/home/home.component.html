@@ -1,12 +1,32 @@
-<div class="toolbar">
 <mat-toolbar  color="primary">
     <!-- preview -->
         <button mat-icon-button class="new-drop-button" [matMenuTriggerFor]="types">
             <mat-icon aria-label="Add Drop" >menu</mat-icon>
         </button>
         <mat-menu #types="matMenu">
+            <button mat-menu-item [matMenuTriggerFor]="dropTypes">
+                <mat-icon aria-label="Create">add</mat-icon>New
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item [matMenuTriggerFor]="streams">
+                <mat-icon aria-label="Streams">water</mat-icon>Streams
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item routerLink="/settings">
+                <mat-icon aria-label="Setting">settings</mat-icon>Settings
+            </button>
+        </mat-menu>    
+        <mat-menu #streams="matMenu">
+            <button mat-menu-item *ngFor="let stream of streams$ | async" routerLink="/stream/oos/{{stream.name}}">
+                <mat-icon [ngClass]="stream.color">{{stream.icon}}</mat-icon>{{stream.name}}
+            </button>
+        </mat-menu>
+        <mat-menu #dropTypes="matMenu">
             <button mat-menu-item aria-label="Note" routerLink="/note/edit/new">
                 <mat-icon class="note-icon">note</mat-icon> Note
+            </button>
+            <button mat-menu-item aria-label="Photo" routerLink="/photo/edit/new">
+                <mat-icon class="photo-icon">photo_camera</mat-icon> Photo
             </button>
             <button mat-menu-item aria-label="Transaction" routerLink="/money/edit/new">
                 <mat-icon class="money-icon" >monetization_on</mat-icon> Transaction
@@ -20,14 +40,9 @@
             <button mat-menu-item aria-label="Rate" routerLink="/rate/edit/new">
                 <mat-icon class="rate-icon">star_rate</mat-icon> Rate
             </button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item routerLink="/settings">
-                <mat-icon aria-label="Setting">settings</mat-icon>Settings
-            </button>
-            <button mat-menu-item routerLink="/start">
-                <mat-icon aria-label="Setting">water</mat-icon>Public
-            </button>
-        </mat-menu>    
+        </mat-menu>
+
+
         <span style="margin-right: 10px;">Preview</span>
         <mat-select [(ngModel)]="stream.preview" (selectionChange)="futurePreview($event)">
             <mat-option value="day">Day</mat-option>
@@ -67,15 +82,12 @@
             </mat-autocomplete>
           </mat-form-field>
 </mat-toolbar>         
-</div>
 <!-- drop list --> 
-<div class="main-content">
-    <cdk-virtual-scroll-viewport #scroller itemSize="48" class="content">
-        <mat-accordion class="drop-headers" multi>
-            <oss-drops *cdkVirtualFor="let drop of drops" [drop]="drop"></oss-drops>
-        </mat-accordion>          
-    </cdk-virtual-scroll-viewport>
-</div>
+<cdk-virtual-scroll-viewport #scroller itemSize="48" class="content">
+    <mat-accordion class="drop-headers" multi>
+        <oss-drops *cdkVirtualFor="let drop of drops" [drop]="drop"></oss-drops>
+    </mat-accordion>          
+</cdk-virtual-scroll-viewport>
 <!-- fab buttons 
 <button class="fab" mat-fab aria-label="Add drop" (click)="toggleFab()">
     <mat-icon>add</mat-icon>

@@ -13,7 +13,6 @@
   margin-left: 8px;
 }
   
-
 .content {
     display: block;
     position:absolute;
@@ -28,53 +27,13 @@
     margin-left:10px;
 }
 
-
-.toolbar {
-    position:fixed;
-    width: 100%;
-    /*
-    z-index: 1000;
-    display: flex;
-    align-items:center;
-    justify-content: space-between;
-    */     
-}
-
 .tag-list {
     width: 100%;
 }
 
-.fab {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-}
-
-.fab-buttons-on {
-    position: fixed;
-    bottom: 90px;
-    right: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    opacity: 1.0;
-}
-
-.fab-buttons-off {
-    position:fixed;
-    bottom: -300px;
-    right: 40px;
-    opacity: 0.0;
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-}
-
-.drop-fab {
-    background-color: #666;
-    margin-bottom: 10px;
-}
 // drop icon colors
+
+/*
 .goal-icon {
     color: #3998f1;
 }
@@ -92,4 +51,29 @@
 }
 .task-icon {
     color: #69dd2f;
+}
+*/
+.goal-icon {
+    color: #3998f1;
+}
+.money-icon {
+    color: #ebff3c;
+}
+.note-icon {
+    color: #f83cff;
+}
+.rate-icon {
+    color: #ff874a;
+}
+.system-icon {
+    color: #fff;
+}
+.task-icon {
+    color: #69dd2f;
+}
+.stream-icon {
+    color: #2f80dd;
+}
+.photo-icon {
+    color: #7361d9;
 }
