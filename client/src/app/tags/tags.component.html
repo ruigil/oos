@@ -19,8 +19,15 @@
             <mat-icon [ngClass]="color.value">bookmark</mat-icon>
         </mat-radio-button>
     </mat-radio-group>
-      
-    <button mat-flat-button color="accent" (click)="newTag()" class="title">
+ 
+    <!--
+    <mat-form-field >
+        <mat-label>Color</mat-label>
+        <input matInput type="color" [(ngModel)]="currentTag.color">
+    </mat-form-field>
+    -->
+
+    <button mat-flat-button color="accent" (click)="newTag()" class="tag-button">
         <mat-icon>add</mat-icon>  New Tag
     </button>
 
