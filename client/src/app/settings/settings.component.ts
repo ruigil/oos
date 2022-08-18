@@ -1,6 +1,8 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { filter, map, Observable } from 'rxjs';
+import { Tag } from '../model/tag';
 import { User } from '../model/user';
 import { OceanOSService } from '../services/ocean-os.service';
 
@@ -23,6 +25,8 @@ export class SettingsComponent {
         {name: "Month", value:"month"},
         {name: "Year", value:"year"}
     ];
+    streams: Observable<Tag[]>;
+    streamName: string = "";
     public timezones:Array<any> = ["Europe/Zurich","Europe/Lisbon","Europe/Paris","Europe/Berlin"];
     user: User = new User({ id: "oos", username: "oos"});
     btnDisabled: boolean = false;
@@ -35,6 +39,15 @@ export class SettingsComponent {
         this.oos.settings().subscribe( s => {
             this.user = s
         });
+        this.streams = this.oos.tags().pipe( map (ts => ts.filter( t => t.id.endsWith("_STREAM")) ) );
+    }
+
+    deleteStream(stream:Tag) {
+        this.oos.deleteTag(stream)
+    }
+    addStream() {
+        if (this.streamName !== "")
+            this.oos.putTag( new Tag({ id: `${this.streamName}_STREAM`, name: this.streamName, icon: 'water', color: 'stream-icon'}) );
     }
 
     saveSettings() {

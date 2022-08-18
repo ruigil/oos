@@ -41,7 +41,23 @@
 
 
     <mat-slide-toggle class="slide" [(ngModel)]="user.settings.system.day">Current Day is {{ user.settings.system.day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
-
+    <mat-label class="section-title"><b>Streams</b></mat-label>
+    
+    <mat-divider class="section"></mat-divider>
+    <mat-form-field>
+        <input name="name" matInput [(ngModel)]="streamName" placeholder="Stream name..." autofocus>
+    </mat-form-field>
+    <button mat-flat-button color="accent" [disabled]="btnDisabled" (click)="addStream()">
+        <mat-icon>add</mat-icon> Add Stream
+    </button>
+    <mat-divider class="section"></mat-divider>
+    <mat-chip-list class="mat-chip-list-stacked" aria-label="stream selection">
+        <mat-chip *ngFor="let stream of streams | async" [removable]="true" (removed)="deleteStream(stream)">
+            <mat-icon matChipRemove>cancel</mat-icon><mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>&nbsp;{{stream.name}}
+          </mat-chip>
+    </mat-chip-list>
+      
+    <mat-divider class="section"></mat-divider>
     <button mat-flat-button color="accent" [disabled]="btnDisabled" (click)="saveSettings()">
         <mat-icon>save</mat-icon> Save Settings
     </button>
