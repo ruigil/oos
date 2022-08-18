@@ -71,27 +71,70 @@
   }</style><path d="M 0,400 C 0,400 0,300 0,300 C 60.0974358974359,321.7282051282051 120.1948717948718,343.45641025641027 203,337 C 285.8051282051282,330.54358974358973 391.31794871794875,295.9025641025641 486,291 C 580.6820512820512,286.0974358974359 664.5333333333333,310.9333333333333 747,316 C 829.4666666666667,321.0666666666667 910.5487179487179,306.3641025641026 974,292 C 1037.451282051282,277.6358974358974 1083.271794871795,263.6102564102564 1158,265 C 1232.728205128205,266.3897435897436 1336.3641025641025,283.1948717948718 1440,300 C 1440,300 1440,400 1440,400 Z" stroke="none" stroke-width="0" fill="#08314bff" class="transition-all duration-300 ease-in-out delay-150 path-2" transform="rotate(-180 720 200)"></path></svg>
 
 <!-- drop list -->
+<mat-accordion >
+  <mat-expansion-panel class="tags">
+  <mat-expansion-panel-header >
+  <mat-panel-title>
+  OOS tags
+  </mat-panel-title>
+  <mat-panel-description>
+  
+  </mat-panel-description>
+  </mat-expansion-panel-header>
+  <mat-action-row>
+    <div>Selected</div>
+    <div class="spacer"></div>
+    <mat-chip-list>
+      <mat-chip><mat-icon class="dark">water</mat-icon> OOS</mat-chip> 
+  </mat-chip-list>
+  </mat-action-row>
+  <mat-action-row>
+    <div>Available</div>
+    <div class="spacer"></div>
+    <mat-chip-list>
+      <mat-chip><mat-icon class="dark">bookmark</mat-icon> PLACE</mat-chip> 
+      <mat-chip><mat-icon class="blue">bookmark</mat-icon> SAIL</mat-chip> 
+      <mat-chip><mat-icon class="red">bookmark</mat-icon> NOTE</mat-chip> 
+      <mat-chip><mat-icon class="yellow">bookmark</mat-icon> TRAVEL</mat-chip> 
+      <mat-chip><mat-icon class="dark">bookmark</mat-icon> PLACE</mat-chip> 
+      <mat-chip><mat-icon class="blue">bookmark</mat-icon> SAIL</mat-chip> 
+      <mat-chip><mat-icon class="red">bookmark</mat-icon> NOTE</mat-chip> 
+      <mat-chip><mat-icon class="yellow">bookmark</mat-icon> TRAVEL</mat-chip> 
+    </mat-chip-list>
+  </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+  
+<mat-divider class="p-divider"></mat-divider>
 
-<mat-card class="post">
+<div *ngFor="let d of drops$ | async">
+<mat-card class="post" >
   <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
-    <mat-card-title>Shiba Inu</mat-card-title>
-    <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+    <mat-card-title>{{d.title}}</mat-card-title>
+    <mat-card-subtitle>{{d.date | formatDate}}</mat-card-subtitle>
   </mat-card-header>
-  <img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">
+  <img *ngIf="d.type =='PHOTO'" mat-card-image src="/api/file/{{d.photo!.filename}}" alt="Photo of a city">
   <mat-card-content>
-    <p>
-      The Shiba Inu is the smallest of the six original and distinct spitz breeds of dog from Japan.
-      A small, agile dog that copes very well with mountainous terrain, the Shiba Inu was originally
-      bred for hunting.
-    </p>
+    <p [innerHTML]="d.content | markdown"></p>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button>LIKE</button>
-    <button mat-button>SHARE</button>
-  </mat-card-actions>
+    <mat-chip-list>
+      <mat-chip *ngFor="let t of d.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
+  </mat-chip-list>
+    <button mat-icon-button >
+      <mat-icon aria-label="Favorite">favorite</mat-icon>
+    </button>
+    <button mat-icon-button >
+      <mat-icon aria-label="Comment">chat_bubble</mat-icon>
+    </button>
+</mat-card-actions>
+  <!--
   <mat-card-footer>footer</mat-card-footer>
+  -->
 </mat-card>
+<mat-divider class="p-divider"></mat-divider>
+</div>
 <!--
 <cdk-virtual-scroll-viewport #scroller itemSize="48" class="content">
     <mat-accordion multi >

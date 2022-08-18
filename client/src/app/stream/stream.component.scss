@@ -6,9 +6,13 @@
 
 .start {
     width: 100%;
-    height: 100%;
     background-color: #ff8100;
+    min-height: 100%;
     //background-color:#011c3b; 
+}
+.p-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .avatar {
     vertical-align: middle;
@@ -22,8 +26,16 @@
     left:0px;
     color: #ff8100;
 }
+
 .post{
     max-width: 500px;
+    margin-left: auto;
+    margin-right:auto;
+    background-color: #08314b; 
+}
+
+.tags {
+    max-width: 532px;
     margin-left: auto;
     margin-right:auto;
     background-color: #08314b; 
