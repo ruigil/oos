@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { StartComponent } from './start/start.component';
+import { StreamComponent } from './stream/stream.component';
 
 const routes: Routes = [
   {
@@ -9,8 +9,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'start',
-    component: StartComponent,
+    path: 'stream/:uid/:id',
+    component: StreamComponent,
   },
   {
     path: 'home',
@@ -23,6 +23,10 @@ const routes: Routes = [
   {
     path: 'note',
     loadChildren: () => import('./drops/drop-note/note/note.module').then( m => m.NoteModule )
+  },
+  {
+    path: 'photo',
+    loadChildren: () => import('./drops/drop-photo/photo/photo.module').then( m => m.PhotoModule )
   },
   {
     path: 'money',
