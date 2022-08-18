@@ -11,6 +11,8 @@ const TAGS = [
     new Tag({ id:"GOAL_TYPE", name:"GOAL", count: 0 , color: "goal-icon", icon: 'center_focus_strong' }),
     new Tag({ id:"MONEY_TYPE", name:"MONEY", count: 0 , color: "money-icon", icon: 'monetization_on' }),
     new Tag({ id:"SYS_TYPE", name:"SYSTEM", count: 0 , color: "system-icon", icon: 'brightness_7'}),
+    new Tag({ id:"PHOTO_TYPE", name:"PHOTO", count: 0 , color: "photo-icon", icon: 'photo_camera'}),
+    new Tag({ id:"OOS_STREAM", name:"OOS", count: 0 , color: "stream-icon", icon: 'water'}),
 ]
 
 @Injectable()
