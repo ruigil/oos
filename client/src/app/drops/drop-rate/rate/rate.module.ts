@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { OOSCommonModule } from '../../../common/common.module';
+import { OOSCommonModule } from '../../../common.module';
 
 import { TagsModule } from '../../../tags/tags.module';
 
