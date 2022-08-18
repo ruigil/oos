@@ -29,7 +29,6 @@
     "rxjs": "~7.5.0",
     "showdown": "^1.9.1",
     "tslib": "^2.3.0",
-    "typester-editor": "^0.0.3",
     "zone.js": "^0.11.6"
   },
   "devDependencies": {
