@@ -15,7 +15,9 @@
             A text is <strong>required</strong>
         </mat-error> 
     </mat-form-field>
-    
+    <!--
+    <div contenteditable="true">...</div>
+    -->
     <mat-form-field>
         <input id="date" matInput type="datetime-local" [(ngModel)]="dateISO"required>
         <mat-error *ngIf="field.hasError('required')">

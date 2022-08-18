@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl, Validators } from '@angular/forms';
 import { combineLatest, take } from 'rxjs';
@@ -8,18 +8,20 @@ import { DateTimeService } from '../../../services/date-time.service';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
 import { Drop } from '../../../model/drop';
 import { Tag } from '../../../model/tag';
+import Typester from 'typester-editor';
 
 @Component({
   selector: 'oos-note-detail',
   templateUrl: './note-detail.component.html',
   styleUrls: ['./note-detail.component.scss']
 })
-export class NoteDetailComponent {
+export class NoteDetailComponent implements AfterViewInit {
 
     drop:Drop = new Drop({ note: { }});
     recurrences: Array<{ key: string, value: string }> = [];
     btnDisabled: boolean = false; 
     dateISO: string = "";
+    tin:any = null;
     field = new FormControl('', [
         Validators.required,
     ]);    
@@ -47,6 +49,9 @@ export class NoteDetailComponent {
             this.dateISO = this.dts.getDateISO(this.drop.date);
 
         });
+    }
+    ngAfterViewInit(): void {
+        //this.tin = new Typester({ el: document.querySelector('[contenteditable]') });
     }
 
     dropData(id:string) {
