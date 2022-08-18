@@ -4,7 +4,7 @@ import { subHours, endOfYear, addMinutes, addDays, addWeeks, addMonths, addYears
 import { TagsService } from 'src/tags/tags.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DropEntity } from './drop.entity';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, In } from 'typeorm';
 import { TagEntity } from 'src/tags/tag.entity';
 import { Cron } from '@nestjs/schedule';
 import { subMinutes } from 'date-fns';
@@ -112,6 +112,17 @@ export class DropsService {
       });
       
     }
+
+    async findByTags(uid:string, tags:string[]):Promise<DropEntity[]> {
+      const drops = await this.drepo.createQueryBuilder("drop")
+      .leftJoinAndSelect("drop.tags","tag")
+      .where("tag.id IN(:...ids)", { ids: tags })
+      .orderBy("drop.date", "DESC")
+      .getMany()
+
+      return Promise.resolve(drops);
+  }
+
 
     private async updateGoals(drop:Drop) {
       const now = Date.now();

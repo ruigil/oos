@@ -21,6 +21,9 @@ export class DropEntity {
     note?: {  };
 
     @Column({ type: 'simple-json', nullable: true } )
+    photo?: {  filename: string, mimetype: string, originalname: string };
+
+    @Column({ type: 'simple-json', nullable: true } )
     money?: { value: number, type: string, currency: string };
     
     @Column({ type: 'simple-json', nullable: true } )

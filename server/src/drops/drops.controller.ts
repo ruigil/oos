@@ -1,5 +1,6 @@
 import { Controller, Get, Query, Post, Body, Put, Param, Delete, Res, StreamableFile, Header } from '@nestjs/common';
 import { id } from 'date-fns/locale';
+import { TagEntity } from 'src/tags/tag.entity';
 import { DeleteResult } from 'typeorm';
 import { Drop } from '../models/drop';
 import { DropEntity } from './drop.entity';
@@ -13,6 +14,11 @@ export class DropsController {
     @Post()
     async create(@Body() createDrop: Drop):Promise<DropEntity> {
         return this.ds.create(createDrop);
+    }
+
+    @Post('stream')
+    async stream(@Body() tags: { uid: string, tags: [] }):Promise<DropEntity[]> {
+        return this.ds.findByTags(tags.uid, tags.tags);
     }
 
     @Get()

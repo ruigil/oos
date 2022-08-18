@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ScheduleModule } from '@nestjs/schedule';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -23,7 +24,10 @@ import { ScheduleModule } from '@nestjs/schedule';
       autoLoadEntities: true,
       synchronize: true
     }),
-    ScheduleModule.forRoot(),    
+    ScheduleModule.forRoot(),
+    MulterModule.register({
+      dest: '/oos/db/upload'
+    }),    
     DropsModule, 
     TagsModule,
     UserModule
