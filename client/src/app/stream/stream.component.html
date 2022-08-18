@@ -112,7 +112,7 @@
   <mat-card-header>
     <div mat-card-avatar class="example-header-image"></div>
     <mat-card-title>{{d.title}}</mat-card-title>
-    <mat-card-subtitle>{{d.date | formatDate}}</mat-card-subtitle>
+    <mat-card-subtitle>{{d.date | timeago}}</mat-card-subtitle>
   </mat-card-header>
   <img *ngIf="d.type =='PHOTO'" mat-card-image src="/api/file/{{d.photo!.filename}}" alt="Photo of a city">
   <mat-card-content>

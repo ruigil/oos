@@ -11,6 +11,7 @@ import { OOSRoutingModule } from './oos-routing.module';
 import { OOSComponent } from './oos.component';
 import { StreamComponent } from './stream/stream.component';
 import { OOSCommonModule } from './common.module';
+import { TimeagoPipe } from './pipes/timeago.pipe';
 
 /*
 */
@@ -18,7 +19,8 @@ import { OOSCommonModule } from './common.module';
 @NgModule({
   declarations: [
     OOSComponent,
-    StreamComponent
+    StreamComponent,
+    TimeagoPipe
   ],
   imports: [
     BrowserModule,
