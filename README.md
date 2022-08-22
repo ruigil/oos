@@ -8,6 +8,8 @@ It is a great tool for habit formation, tracking objectives, and stay organized.
 
 It uses the concept of [lifestreaming](https://en.wikipedia.org/wiki/Lifestreaming) to organize your life events.
 
+You can also use it to build microblogs with public life streams that you can share with your friends.
+
 To build it, you need @angular/cli and @nestjs/cli installed globally.
 
     npm install -g @angular/cli @nestjs/cli
