@@ -11,7 +11,7 @@ const TAGS = [
     new Tag({ _id:"MONEY_TYPE", name:"MONEY", type: "MONEY" }),
     new Tag({ _id:"SYS_TYPE", name:"SYSTEM", type: "SYS" }),
     new Tag({ _id:"PHOTO_TYPE", name:"PHOTO", type: "PHOTO" }),
-    new Tag({ _id:"OOS_STREAM", name:"OOS", description: "Default stream", type: "STREAM" }),
+    new Tag({ _id:"OOS_STREAM", name:"OOS", description: "Default user stream", type: "STREAM", uid: "oos"}),
 ]
 
 @Injectable()

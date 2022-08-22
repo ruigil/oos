@@ -21,7 +21,7 @@ export class OceanOSService {
   private dropsV: Map<string,Drop> = new Map();
   private drops$: Subject<Drop[]> = new ReplaySubject<Drop[]>(1);
 
-  private settingsV: User = new User();
+  private userV: User = new User();
   private settings$: Subject<User> = new ReplaySubject<User>(1);
 
   private previewAt: number = 0;
@@ -45,12 +45,11 @@ export class OceanOSService {
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
 
-    // TODO: implement remote settings
     combineLatest([
       this.http.get<Tag[]>(`/api/tags`),
       this.http.get<Drop[]>(`/api/drops`),
-      this.http.get<User>(`/api/user/oos`)])
-      .subscribe( ([ts,ds,us]) => {
+      this.http.get<User>(`/api/user/oos`)]).subscribe( ([ts,ds,us]) => {
+        
         this.tagsV = new Map( ts.map( t => new Tag({
           ...t, 
           available: true, 
@@ -59,14 +58,21 @@ export class OceanOSService {
           icon: this.tagsIC.get(t.type)!.icon,
           color: this.tagsIC.get(t.type)!.color
         })).map( t => [t._id,t]) );
+
         this.dropsV = new Map( ds.map( d => new Drop({
           ...d, 
           available: true,
-          tags: d.tags.map( t => new Tag({...t, icon: this.tagsIC.get(t.type)!.icon, color: this.tagsIC.get(t.type)!.color}))
+          tags: d.tags.map( t => new Tag({
+            ...t, 
+            icon: this.tagsIC.get(t.type)!.icon, 
+            color: this.tagsIC.get(t.type)!.color
+          }))
         })).map( d => [d._id,d]) );
-        this.settingsV = us;
-        this.settings$.next(this.settingsV);
-        this.fromTime( { preview: this.settingsV.settings.preview, startAt:this.dts.startOfToday() });
+        
+        this.userV = us;
+        this.settings$.next(this.userV);
+        
+        this.fromTime( { preview: this.userV.settings.preview, startAt:this.dts.startOfToday() });
       });
   }
 
@@ -74,8 +80,8 @@ export class OceanOSService {
     return new Promise( (resolve,reject) => {
       this.http.post(`/api/user`, settings).subscribe( u => {
         if (u) {
-          this.settingsV = new User({...settings});
-          this.settings$.next(this.settingsV);
+          this.userV = new User({...settings});
+          this.settings$.next(this.userV);
           resolve(u);
         } else reject();
       });
@@ -83,7 +89,7 @@ export class OceanOSService {
   }
 
   putTag(tag : Tag ): Promise<Object> {
-    tag.uid = this.settingsV.id;
+    tag.uid = this.userV._id;
     return new Promise( (resolve,reject) => {
       this.http.post(`/api/tags`, tag).subscribe( r => {
         if (r) {
@@ -95,8 +101,8 @@ export class OceanOSService {
     });
   }
 
-  putDrop(drop:Drop):Promise<object> {
-    drop.uid = this.settingsV.id;
+  putDrop(drop:Drop):Promise<Object> {
+    drop.uid = this.userV._id;
     drop.color = this.previewColor(drop,this.startAt);
     if (drop._id === 'new') {
       drop._id = uuidv4();
@@ -229,7 +235,6 @@ export class OceanOSService {
       stream.preview === 'month' ? this.dts.addMonth(stream.startAt) :
       stream.preview === 'year' ? this.dts.addYear(stream.startAt) : stream.startAt;
     
-
     
     for (let d of this.dropsV.values()) {
       d.color = this.previewColor(d, stream.startAt);        
@@ -264,7 +269,7 @@ export class OceanOSService {
   }
 
   getSettings() {
-    this.settings$.next(this.settingsV);
+    this.settings$.next(this.userV);
   }
 
   getTagIC(id:string) {

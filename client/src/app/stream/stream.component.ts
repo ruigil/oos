@@ -16,9 +16,6 @@ export class StreamComponent {
   tagsSelected: Map<string,Tag> = new Map();
   tagsAvailable: Map<string,Tag> = new Map();
   stream: Tag = new Tag();
-  uid: string = "oos";
-  streamId: string = "";
-  streamName: string = "";
 
   constructor(private oos: OceanOSService, private route: ActivatedRoute, ) { 
     this.drops$ = combineLatest([this.oos.tags(),this.route.paramMap]).pipe( mergeMap( v => {
@@ -40,9 +37,9 @@ export class StreamComponent {
   }
 
   private getStream() {
-    return this.oos.getStream( this.uid, [...this.tagsSelected.keys()] ).pipe( map( ds => {
+    return this.oos.getStream( this.stream.uid, [...this.tagsSelected.keys()] ).pipe( map( ds => {
       const dt = ds.map( d => new Drop({ ...d, tags: d.tags.filter(t => t.type != "STREAM").map( t => new Tag({...t, icon: this.oos.getTagIC(t.type)?.icon, color:  this.oos.getTagIC(t.type)?.color }) )}) );
-      this.tagsAvailable = new Map<string,Tag>();
+      this.tagsAvailable.clear();
       dt.forEach( d => d.tags.forEach( t => { if ((t.type !== 'STREAM') && (!this.tagsSelected.get(t._id))) this.tagsAvailable.set(t._id, t) } ));
       return dt;
     }));

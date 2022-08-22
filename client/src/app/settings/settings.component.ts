@@ -30,7 +30,7 @@ export class SettingsComponent {
     streamName: string = "";
     streamDescription: string = "";
     public timezones:Array<any> = ["Europe/Zurich","Europe/Lisbon","Europe/Paris","Europe/Berlin"];
-    user: User = new User({ id: "oos", username: "oos"});
+    user: User = new User();
     btnDisabled: boolean = false;
     fileName: string = "";
     uploadProgress:number = 0;
@@ -42,18 +42,25 @@ export class SettingsComponent {
         private http: HttpClient,
         private snackbar: MatSnackBar) { 
         
-        this.oos.settings().subscribe( s => {
-            this.user = s
-        });
+        this.oos.settings().subscribe( s => { this.user = s });
         this.streams = this.oos.tags().pipe( map (ts => ts.filter( t => t.type === 'STREAM') ) );
     }
 
     deleteStream(stream:Tag) {
         this.oos.deleteTag(stream)
     }
+
     addStream() {
         if (this.streamName !== "")
-            this.oos.putTag( new Tag({ _id: `${this.streamName}_STREAM`, name: this.streamName, description: this.streamDescription, type: "STREAM", icon: this.oos.getTagIC('STREAM').icon, color: this.oos.getTagIC('STREAM').color}) );
+            this.oos.putTag( new Tag({ 
+                _id: `${this.streamName}_STREAM`, 
+                uid: this.user._id,
+                name: this.streamName, 
+                description: this.streamDescription, 
+                type: "STREAM", 
+                icon: this.oos.getTagIC('STREAM').icon, 
+                color: this.oos.getTagIC('STREAM').color
+            }));
     }
 
     saveSettings() {
