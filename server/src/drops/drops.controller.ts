@@ -11,42 +11,33 @@ export class DropsController {
 
     constructor(private ds: DropsService) {}
 
-    @Post()
-    async create(@Body() createDrop: Drop):Promise<DropEntity> {
-        return this.ds.create(createDrop);
-    }
-
     @Post('stream')
-    async stream(@Body() tags: { uid: string, tags: [] }):Promise<DropEntity[]> {
+    async stream(@Body() tags: { uid: string, tags: [] }):Promise<Drop[]> {
         return this.ds.findByTags(tags.uid, tags.tags);
     }
 
     @Get()
-    //@Header('Content-Type', 'application/json')
-    async findAll(): Promise<DropEntity[]> {
-        //@Query() query: string
+    async findAll(): Promise<Drop[]> {
         return this.ds.findAll();        
     }
 
-    @Get('sample')
-    //@Header('Content-Type', 'application/json')
-    async testSample(): Promise<{result:boolean}> {
-        //@Query() query: string
-        return this.ds.testSample();
-    }
-
     @Get(':id')
-    async findOne(@Param('id') id: string):Promise<DropEntity> {
+    async findOne(@Param('id') id: string):Promise<Drop> {
         return this.ds.get(id);
     }
 
+    @Post()
+    async create(@Body() createDrop: Drop):Promise<Drop> {
+        return this.ds.upsert(createDrop);
+    }
+
     @Put(':id')
-    async update(@Body() updateDrop: Drop):Promise<DropEntity> {
-        return this.ds.update(updateDrop);
+    async update(@Body() updateDrop: Drop):Promise<Drop> {
+        return this.ds.upsert(updateDrop);
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string):Promise<DeleteResult> {
+    async remove(@Param('id') id: string):Promise<boolean> {
         return this.ds.delete(id);
     }
 }

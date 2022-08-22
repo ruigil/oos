@@ -1,51 +1,91 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DropSchema, TagSchema, UserSchema } from 'src/models/schema';
 import { DeleteResult, In, Repository } from 'typeorm';
 import { Tag } from '../models/tag';
 import { TagEntity } from './tag.entity';
 
 const TAGS = [
-    new Tag({ id:"NOTE_TYPE", name:"NOTE", count: 0 , color: "note-icon", icon: 'note' }),
-    new Tag({ id:"RATE_TYPE", name:"RATE", count: 0 , color: "rate-icon", icon: 'star_rate'  }),
-    new Tag({ id:"TASK_TYPE", name:"TASK", count: 0 , color: "task-icon", icon: 'folder' }),
-    new Tag({ id:"GOAL_TYPE", name:"GOAL", count: 0 , color: "goal-icon", icon: 'center_focus_strong' }),
-    new Tag({ id:"MONEY_TYPE", name:"MONEY", count: 0 , color: "money-icon", icon: 'monetization_on' }),
-    new Tag({ id:"SYS_TYPE", name:"SYSTEM", count: 0 , color: "system-icon", icon: 'brightness_7'}),
-    new Tag({ id:"PHOTO_TYPE", name:"PHOTO", count: 0 , color: "photo-icon", icon: 'photo_camera'}),
-    new Tag({ id:"OOS_STREAM", name:"OOS", count: 0 , color: "stream-icon", icon: 'water'}),
+    new Tag({ _id:"NOTE_TYPE", name:"NOTE", type: "NOTE" }),
+    new Tag({ _id:"RATE_TYPE", name:"RATE", type: "RATE" }),
+    new Tag({ _id:"TASK_TYPE", name:"TASK", type: "TASK" }),
+    new Tag({ _id:"GOAL_TYPE", name:"GOAL", type: "GOAL" }),
+    new Tag({ _id:"MONEY_TYPE", name:"MONEY", type: "MONEY" }),
+    new Tag({ _id:"SYS_TYPE", name:"SYSTEM", type: "SYS" }),
+    new Tag({ _id:"PHOTO_TYPE", name:"PHOTO", type: "PHOTO" }),
+    new Tag({ _id:"OOS_STREAM", name:"OOS", description: "Default stream", type: "STREAM" }),
 ]
 
 @Injectable()
-export class TagsService {
+export class TagsService implements OnModuleInit, OnModuleDestroy {
+    realm:Realm;
+
     constructor(
         @InjectRepository(TagEntity) private trepo: Repository<TagEntity>,
     ) {
-        TAGS.forEach( t => this.create(t) );
     }
 
-    create(tag:Tag):Promise<TagEntity> {
-        return this.trepo.save(new TagEntity( {...tag}));
+    onModuleDestroy() {
+        this.realm.close();
     }
 
-    update(tag:Tag): Promise<TagEntity> {
-        return this.trepo.save(new TagEntity( {...tag}));
+    async onModuleInit() {
+        this.realm = await Realm.open({
+            path: 'db/oos.realm',
+            schema: [DropSchema, TagSchema, UserSchema],
+            schemaVersion: 1
+        });
+        TAGS.forEach( t => this.upsert(t) );
     }
 
-    get(id:string):Promise<TagEntity> {
-        return this.trepo.findOneBy({ id:id })
+
+    upsert(tag:Tag): Promise<Tag> {    
+        return new Promise<Tag>((resolve,reject) =>{
+            this.realm.write(() => {          
+                try {
+                    const t = this.realm.create<Tag>('Tag', {...tag}, Realm.UpdateMode.Modified);
+                    resolve(new Tag(t.toJSON()));
+                } catch(e) {
+                    reject(e);
+                }
+            });
+        });
     }
 
-    delete(id:string):Promise<DeleteResult> {
-        return this.trepo.delete(id);
+    get(id:string):Promise<Tag> {
+        return new Promise<Tag>((resolve,reject) => {
+            try {
+                const t = this.realm.objectForPrimaryKey<Tag>('Tag', id);
+                resolve(new Tag(t.toJSON()));
+            } catch(e) {
+                reject(e);
+            }
+        });
     }
 
-    findAll():Promise<TagEntity[]> {
-        return this.trepo.find();
+    delete(id:string):Promise<boolean> {
+        return new Promise<boolean>((resolve,reject) => {
+            this.realm.write(() => {
+                try {
+                    const t = this.realm.objectForPrimaryKey<Tag>('Tag', id);
+                    this.realm.delete(t);
+                    resolve(true);
+                } catch(e) {
+                    reject(false);
+                }
+            });
+        });
     }
 
-    findByIds(ids:string[]):Promise<TagEntity[]> {
-        return this.trepo.findBy({
-            id: In(ids)
-        })
+    findAll():Promise<Tag[]> {    
+        return new Promise<Tag[]>((resolve,reject) => {
+            try {
+                const tags = this.realm.objects<Tag>('Tag');
+                resolve(tags.map( t => new Tag(t.toJSON())));
+            } catch(e) {
+                reject(e);
+            }
+        });
     }
+
 }

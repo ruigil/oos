@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Drop } from 'src/models/drop';
 import { subHours, endOfYear, addMinutes, addDays, addWeeks, addMonths, addYears, addBusinessDays, parseISO, isWithinInterval, parse } from 'date-fns';
 import { TagsService } from 'src/tags/tags.service';
@@ -10,19 +10,39 @@ import { Cron } from '@nestjs/schedule';
 import { subMinutes } from 'date-fns';
 import { UserEntity } from 'src/user/user.entity';
 import { utcToZonedTime, zonedTimeToUtc, format } from 'date-fns-tz';
-
+import * as Realm from "realm";
+import { DropSchema, TagSchema, UserSchema } from 'src/models/schema';
+import { randomUUID } from 'crypto';
+import { Tag } from 'src/models/tag';
+import { de } from 'date-fns/locale';
 
 @Injectable()
-export class DropsService {
-    drops: Drop[] = [];
+export class DropsService implements OnModuleInit, OnModuleDestroy {
+  realm:Realm;
 
-    constructor(
-      @InjectRepository(DropEntity) private drepo: Repository<DropEntity>,
-      @InjectRepository(TagEntity) private trepo:Repository<TagEntity>,
-      @InjectRepository(UserEntity) private urepo:Repository<UserEntity>,
-      private ts: TagsService) {
-    }
+  drops: Drop[] = [];
 
+  constructor(
+    @InjectRepository(DropEntity) private drepo: Repository<DropEntity>,
+    @InjectRepository(TagEntity) private trepo:Repository<TagEntity>,
+    @InjectRepository(UserEntity) private urepo:Repository<UserEntity>,
+    private ts: TagsService) {
+  }
+
+
+  onModuleDestroy() {
+    this.realm.close();
+  }
+
+  async onModuleInit() {
+    this.realm = await Realm.open({
+      path: 'db/oos.realm',
+      schema: [DropSchema, TagSchema, UserSchema],
+      schemaVersion: 1
+    });
+  }
+
+    /*
     async testSample():Promise<{result:boolean}> {
 
       const drops:Drop[] = [];
@@ -50,11 +70,11 @@ export class DropsService {
           title: dtype === 'TASK'? `Do Something`: dtype === 'RATE' ? `GOOD` : `This is a ${dtype} drop`,
           recurrence: "day",
           tags: 
-            dtype === 'NOTE' ? [ this.ts.get("NOTE_TYPE"), this.ts.get("HELLO") ] :
-            dtype === 'RATE' ? [ this.ts.get("RATE_TYPE"), this.ts.get("BYE") ] :
-            dtype === 'TASK' ? [ this.ts.get("TASK_TYPE"), this.ts.get("HELLO") ] :
-            dtype === 'GOAL' ? [ this.ts.get("GOAL_TYPE"), this.ts.get("BYE") ] :
-            dtype === 'MONEY' ? [ this.ts.get("MONEY_TYPE"), this.ts.get("HELLO") ] : []
+            dtype === 'NOTE' ? [ this.ts.get("NOTE"), this.ts.get("HELLO") ] :
+            dtype === 'RATE' ? [ this.ts.get("RATE"), this.ts.get("BYE") ] :
+            dtype === 'TASK' ? [ this.ts.get("TASK"), this.ts.get("HELLO") ] :
+            dtype === 'GOAL' ? [ this.ts.get("GOAL"), this.ts.get("BYE") ] :
+            dtype === 'MONEY' ? [ this.ts.get("MONEY"), this.ts.get("HELLO") ] : []
           ,
           date: subHours(endOfYear(Date.now()), i*12 ).getTime(),
           ...d
@@ -66,121 +86,142 @@ export class DropsService {
 
       return Promise.resolve({result: r.length === 1000}); 
     }
+    */
 
-    async create(drop:Drop):Promise<DropEntity> {
- 
+    upsert(drop:Drop): Promise<Drop> {
+      return new Promise<Drop>((resolve,reject) => {
+        this.realm.write(() => {          
+          try {
+            const tags = drop.tags.map( t => this.realm.create('Tag', t, Realm.UpdateMode.Modified));
+            if (drop.type === 'GOAL') {
+              const tg = JSON.stringify(drop.content.tags);
+              const d = this.realm.create<Drop>('Drop', {...drop, content:{ completed: drop.content.completed, createdAt:Date.now(), tags: tg }, tags: tags}, Realm.UpdateMode.Modified);
+              const nd = d.toJSON();
+              nd.content.tags = JSON.parse(nd.content.tags);
+              resolve(new Drop(nd));  
+            } else {
+              const d = this.realm.create<Drop>('Drop', {...drop, tags: tags}, Realm.UpdateMode.Modified);
+              this.updateGoals();
+              resolve(new Drop(d.toJSON()));  
+            }
+          } catch(e) {
+            reject(e);
+          }
+        });
+      });
 
-      //const tags:TagEntity[] = await this.ts.findByIds( drop.tags.map( t=> t.id));
-
-      const tags:TagEntity[] = drop.tags.map( t => new TagEntity({...t}) );
-      const dropEnt = await this.drepo.save(new DropEntity( {...drop, tags:tags }));
-      this.updateGoals(drop);
-      return Promise.resolve(dropEnt);
     }
 
-    async update(drop:Drop): Promise<DropEntity> {
-      //const tags:TagEntity[] = await this.ts.findByIds( drop.tags.map( t=> t.id));
-      const tags:TagEntity[] = drop.tags.map( t => new TagEntity({...t}) );
-      const dropEnt = await this.drepo.save(new DropEntity( {...drop, tags:tags }));
-      this.updateGoals(drop);
-      return Promise.resolve(dropEnt);
-    }
-
-    get(id:string):Promise<DropEntity> {
-      this.updateGoals(new Drop());
-      return this.drepo.findOne({ 
-        where: {
-          id:id
-        },
-        relations: {
-          tags: true
-        } 
-      })
-    }
-
-    async delete(id:string):Promise<DeleteResult> {
-      const drop = await this.get(id);
-      await this.drepo.save({...drop, tags:[]});
-      return this.drepo.delete(id);
-    }
-
-    findAll():Promise<DropEntity[]> {
-      return this.drepo.find( {
-        relations: {
-          tags: true
+    get(id:string):Promise<Drop> {
+      return new Promise<Drop>((resolve,reject) => {
+        try {
+          const d = this.realm.objectForPrimaryKey<Drop>('Drop', id);
+          resolve(new Drop(d.toJSON()));
+        } catch(e) {
+          reject(e);
         }
       });
-      
     }
 
-    async findByTags(uid:string, tags:string[]):Promise<DropEntity[]> {
-      const drops = await this.drepo.createQueryBuilder("drop")
-      .leftJoinAndSelect("drop.tags","tag")
-      .where("tag.id IN(:...ids)", { ids: tags })
-      .orderBy("drop.date", "DESC")
-      .getMany()
+    delete(id:string):Promise<boolean> {
+      return new Promise<boolean>((resolve,reject) => {
+        this.realm.write(() => {          
+          try {
+            const d = this.realm.objectForPrimaryKey<Drop>('Drop', id);
+            this.realm.delete(d);
+            resolve(true);
+          } catch(e) {
+            reject(false);
+          }
+        });
+      });
+    }
 
-      return Promise.resolve(drops);
-  }
+    async findAll():Promise<Drop[]> {
+      return new Promise<Drop[]>((resolve,reject) => {
+        try {
+          const drops = this.realm.objects<Drop>('Drop');
+          resolve(drops.map( d => { 
+            const nd = d.toJSON();
+            if (d.type === 'GOAL') {
+              nd.content.tags = JSON.parse(nd.content.tags);
+            }
+            return new Drop(nd) 
+          } ));
+        } catch(e) {
+          reject(e);
+        }
+      });
+    }
 
+    async findByTags(uid:string, tags:string[]):Promise<Drop[]> {
 
-    private async updateGoals(drop:Drop) {
       const now = Date.now();
-      const ddate = drop.date;
+      const tagsQuery = tags.map( t => `tags._id == "${t}"`).join(' AND ');
+      const drops = this.realm.objects<Drop>('Drop').filtered(`uid == '${uid}' AND date < ${now} AND (${tagsQuery})`).sorted('date', true);
+      return Promise.resolve(drops.map( d => d.toJSON()));
+    }
 
-      const out = (d:DropEntity) => {
+    private async updateGoals() {
+      const now = Date.now();
+
+      const out = (d:Drop) => {
         console.log(`drop [${d.type}] [${d.title}]`)
-        if (d.tags) console.log(`tags [${ d.tags.map(t => t.id+',' ) }]`)
-        if (d.goal?.tags) console.log(`tags [${ d.goal.tags.map(t => t.id+',' ) }]`)
+        if (d.tags) console.log(`tags [${ d.tags.map(t => t._id+',' ) }]`)
+        if (d.content?.tags) console.log(`tags [${ JSON.parse(d.content.tags).map(t => t.id+',' ) }]`)
       }
       
-      const goals:DropEntity[] = await this.drepo.createQueryBuilder("drop")
-      .where("drop.date >= :now", { now })
-      .andWhere("drop.type = :type", { type: "GOAL" })
-      .getMany();
+      const goals = this.realm.objects<Drop>('Drop').filtered('date >= $0 AND type = "GOAL"', now);      
 
       //console.log("goals")
       //goals.forEach( g => out(g) );
 
       for (let g of goals) {
-        const goalDate = g.date;
-        const goalCreated:number = new Date(g.createdAt.toString()).getTime();
-        const goalTags = g.goal.tags.map( t => t.id);
-        const drops = await this.drepo.createQueryBuilder("drop")
-        .leftJoinAndSelect("drop.tags","tag")
-        .where("drop.type <> 'GOAL'")
-        .andWhere("drop.date >= :goalCreated", { goalCreated })
-        .andWhere("drop.date < :goalDate", { goalDate })
-        .andWhere("tag.id IN(:...ids)", { ids: goalTags })
-        .getMany()
+        const goal = new Drop(g.toJSON());
+        goal.content.tags = JSON.parse(goal.content.tags);
+        const goalDate = goal.date;
+        const goalCreated:number = goal.content.createdAt;
+        const goalTags = goal.content.tags.map( t => t.id);
+
+        const tagsQuery = goalTags.reduce( (acc,v,i) => acc + `${ i == 0 ? '' : 'OR'} tags.name == "${v}" ` ,"");
+        const drops = this.realm.objects<Drop>('Drop').filtered(`type <> "GOAL" AND date >= ${goalCreated} AND date < ${goalDate} AND (${tagsQuery})`);
         
         const totals = new Map( goalTags.map( t => [ t, [0,0,0,0,0,0,0] ]) )
 
         //console.log("drops")
         //drops.forEach(d => out(d));
 
-        const countTotalType = (drop:DropEntity, tag:TagEntity) => {
-          const tot = totals.get(tag.id);
-          switch(drop.type) {
-            case "NOTE" : tot[6]++; break;
-            case "RATE" : tot[4]++; tot[5] += drop.rate.value; break;
-            case "MONEY" : drop.money.type == 'expense' ? tot[2] += drop.money.value : tot[3] += drop.money.value; break;
-            case "TASK" : tot[0]++; tot[1] += drop.task.completed ? 1 : 0; break;
+        const countTotalType = (drop:Drop, tag:Tag) => {
+
+          const tot = totals.get(tag._id);
+          if (tot) {
+            switch(drop.type) {
+              case "NOTE" : tot[6]++; break;
+              case "RATE" : tot[4]++; tot[5] += drop.content.value; break;
+              case "MONEY" : drop.content.type == 'expense' ? tot[2] += drop.content.value : tot[3] += drop.content.value; break;
+              case "TASK" : tot[0]++; tot[1] += drop.content.completed ? 1 : 0; break;
+            }
+            totals.set(tag._id,tot);
           }
-          totals.set(tag.id,tot);
         }
 
-        drops.forEach( d=> d.tags.forEach( t => countTotalType(d,t) ) )
+        drops.map(d => new Drop(d.toJSON())).forEach( d=> d.tags.forEach( t => countTotalType(d,t) ) )
 
-        g.goal.tags = [...totals.entries()].map( e => ({ id: e[0], totals: e[1]}))
-        //console.log(g.goal.tags);
-        this.drepo.save(g);
+        goal.content.tags = [...totals.entries()].map( e => ({ id: e[0], totals: e[1]}))
+        //console.log(goal.content.tags)
+        const d = this.realm.create<Drop>('Drop', {
+          ...goal, 
+          content: { 
+            completed: goal.content.completed,
+            createdAt: goal.content.createdAt, 
+            tags: JSON.stringify(goal.content.tags) 
+          }, 
+        }, 
+        Realm.UpdateMode.Modified);
       }
     }
 
-    private generateID(): string {
-        return Date.now().toString(36).concat(Math.random().toString(36).substring(2,8));
-    }
+
 
         /*
          0 -> totals tasks, 
@@ -200,15 +241,16 @@ export class DropsService {
       const d = utcToZonedTime(now,user.settings.system.timezone);
       if (d.getHours() == 0) {
         const tag = await this.ts.get("SYS_TYPE");
-        await this.drepo.save(new DropEntity({
-          id: this.generateID(),
+        this.upsert(new Drop({
+          _id: randomUUID(),
           type: "SYS",
           title: format(d,"eeee dd MMMM"),
-          system: { content: format(d,"eeee dd MMMM")},
+          text: format(d,"eeee dd MMMM"),
+          content: { },
           tags: [ tag ],
           date: now,
           recurrence: 'none'
-        }));  
+        }))
       }
     }
 
@@ -218,30 +260,25 @@ export class DropsService {
       const now = Date.now();
       const before = subMinutes(now,1).getTime();
 
-      const tagsRel = await this.drepo.createQueryBuilder("drop").relation(DropEntity,"tags");
-      
-      const drops:DropEntity[] = await this.drepo.createQueryBuilder("drop")
-      .where("drop.date < :now", { now })
-      .andWhere("drop.date >= :before", { before })
-      .andWhere("drop.recurrence != 'none'").getMany();
-
-      //console.log(`drops found ${drops.length}`)
+      const drops = this.realm.objects<Drop>('Drop').filtered('date < $0 AND date >= $1 AND recurrence != "none"', now, before);
 
       for (let d of drops) {
-        const ts = await tagsRel.of(d).loadMany();
-        d.date =  d.recurrence === 'day' ? addDays(d.date,1).getTime() :
-                  d.recurrence === 'week' ? addWeeks(d.date,1).getTime() :
-                  d.recurrence === 'month' ? addMonths(d.date,1).getTime() :
-                  d.recurrence === 'year' ? addYears(d.date,1).getTime() :
-                  d.recurrence === 'weekdays' ? addBusinessDays(d.date,1).getTime() :
-                  d.date;
-        d.id = this.generateID();
-        
-        if (d.type === 'RATE') d.rate.value = 0;
-        if (d.type === 'TASK') d.task.completed = false;
-
-        const nd = await this.drepo.save( new DropEntity( {...d, content: (d.clone ? d.content : "") }));
-        ts.forEach( t => tagsRel.of(nd.id).add(t.id) );
-      }
+        this.realm.write(() => {
+          const drop = new Drop(d.toJSON());
+          drop.date =  d.recurrence === 'day' ? addDays(d.date,1).getTime() :
+                      d.recurrence === 'week' ? addWeeks(d.date,1).getTime() :
+                      d.recurrence === 'month' ? addMonths(d.date,1).getTime() :
+                      d.recurrence === 'year' ? addYears(d.date,1).getTime() :
+                      d.recurrence === 'weekdays' ? addBusinessDays(d.date,1).getTime() :
+                      d.date;
+          drop._id = randomUUID();
+          drop.text = (d.clone ? d.text : "")
+          
+          if (d.type === 'RATE') drop.content.value = 0;
+          if (d.type === 'TASK') drop.content.completed = false;
+          if (d.type === 'GOAL') drop.content.createdAt = Date.now();
+          this.upsert(drop);
+        })
+      };
     }
 }

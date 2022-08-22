@@ -10,27 +10,27 @@ export class TagsController {
     constructor(private ts: TagsService) {}
 
     @Post()
-    async create(@Body() tag: Tag):Promise<TagEntity> {
-        return this.ts.create(tag);
+    async create(@Body() tag: Tag):Promise<Tag> {
+        return this.ts.upsert(tag);
     }
 
     @Get()
-    async findAll():Promise<TagEntity[]> {
+    async findAll():Promise<Tag[]> {
         return this.ts.findAll();
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: string):Promise<TagEntity> {
+    async findOne(@Param('id') id: string):Promise<Tag> {
         return this.ts.get(id);
     }
 
     @Put(':id')
-    async update(@Body() tag: Tag):Promise<TagEntity> {
-        return this.ts.update(tag);
+    async update(@Body() tag: Tag):Promise<Tag> {
+        return this.ts.upsert(tag);
     }
 
     @Delete(':id')
-    async remove(@Param('id') id: string):Promise<DeleteResult> {
+    async remove(@Param('id') id: string):Promise<boolean> {
         return this.ts.delete(id);
     }
 }

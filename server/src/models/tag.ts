@@ -1,9 +1,8 @@
 export class Tag {
-    id: string = "";
+    _id: string = "";
+    type: string = "";
     name: string = "";
-    color: string = "";
-    icon: string = "";
-    count: number = 0;
+    description: string = "";
     uid: string = "";
     
     public constructor(init?:Partial<Tag>) {
