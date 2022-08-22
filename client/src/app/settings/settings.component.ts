@@ -39,7 +39,7 @@ export class SettingsComponent {
         this.oos.settings().subscribe( s => {
             this.user = s
         });
-        this.streams = this.oos.tags().pipe( map (ts => ts.filter( t => t.id.endsWith("_STREAM")) ) );
+        this.streams = this.oos.tags().pipe( map (ts => ts.filter( t => t.type === 'STREAM') ) );
     }
 
     deleteStream(stream:Tag) {
@@ -47,7 +47,7 @@ export class SettingsComponent {
     }
     addStream() {
         if (this.streamName !== "")
-            this.oos.putTag( new Tag({ id: `${this.streamName}_STREAM`, name: this.streamName, icon: 'water', color: 'stream-icon'}) );
+            this.oos.putTag( new Tag({ _id: `${this.streamName}_STREAM`, name: this.streamName, type: "STREAM", icon: 'water', color: 'stream-icon'}) );
     }
 
     saveSettings() {

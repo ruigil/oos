@@ -62,20 +62,7 @@ export class DateTimeService {
     addYear(date: number, count = 1): number {
         return addYears(date, count).getTime();
     }
-/*
-    subDay(date: number, count = 1): number {
-        return subDays(date, count).getTime();
-    }
-    subWeek(date: number, count = 1): number {
-        return subWeeks(date, count).getTime();
-    }
-    subMonth(date: number, count = 1): number {
-        return subMonths(date, count).getTime();
-    }
-    subYear(date: number, count = 1): number {
-        return subYears(date, count).getTime();
-    }
-*/
+
     isWithin(d:number, interval: Interval):boolean {
         return isWithinInterval(d, interval);
     }

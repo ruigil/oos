@@ -24,7 +24,7 @@
     </div>
 
     <mat-form-field>
-        <textarea name="text" matInput placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.content"></textarea>
+        <textarea name="text" matInput placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.text"></textarea>
     </mat-form-field>
     <!--
     <div contenteditable="true">...</div>
@@ -45,8 +45,8 @@
 
     <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
 
-    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
-        <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Photo
+    <button mat-flat-button color="accent" (click)="dropData(drop._id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop._id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop._id !== 'new' ? 'Update' : 'Add' }} Photo
     </button>
 
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>

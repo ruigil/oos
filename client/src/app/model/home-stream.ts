@@ -1,4 +1,4 @@
-export interface Stream {
+export interface HomeStream {
     startAt: number;
     preview: string;
 }

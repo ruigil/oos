@@ -19,7 +19,7 @@ import { User } from 'src/app/model/user';
 })
 export class MoneyDetailComponent {
 
-    drop: Drop = new Drop({money: { value: 0, type: "", currency: "" } });
+    drop: Drop = new Drop({content: { value: 0, type: "", currency: "" } });
     user: User = new User();
     btnDisabled: boolean = false;
     dateISO:string = "";
@@ -42,10 +42,11 @@ export class MoneyDetailComponent {
             let id:string = v[2].get("id") || "new";
             
             this.drop = id === 'new' ? new Drop({
-                id: "new",
+                _id: "new",
                 title: "", 
                 type: "MONEY",
-                money: { value: 0, type: "expense", currency: "" },
+                text: "",
+                content: { value: 0, type: "expense", currency: "" },
                 recurrence: "none",
                 tags: [this.oos.getTag("MONEY_TYPE")],
                 date: this.dts.getTimestamp(new Date())
@@ -61,7 +62,7 @@ export class MoneyDetailComponent {
         const type = "transaction";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
-        this.drop.money!.currency = this.user.settings.transaction.currency;
+        this.drop.content!.currency = this.user.settings.transaction.currency;
         this.oos.putDrop(this.drop).then(
             (value) => {
                 this.snackbar

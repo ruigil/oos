@@ -26,19 +26,19 @@
                 <mat-icon class="note-icon">note</mat-icon> Note
             </button>
             <button mat-menu-item aria-label="Photo" routerLink="/photo/edit/new">
-                <mat-icon class="photo-icon">photo_camera</mat-icon> Photo
+                <mat-icon class="photo-icon">photo</mat-icon> Photo
             </button>
             <button mat-menu-item aria-label="Transaction" routerLink="/money/edit/new">
-                <mat-icon class="money-icon" >monetization_on</mat-icon> Transaction
+                <mat-icon class="money-icon" >money</mat-icon> Transaction
             </button>
             <button mat-menu-item aria-label="Task" routerLink="/task/edit/new">
-                <mat-icon class="task-icon" >folder</mat-icon> Task
+                <mat-icon class="task-icon" >task</mat-icon> Task
             </button>
             <button mat-menu-item aria-label="Goal" routerLink="/goal/edit/new">
-                <mat-icon class="goal-icon">center_focus_strong</mat-icon> Goal
+                <mat-icon class="goal-icon">flag_circle</mat-icon> Goal
             </button>
             <button mat-menu-item aria-label="Rate" routerLink="/rate/edit/new">
-                <mat-icon class="rate-icon">star_rate</mat-icon> Rate
+                <mat-icon class="rate-icon">star</mat-icon> Rate
             </button>
         </mat-menu>
 
@@ -64,7 +64,7 @@
             <mat-chip-list #chipList aria-label="Tag selection">
               <mat-chip
                 *ngFor="let tag of filteredTags$ | async" (removed)="unfilterTag(tag)">
-                <mat-icon [ngClass]="tag.color" matPrefix>bookmark</mat-icon>{{tag.name}}
+                <mat-icon [ngClass]="tag.color" matPrefix>{{tag.icon}}</mat-icon>{{tag.name}}
                 <button matChipRemove>
                   <mat-icon>cancel</mat-icon>
                 </button>

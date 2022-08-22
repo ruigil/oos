@@ -1,15 +1,14 @@
 export class Tag {
-    id: string = "";
+    _id: string = "";
     name: string = "";
-    color: string = "";
-    icon: string = "";
-    count: number = 0;
+    description: string = "";
+    type: string = "";
+    uid: string = "";
     selected?: boolean = false;
     filtered?: boolean = false;
     available?: boolean = true;
-    uid: string = "";
-    createdAt: any;
-    updatedAt: any;
+    icon: string = "";
+    color: string = "";
 
     public constructor(init?:Partial<Tag>) {
         Object.assign(this, init);

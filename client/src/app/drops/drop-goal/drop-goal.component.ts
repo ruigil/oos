@@ -24,13 +24,12 @@ export class DropGoalComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     // construct a map with the totals for each tag
-    this.tagTotals = new Map(this.drop.goal!.tags.map(t => [t.id,t.totals]) )
-    // add an entry for the total of totals
-    this.tagTotals.set('all', [...this.tagTotals.values()].reduce( (acc,v) => acc.map( (t,i) => t + v[i] ), [0,0,0,0,0,0,0] ) )
+    this.tagTotals = new Map(this.drop.content!.tags.map((t:any) => [t.id,t.totals]))
+    this.tagTotals.set('all', [...this.tagTotals.values()].reduce( (acc,v) => acc.map( (t,i) =>  t + v[i]), [0,0,0,0,0,0,0] ) )
 }
 
   edit() {
-    this.router.navigate(['/goal/edit', this.drop.id]);
+    this.router.navigate(['/goal/edit', this.drop._id]);
   }
 
   delete() {
@@ -38,7 +37,7 @@ export class DropGoalComponent implements AfterViewInit {
   }
 
   tags():Tag[] {
-    return this.drop.tags.filter( t => !t.id.endsWith('_TYPE'));
+    return this.drop.tags.filter( t => !t._id.endsWith('_TYPE'));
   }
 
   summary(type:string, tag:Tag | null) {
@@ -53,7 +52,7 @@ export class DropGoalComponent implements AfterViewInit {
 
     const note = (total:number) => `${total}`
 
-    const totals = (tag ? this.tagTotals.get(tag.id) : this.tagTotals.get('all')) || [0,0,0,0,0,0,0]; 
+    const totals = (tag ? this.tagTotals.get(tag._id) : this.tagTotals.get('all')) || [0,0,0,0,0,0,0]; 
 
     return  type === 'task' && totals[0] != 0 ?  task(totals[0],totals[1]) :
             type === 'expense' && totals[2] != 0 ? expense(totals[2]) :

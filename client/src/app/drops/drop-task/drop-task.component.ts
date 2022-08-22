@@ -19,14 +19,14 @@ export class DropTaskComponent implements OnInit {
   }
 
   complete(event:MouseEvent) {
-        this.drop.task!.completed = !this.drop.task!.completed;
-        this.drop.task!.date = Date.now();
+        this.drop.content!.completed = !this.drop.content!.completed;
+        this.drop.content!.date = Date.now();
         event.stopPropagation();
         this.oos.putDrop(this.drop);
   }
 
   edit() {
-    this.router.navigate(['/task/edit', this.drop.id]);
+    this.router.navigate(['/task/edit', this.drop._id]);
   }
 
   delete() {

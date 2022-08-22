@@ -7,7 +7,7 @@
             <mat-chip-list [selectable]="true">
                 <mat-chip class="rate-bg">
                     {{drop.title}}
-                    <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate-icon" (click)="rate(key, $event)">{{ key <= drop.rate!.value ? 'star_rate' : 'star_border'}}</mat-icon> 
+                    <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate-icon" (click)="rate(key, $event)">{{ key <= drop.content!.value ? 'star_rate' : 'star_border'}}</mat-icon> 
                 </mat-chip>
             </mat-chip-list>
         </mat-panel-title>
@@ -16,7 +16,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p>{{drop.content | markdown}}</p>
+    <p [innerHtml]="drop.text | markdown"></p>
 
     <mat-divider></mat-divider>
 

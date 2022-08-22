@@ -2,7 +2,7 @@
 
     <mat-expansion-panel-header>
         <mat-panel-title>
-            <mat-icon class="note-icon">note</mat-icon>
+            <mat-icon class="photo-icon">photo</mat-icon>
             <mat-icon *ngIf="drop.recurrence !== 'none'">loop</mat-icon>
             <span [innerHTML]="drop.title | markdown"></span>
         </mat-panel-title>
@@ -12,8 +12,8 @@
     </mat-expansion-panel-header>
 
     <ng-template matExpansionPanelContent>
-        <img class="photo" src="/api/file/{{drop.photo!.filename}}"/>
-        <p [innerHTML]="drop.content | markdown" ></p>
+        <img class="photo" src="/api/file/{{drop.content!.filename}}"/>
+        <p [innerHTML]="drop.text | markdown" ></p>
     </ng-template>
 
     <mat-action-row>

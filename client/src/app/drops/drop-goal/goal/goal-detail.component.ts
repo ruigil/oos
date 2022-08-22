@@ -5,7 +5,7 @@ import { combineLatest, take } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { DateTimeService } from '../../../services/date-time.service';
-import { Drop } from '../../../model/drop';
+import { Drop, goal } from '../../../model/drop';
 import { Tag } from '../../../model/tag';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
 import { G } from '@angular/cdk/keycodes';
@@ -17,7 +17,7 @@ import { G } from '@angular/cdk/keycodes';
 })
 export class GoalDetailComponent {
 
-    drop: Drop = new Drop({ goal: { completed: false, tags: [] } });
+    drop: Drop = new Drop({ content: { completed: false, tags: [] } });
     dateISO: string = "";
     recurrences: Array<{ key: string, value: string }>;
     btnDisabled: boolean = false;
@@ -39,10 +39,11 @@ export class GoalDetailComponent {
             let id:string = v[2].get("id") || "new";
             // add a gamification to the goal in teh complete field
             this.drop = id === 'new' ? new Drop({ 
-                id: "new",
-                title: "", 
+                _id: "new",
+                title: "",
+                text: "", 
                 type: "GOAL",
-                goal: { completed: false, tags: [] }, 
+                content: { completed: false, tags: [] }, 
                 recurrence: "none",
                 tags: [this.oos.getTag("GOAL_TYPE")],
                 date: this.dts.getTimestamp(new Date())
@@ -67,12 +68,11 @@ export class GoalDetailComponent {
         const type = "goal";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
-        const gtags = new Map( this.drop.goal!.tags.map( t => [t.id,t]) );
-        console.log(gtags);
-        this.drop.goal!.tags = 
+        const gtags = new Map<string,Array<number>>( this.drop.content!.tags.map( (t:{id: string, totals: Array<number>}) => [t.id,t.totals]) );
+        this.drop.content!.tags = 
             this.drop.tags
-            .filter( t => !t.id.endsWith('_TYPE'))
-            .map( t =>  (gtags.get(t.id)) ? { id: t.id, totals: gtags.get(t.id)!.totals }: { id: t.id, totals: [0,0,0,0,0,0,0]} );
+            .filter( t => !t._id.endsWith('_TYPE'))
+            .map( t =>  (gtags.get(t._id)) ? { id: t._id, totals: gtags.get(t._id) }: { id: t._id, totals: [0,0,0,0,0,0,0]} );
         
         this.oos.putDrop(this.drop).then(
             (value) => {

@@ -13,7 +13,7 @@
     </mat-form-field>
     <mat-form-field>
         <mat-label>Description</mat-label>
-        <textarea name="description" matInput placeHolder="Enter you text here..." rows="7" [(ngModel)]="drop.content"></textarea>
+        <textarea name="description" matInput placeHolder="Enter you text here..." rows="7" [(ngModel)]="drop.text"></textarea>
     </mat-form-field>
     <mat-form-field>
         <input name="date" matInput type="datetime-local" placeholder="Choose a date" [(ngModel)]="dateISO" required>
@@ -29,8 +29,8 @@
     </mat-form-field>
     <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
     
-    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
-        <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Task
+    <button mat-flat-button color="accent" (click)="dropData(drop._id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop._id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop._id !== 'new' ? 'Update' : 'Add' }} Task
     </button>
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags> 
 </form>

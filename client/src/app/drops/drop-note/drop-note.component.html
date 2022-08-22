@@ -11,7 +11,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p [innerHTML]="drop.content | markdown" ></p>
+    <p [innerHTML]="drop.text | markdown" ></p>
 
     <mat-action-row>
         <button mat-icon-button (click)="edit()">

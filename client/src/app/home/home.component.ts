@@ -6,7 +6,7 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 import { Drop } from '../model/drop';
 import { Tag } from '../model/tag';
-import { Stream } from '../model/stream';
+import { HomeStream } from '../model/home-stream';
 
 import { trigger, state, style, transition, animate } from '@angular/animations';
 
@@ -36,7 +36,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 })
 export class HomeComponent {
 
-  stream: Stream = { startAt: 0, preview: 'day' }
+  stream: HomeStream = { startAt: 0, preview: 'day' }
   //separatorKeysCodes: number[] = [ENTER, COMMA];
   availableTags$: Observable<Tag[]>;
   filteredTags$: Observable<Tag[]>;
@@ -53,7 +53,7 @@ export class HomeComponent {
 
     this.filteredTags$ = this.oos.filteredTags();
     this.availableTags$ = this.oos.availableTags();
-    this.streams$ = this.oos.tags().pipe( map( ts => ts.filter( t => t.id.endsWith('_STREAM') )));
+    this.streams$ = this.oos.tags().pipe( map( ts => ts.filter( t => t.type === "STREAM" )));
 
     this.currentDate$ = interval(1000).pipe( 
       map( t => this.dts.isToday(this.stream.startAt) ? 

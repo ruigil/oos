@@ -2,13 +2,13 @@
 
     <mat-expansion-panel-header>
         <mat-panel-title>
-            <mat-icon class="money-icon">monetization_on</mat-icon>
+            <mat-icon class="money-icon">money</mat-icon>
             <mat-icon *ngIf="drop.recurrence !== 'none'">loop</mat-icon>
             <mat-chip-list>
-                <mat-chip class="{{drop.money?.type}}" >
-                    <span *ngIf="drop.money!.type === 'expense'">-</span>{{drop.money?.value}} {{drop.money?.currency}}
+                <mat-chip class="{{drop.content?.type}}" >
+                    <span *ngIf="drop.content!.type === 'expense'">-</span>{{drop.content?.value}} {{drop.content?.currency}}
                 </mat-chip> 
-                <span>{{drop.content}}</span>
+                <span>{{drop.title}}</span>
             </mat-chip-list>
         </mat-panel-title>
         <mat-panel-description class="description">
@@ -16,7 +16,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p>{{drop.content | markdown}}</p>
+    <p [innerHtml]="drop.text | markdown"></p>
 
     <mat-divider></mat-divider>
 

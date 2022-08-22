@@ -14,7 +14,7 @@ import { Tag } from '../model/tag';
 export class TagsComponent {
     @Output() onSelectTag = new EventEmitter<Tag[]>();
     @Input() selected: Array<Tag> = [];
-    currentTag: Tag = new Tag( { id: "", name: "", icon: 'bookmark', color: 'dark'});
+    currentTag: Tag = new Tag( { _id: "", name: "", icon: 'bookmark', color: 'dark'});
     update:boolean = false;
     unselectedTags: Observable<Tag[]>;
     selectedTags: Observable<Tag[]>;
@@ -62,8 +62,9 @@ export class TagsComponent {
     }
 
     newTag() {
+        const types = new Map([["dark","USER1"],["light","USER2"],["red","USER3"],["blue","USER4"],["green","USER5"],["yellow","USER6"]]);
         const tagName = this.currentTag.name.toLocaleUpperCase();
-        const tag:Tag = new Tag({ id:tagName, name: tagName, count: 0, color: this.currentTag.color, icon: 'bookmark' }); 
+        const tag:Tag = new Tag({ _id:tagName, name: tagName, color: this.currentTag.color, type:types.get(this.currentTag.color),icon: 'bookmark' }); 
         this.oos.putTag(tag);
     }
     
@@ -72,7 +73,7 @@ export class TagsComponent {
     }
 
     unselectTag(tag:Tag) {
-        if (!tag.id.endsWith("_TYPE")) this.oos.unselectTag(tag);
+        if (!tag._id.endsWith("_TYPE")) this.oos.unselectTag(tag);
     }
 
     colorChoice($event:any) {

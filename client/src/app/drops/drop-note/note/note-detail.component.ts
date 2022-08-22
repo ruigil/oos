@@ -17,7 +17,7 @@ import Typester from 'typester-editor';
 })
 export class NoteDetailComponent implements AfterViewInit {
 
-    drop:Drop = new Drop({ note: { }});
+    drop:Drop = new Drop({ content: { }});
     recurrences: Array<{ key: string, value: string }> = [];
     btnDisabled: boolean = false; 
     dateISO: string = "";
@@ -37,11 +37,13 @@ export class NoteDetailComponent implements AfterViewInit {
         combineLatest([this.oos.tags(),this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
             let id:string = v[2].get("id") || "new";
             this.drop = id === 'new' ? new Drop({ 
-                id: "new",
+                _id: "new",
                 title: "", 
                 type: "NOTE",
-                note: { },
+                text: "",
+                content: { },
                 recurrence: "none",
+                uid: "oos",
                 tags: [this.oos.getTag("NOTE_TYPE")],
                 date: this.dts.getTimestamp(new Date())
             }) : this.oos.getDrop(id);
@@ -59,7 +61,7 @@ export class NoteDetailComponent implements AfterViewInit {
         const type = "note";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
-        this.drop.title = this.drop.title === "" ? this.drop.content.split('\n')[0] : this.drop.title;
+        this.drop.title = this.drop.title === "" ? this.drop.text.split('\n')[0] : this.drop.title;
         this.oos.putDrop(this.drop).then(
             (value) => {
                 this.snackbar

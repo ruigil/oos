@@ -20,7 +20,7 @@ export class DropNoteComponent implements OnInit {
   }
 
   edit() {
-    this.router.navigate(['/note/edit', this.drop.id]);
+    this.router.navigate(['/note/edit', this.drop._id]);
   }
 
   delete() {

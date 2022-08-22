@@ -12,7 +12,7 @@
         </mat-error> 
     </mat-form-field>
     <mat-form-field>
-        <textarea name="text" matInput placeholder="Please describe your goal in a clear, measurable form..." rows="15" [(ngModel)]="drop.content"  autofocus required></textarea>
+        <textarea name="text" matInput placeholder="Please describe your goal in a clear, measurable form..." rows="15" [(ngModel)]="drop.text"  autofocus required></textarea>
         <mat-error *ngIf="field.errors?.['required']">
             Description <strong>required</strong>
         </mat-error> 
@@ -32,8 +32,8 @@
 
     <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
 
-    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
-        <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Goal
+    <button mat-flat-button color="accent" (click)="dropData(drop._id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop._id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop._id !== 'new' ? 'Update' : 'Add' }} Goal
     </button>
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </form>

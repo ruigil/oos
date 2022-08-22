@@ -1,11 +1,11 @@
 <mat-expansion-panel class="{{drop.color}}">
 
     <mat-expansion-panel-header>
-        <mat-panel-title><mat-icon class="task-icon">folder</mat-icon>
+        <mat-panel-title><mat-icon class="task-icon">task</mat-icon>
             <mat-icon *ngIf="drop.recurrence != 'none'">loop</mat-icon>
             <mat-chip-list [selectable]="true">
-                <mat-chip [ngClass]="{'task-completed' : drop.task?.completed }" (click)="complete($event)">
-                    <mat-icon>{{drop.task?.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>
+                <mat-chip [ngClass]="{'task-completed' : drop.content?.completed }" (click)="complete($event)">
+                    <mat-icon>{{drop.content?.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>
                     <span>&nbsp;{{drop.title}}</span>
                 </mat-chip>
             </mat-chip-list>
@@ -15,7 +15,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p>{{drop.content | markdown}}</p>
+    <p [innerHtml]="drop.text | markdown"></p>
     
     <mat-divider></mat-divider>
     

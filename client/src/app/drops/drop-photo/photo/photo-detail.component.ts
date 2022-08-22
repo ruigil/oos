@@ -18,7 +18,7 @@ import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 })
 export class PhotoDetailComponent implements AfterViewInit {
 
-    drop:Drop = new Drop({ note: { }});
+    drop:Drop = new Drop({ content: { filename: "", mimetype: "", originalname: ""} });
     recurrences: Array<{ key: string, value: string }> = [];
     btnDisabled: boolean = false; 
     dateISO: string = "";
@@ -42,17 +42,18 @@ export class PhotoDetailComponent implements AfterViewInit {
         combineLatest([this.oos.tags(),this.oos.drops(), this.route.paramMap]).pipe(take(1)).subscribe( v => {
             let id:string = v[2].get("id") || "new";
             this.drop = id === 'new' ? new Drop({ 
-                id: "new",
+                _id: "new",
                 title: "", 
+                text: "",
                 type: "PHOTO",
-                photo: { filename: "", mimetype: "", originalname: ""},
+                content: { filename: "", mimetype: "", originalname: ""},
                 recurrence: "none",
                 tags: [this.oos.getTag("PHOTO_TYPE")],
                 date: this.dts.getTimestamp(new Date())
             }) : this.oos.getDrop(id);
 
             this.dateISO = this.dts.getDateISO(this.drop.date);
-            this.fileName = this.drop.photo!.originalname;
+            this.fileName = this.drop.content!.originalname;
 
         });
     }
@@ -80,8 +81,8 @@ export class PhotoDetailComponent implements AfterViewInit {
             .pipe( finalize(() => this.reset()))
             .subscribe( (event:any) => {
                 if (event.type == HttpEventType.Response) {
-                    this.drop.photo = { filename: event.body.filename, mimetype: event.body.mimetype, originalname: event.body.originalname }
-                    console.log(this.drop.photo);
+                    this.drop.content = { filename: event.body.filename, mimetype: event.body.mimetype, originalname: event.body.originalname }
+                    //console.log(this.drop.content);
                 }
                 if (event.type == HttpEventType.UploadProgress) {
                   this.uploadProgress = Math.round(100 * (event.loaded / event.total));

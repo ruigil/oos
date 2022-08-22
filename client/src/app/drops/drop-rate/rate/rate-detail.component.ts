@@ -17,7 +17,7 @@ import { Tag } from '../../../model/tag';
 })
 export class RateDetailComponent {
 
-    drop: Drop = new Drop({ rate: { value: 0 } } );
+    drop: Drop = new Drop({ content: { value: 0 } } );
     btnDisabled: boolean = false;
     dateISO: string = ""; 
     field = new FormControl('', [
@@ -39,10 +39,11 @@ export class RateDetailComponent {
             let id:string = v[2].get("id") || "new";
             
             this.drop = id === 'new' ? new Drop({ 
-                id: "new",
+                _id: "new",
                 title: "", 
                 type: "RATE",
-                rate: { value: 0 },
+                text: "",
+                content: { value: 0 },
                 recurrence: "none",
                 tags: [this.oos.getTag("RATE_TYPE")],
                 date: this.dts.getTimestamp(new Date())

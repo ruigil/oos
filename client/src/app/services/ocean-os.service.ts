@@ -4,9 +4,10 @@ import { Drop } from "../model/drop";
 import { Tag } from "../model/tag";
 import { DateTimeService } from './date-time.service';
 
-import { Stream } from '../model/stream';
+import { HomeStream } from '../model/home-stream';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../model/user';
+import {v4 as uuidv4} from 'uuid';
 
 
 @Injectable({
@@ -25,6 +26,22 @@ export class OceanOSService {
 
   private previewAt: number = 0;
   private startAt: number = 0;
+  private tagsIC: Map<string,{icon:string,color:string}> = new Map([
+    ["NOTE",{icon:"note",color:"note-icon"}],
+    ["RATE",{icon:"star",color:"rate-icon"}],
+    ["PHOTO",{icon:"photo",color:"photo-icon"}],
+    ["GOAL",{icon:"flag_circle",color:"goal-icon"}],
+    ["TASK",{icon:"task",color:"task-icon"}],
+    ["MONEY",{icon:"money",color:"money-icon"}],
+    ["STREAM",{icon:"stream",color:"stream-icon"}],
+    ["SYS",{icon:"smart_toy",color:"system-icon"}],    
+    ["USER1",{icon:"bookmark",color:"dark"}],
+    ["USER2",{icon:"bookmark",color:"light"}],
+    ["USER3",{icon:"bookmark",color:"red"}],
+    ["USER4",{icon:"bookmark",color:"blue"}],
+    ["USER5",{icon:"bookmark",color:"green"}],
+    ["USER6",{icon:"bookmark",color:"yellow"}]
+  ]);
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
 
@@ -34,8 +51,19 @@ export class OceanOSService {
       this.http.get<Drop[]>(`/api/drops`),
       this.http.get<User>(`/api/user/oos`)])
       .subscribe( ([ts,ds,us]) => {
-        this.tagsV = new Map( ts.map( t => new Tag({...t, available: true, filtered: false, selected: false})).map( t => [t.id,t]) );
-        this.dropsV = new Map( ds.map( d => new Drop({...d, available: true})).map( d => [d.id,d]) );
+        this.tagsV = new Map( ts.map( t => new Tag({
+          ...t, 
+          available: true, 
+          filtered: false, 
+          selected: false,
+          icon: this.tagsIC.get(t.type)!.icon,
+          color: this.tagsIC.get(t.type)!.color
+        })).map( t => [t._id,t]) );
+        this.dropsV = new Map( ds.map( d => new Drop({
+          ...d, 
+          available: true,
+          tags: d.tags.map( t => new Tag({...t, icon: this.tagsIC.get(t.type)!.icon, color: this.tagsIC.get(t.type)!.color}))
+        })).map( d => [d._id,d]) );
         this.settingsV = us;
         this.settings$.next(this.settingsV);
         this.fromTime( { preview: this.settingsV.settings.home.preview, startAt:this.dts.startOfToday() });
@@ -59,7 +87,7 @@ export class OceanOSService {
     return new Promise( (resolve,reject) => {
       this.http.post(`/api/tags`, tag).subscribe( r => {
         if (r) {
-          this.tagsV.set( tag.id, tag );
+          this.tagsV.set( tag._id, tag );
           this.getTags();
           resolve(r);
         } else reject();
@@ -70,13 +98,14 @@ export class OceanOSService {
   putDrop(drop:Drop):Promise<object> {
     drop.uid = this.settingsV.id;
     drop.color = this.previewColor(drop,this.startAt);
-    if (drop.id === 'new') {
-      drop.id = this.generateID();
+    if (drop._id === 'new') {
+      drop._id = uuidv4();
     }
     return new Promise( (resolve,reject) => {
-      this.http.post(`/api/drops`, drop).subscribe( r => {
+      this.http.post(`/api/drops`, drop).subscribe( (r:any) => {
         if (r) {
-          this.dropsV.set(drop.id, drop );
+          //console.log(r);
+          this.dropsV.set(drop._id, drop );
           this.getDrops();
           resolve(r);
         } else reject();
@@ -86,11 +115,11 @@ export class OceanOSService {
 
   deleteTag(tag : Tag ): Promise<object> {
     return new Promise( (resolve,reject) => {
-      this.http.delete(`/api/tags/${tag.id}`).subscribe( r => {
+      this.http.delete(`/api/tags/${tag._id}`).subscribe( r => {
         if (r) {
-          this.tagsV.delete( tag.id );
+          this.tagsV.delete( tag._id );
           for (let d of this.dropsV.values()) {
-            d.tags = d.tags.filter( t => t.id !== tag.id);
+            d.tags = d.tags.filter( t => t._id !== tag._id);
           }
           this.getTags();
           resolve(r);
@@ -101,9 +130,9 @@ export class OceanOSService {
 
   deleteDrop(drop:Drop): Promise<object> {
     return new Promise( (resolve,reject) => {
-      this.http.delete(`/api/drops/${drop.id}`).subscribe( r => {
+      this.http.delete(`/api/drops/${drop._id}`).subscribe( r => {
         if (r) {
-          this.dropsV.delete(drop.id);
+          this.dropsV.delete(drop._id);
           this.getDrops();
           resolve(r);
         } else reject();
@@ -136,19 +165,18 @@ export class OceanOSService {
   }
 
   unselectedTags() {
-    return this.tags$.pipe( map( tags => tags.filter(t => !t.selected && !t.id.endsWith("_TYPE") ) ) );
+    return this.tags$.pipe( map( tags => tags.filter(t => !t.selected && !t._id.endsWith("_TYPE") ) ) );
   }
 
-
   selectTag(tag: Tag) {
-    const t = this.tagsV.get(tag.id) 
+    const t = this.tagsV.get(tag._id) 
     if (t) {
       t.selected = true;
       this.getTags();
     }
   }
   unselectTag(tag: Tag) {
-    const t = this.tagsV.get(tag.id) 
+    const t = this.tagsV.get(tag._id) 
     if (t) {
       t.selected = false;
       this.getTags();
@@ -157,14 +185,14 @@ export class OceanOSService {
 
   initTagSelection(tags: Tag[]) {
     for (let t of this.tagsV.values()) {
-      t.selected = tags.some(st => st.id === t.id)
+      t.selected = tags.some(st => st._id === t._id)
     }
     this.getTags();
   }
 
 
   filterTag(tag: Tag) {
-    const t = this.tagsV.get(tag.id) 
+    const t = this.tagsV.get(tag._id) 
     if (t) {
       t.filtered = true;
       this.filterTagsDrops();
@@ -172,7 +200,7 @@ export class OceanOSService {
   }
 
   unfilterTag(tag: Tag) {
-    const t = this.tagsV.get(tag.id) 
+    const t = this.tagsV.get(tag._id) 
     if (t) {
       t.filtered = false;
       this.filterTagsDrops();
@@ -190,7 +218,7 @@ export class OceanOSService {
       return color;
   }
 
-  fromTime(stream:Stream) {
+  fromTime(stream:HomeStream) {
     console.log("from time...")
     // from time start at, preview a time
     // start + time 
@@ -221,11 +249,8 @@ export class OceanOSService {
     this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
   }
 
-  getStream(uid: string | null, name:string | null):Observable<Drop[]> {
-    if (uid && name) {
-      return this.http.post<Drop[]>(`/api/drops/stream/`, { uid: uid, tags: [name] });
-    }
-    return of([]);
+  getStream(uid: string, tags:string[]):Observable<Drop[]> {
+      return this.http.post<Drop[]>(`/api/drops/stream/`, { uid: uid, tags: tags });
   }
 
   getDrop(did:string):Drop {
@@ -253,17 +278,17 @@ export class OceanOSService {
       const availableDrops:Map<string,Drop> = 
         new Map([...this.dropsV.values()].filter( 
           // for every filter tag, the drop must contain some
-          (d:Drop) => d.date < this.previewAt && ftags.every( (fts:Tag) => d.tags.some( (t:Tag) => t.id === fts.id ))
-        ).map( d => [d.id,d]) );
+          (d:Drop) => d.date < this.previewAt && ftags.every( (fts:Tag) => d.tags.some( (t:Tag) => t._id === fts._id ))
+        ).map( d => [d._id,d]) );
 
       // go through all the available drops, and collect unique tags.
-      const availableTags = new Map( [...availableDrops.values()].flatMap( d => d.tags.map( t => [ t.id, t ]) ) );
+      const availableTags = new Map( [...availableDrops.values()].flatMap( d => d.tags.map( t => [ t._id, t ]) ) );
       
       // update available drops
-      for (let d of this.dropsV.values()) d.available = !!availableDrops.get(d.id);
+      for (let d of this.dropsV.values()) d.available = !!availableDrops.get(d._id);
 
       // update available tags
-      for(let t of this.tagsV.values()) t.available = !!availableTags.get(t.id) && !t.filtered;
+      for(let t of this.tagsV.values()) t.available = !!availableTags.get(t._id) && !t.filtered;
 
     } else {
       // no filter, so render all tags available
@@ -277,10 +302,6 @@ export class OceanOSService {
     }
     this.getTags();
     this.getDrops();    
-  }
-
-  private generateID(): string {
-    return Date.now().toString(36).concat(Math.random().toString(36).substring(2,8));
   }
 
 }

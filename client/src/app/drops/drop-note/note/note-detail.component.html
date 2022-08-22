@@ -10,7 +10,7 @@
     </mat-form-field>
     
     <mat-form-field>
-        <textarea name="text" matInput required autofocus placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.content"></textarea>
+        <textarea name="text" matInput required autofocus placeholder="Enter you text here..." rows="15"  autofocus [(ngModel)]="drop.text"></textarea>
         <mat-error *ngIf="field.hasError('required')">
             A text is <strong>required</strong>
         </mat-error> 
@@ -34,8 +34,8 @@
 
     <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
 
-    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
-        <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Note
+    <button mat-flat-button color="accent" (click)="dropData(drop._id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop._id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop._id !== 'new' ? 'Update' : 'Add' }} Note
     </button>
 
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>

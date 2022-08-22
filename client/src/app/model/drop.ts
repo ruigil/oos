@@ -1,17 +1,19 @@
 import { Tag } from './tag';
 
+type note = {  }
+type photo = { filename: string, mimetype:string, originalname:string }; 
+type money = { value: number, type: string, currency: string };
+type task = { date: any, completed: boolean };
+type system = {  }
+type rate = { value: number }
+export type goal = { completed: boolean, tags: Array<{id: string, totals: Array<number>}> };
+
 export class Drop {
-    id: string = "";
+    _id: string = "";
     type: string = "";
     title: string = "";
-    content: string = "";
-    note?: { };
-    photo?: { filename: string, mimetype: string, originalname: string};
-    money?: { value: number, type: string, currency: string };
-    task?: { date: any, completed: boolean };
-    system?: { };
-    rate?: { value: number };
-    goal?: { completed: boolean, tags: Array<{ id: string, totals: Array<number> }> };
+    text: string = "";
+    content?: any;//note | photo | money | task | system | rate | goal;
     recurrence: string = "";
     clone: boolean = false;
     tags: Array<Tag> = [];
@@ -19,8 +21,6 @@ export class Drop {
     uid: string = "";
     color?: string = "";
     available?: boolean = true;
-    updatedAt: any;
-    createdAt: any;
     
     public constructor(init?:Partial<Drop>) {
         Object.assign(this, init);

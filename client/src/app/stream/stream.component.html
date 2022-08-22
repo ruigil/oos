@@ -75,7 +75,7 @@
   <mat-expansion-panel class="tags">
   <mat-expansion-panel-header >
   <mat-panel-title>
-  OOS tags
+  {{streamName}} tags
   </mat-panel-title>
   <mat-panel-description>
   
@@ -85,21 +85,14 @@
     <div>Selected</div>
     <div class="spacer"></div>
     <mat-chip-list>
-      <mat-chip><mat-icon class="dark">water</mat-icon> OOS</mat-chip> 
+      <mat-chip *ngFor="let t of tagsSelected.values()" (click)="selectTag(t)"><mat-icon [ngClass]="t.color">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
   </mat-chip-list>
   </mat-action-row>
   <mat-action-row>
     <div>Available</div>
     <div class="spacer"></div>
     <mat-chip-list>
-      <mat-chip><mat-icon class="dark">bookmark</mat-icon> PLACE</mat-chip> 
-      <mat-chip><mat-icon class="blue">bookmark</mat-icon> SAIL</mat-chip> 
-      <mat-chip><mat-icon class="red">bookmark</mat-icon> NOTE</mat-chip> 
-      <mat-chip><mat-icon class="yellow">bookmark</mat-icon> TRAVEL</mat-chip> 
-      <mat-chip><mat-icon class="dark">bookmark</mat-icon> PLACE</mat-chip> 
-      <mat-chip><mat-icon class="blue">bookmark</mat-icon> SAIL</mat-chip> 
-      <mat-chip><mat-icon class="red">bookmark</mat-icon> NOTE</mat-chip> 
-      <mat-chip><mat-icon class="yellow">bookmark</mat-icon> TRAVEL</mat-chip> 
+      <mat-chip *ngFor="let t of tagsAvailable.values()" (click)="selectTag(t)"><mat-icon [ngClass]="t.color">{{t.icon}}</mat-icon>{{t.name}}</mat-chip> 
     </mat-chip-list>
   </mat-action-row>
   </mat-expansion-panel>
@@ -114,9 +107,9 @@
     <mat-card-title>{{d.title}}</mat-card-title>
     <mat-card-subtitle>{{d.date | timeago}}</mat-card-subtitle>
   </mat-card-header>
-  <img *ngIf="d.type =='PHOTO'" mat-card-image src="/api/file/{{d.photo!.filename}}" alt="Photo of a city">
+  <img *ngIf="d.type =='PHOTO'" mat-card-image src="/api/file/{{d.content!.filename}}" alt="Photo of a city">
   <mat-card-content>
-    <p [innerHTML]="d.content | markdown"></p>
+    <p [innerHTML]="d.text | markdown"></p>
   </mat-card-content>
   <mat-card-actions>
     <mat-chip-list>

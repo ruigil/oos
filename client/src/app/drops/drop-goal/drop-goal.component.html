@@ -2,7 +2,7 @@
 
     <mat-expansion-panel-header>
         <mat-panel-title>
-            <mat-icon class="goal-icon">center_focus_strong</mat-icon>
+            <mat-icon class="goal-icon">flag_circle</mat-icon>
             <mat-icon *ngIf="drop.recurrence !== 'none'">loop</mat-icon>
             {{drop.title}}
         </mat-panel-title>
@@ -11,25 +11,25 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <div [innerHTML]="drop.content | markdown" ></div>
+    <div [innerHTML]="drop.text | markdown" ></div>
 
     <mat-divider></mat-divider>
     
     <mat-chip-list *ngFor="let tag of tags()" class="tag-totals">
-        <mat-chip class="tag-summary"><mat-icon class="{{tag.color}}">bookmark</mat-icon>{{ tag.name}}</mat-chip>
-        <mat-chip *ngIf="summary('task',tag)" class="goal-summary"><mat-icon class="task-icon">folder</mat-icon>{{summary('task',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('expense',tag)" class="expense"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('expense',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('income',tag)" class="income"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('income',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('rate',tag)" class="goal-summary"><mat-icon class="rate-icon">star_rate</mat-icon>{{summary('rate',tag)}}</mat-chip>
+        <mat-chip class="tag-summary"><mat-icon class="{{tag.color}}">{{tag.icon}}</mat-icon>{{ tag.name}}</mat-chip>
+        <mat-chip *ngIf="summary('task',tag)" class="goal-summary"><mat-icon class="task-icon">task</mat-icon>{{summary('task',tag)}}</mat-chip>
+        <mat-chip *ngIf="summary('expense',tag)" class="expense"><mat-icon class="money-icon">money</mat-icon>{{summary('expense',tag)}}</mat-chip>
+        <mat-chip *ngIf="summary('income',tag)" class="income"><mat-icon class="money-icon">money</mat-icon>{{summary('income',tag)}}</mat-chip>
+        <mat-chip *ngIf="summary('rate',tag)" class="goal-summary"><mat-icon class="rate-icon">star</mat-icon>{{summary('rate',tag)}}</mat-chip>
         <mat-chip *ngIf="summary('note',tag)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('note',tag)}}</mat-chip>
     </mat-chip-list>
     <mat-divider></mat-divider>
     <mat-chip-list class="tag-totals">
         <mat-chip class="tag-summary"><mat-icon class="light">summarize</mat-icon>Totals</mat-chip>
-        <mat-chip *ngIf="summary('task',null)" class="goal-summary"><mat-icon class="task-icon">folder</mat-icon>{{summary('task',null)}}</mat-chip>
-        <mat-chip *ngIf="summary('expense',null)" class="expense"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('expense',null)}}</mat-chip>
-        <mat-chip *ngIf="summary('income',null)" class="income"><mat-icon class="money-icon">monetization_on</mat-icon>{{summary('income',null)}}</mat-chip>
-        <mat-chip *ngIf="summary('rate',null)" class="goal-summary"><mat-icon class="rate-icon">star_rate</mat-icon>{{summary('rate',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('task',null)" class="goal-summary"><mat-icon class="task-icon">task</mat-icon>{{summary('task',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('expense',null)" class="expense"><mat-icon class="money-icon">money</mat-icon>{{summary('expense',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('income',null)" class="income"><mat-icon class="money-icon">money</mat-icon>{{summary('income',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('rate',null)" class="goal-summary"><mat-icon class="rate-icon">star</mat-icon>{{summary('rate',null)}}</mat-chip>
         <mat-chip *ngIf="summary('note',null)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('note',null)}}</mat-chip>
     </mat-chip-list>
 

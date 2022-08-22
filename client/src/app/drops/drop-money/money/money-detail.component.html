@@ -8,20 +8,20 @@
 <form class="form-elements" #dropForm="ngForm">
     <mat-form-field>
         <mat-label>{{user.settings.transaction.currency}}</mat-label>
-        <input matInput type="number" [(ngModel)]="drop.money!.value" name="value" required autofocus>
+        <input matInput type="number" [(ngModel)]="drop.content!.value" name="value" required autofocus>
         <mat-error *ngIf="field.hasError('required')">
             Amount is <strong>required</strong>
         </mat-error> 
     </mat-form-field>
     <mat-form-field>
         <mat-label>Transaction Type</mat-label>
-        <mat-select name="type" [(ngModel)]="drop.money!.type">
+        <mat-select name="type" [(ngModel)]="drop.content!.type">
             <mat-option [value]="'expense'">Expense</mat-option>
             <mat-option [value]="'income'">Income</mat-option>
         </mat-select>
     </mat-form-field>
     <mat-form-field>
-        <textarea  name="description" matInput placeholder="Description..." rows="7" [(ngModel)]="drop.content"></textarea>
+        <textarea  name="description" matInput placeholder="Description..." rows="7" [(ngModel)]="drop.text"></textarea>
     </mat-form-field>
     <mat-form-field>
         <input name="date" matInput type="datetime-local" [(ngModel)]="dateISO"required>
@@ -38,8 +38,8 @@
 
     <mat-checkbox  [(ngModel)]="drop.clone" *ngIf="drop.recurrence !== 'none'">Clone content</mat-checkbox>
     
-    <button mat-flat-button color="accent" (click)="dropData(drop.id)" [disabled]="btnDisabled || !dropForm.form.valid">
-        <mat-icon>{{drop.id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop.id !== 'new' ? 'Update' : 'Add' }} Transaction
+    <button mat-flat-button color="accent" (click)="dropData(drop._id)" [disabled]="btnDisabled || !dropForm.form.valid">
+        <mat-icon>{{drop._id !== 'new' ? 'update' : 'add'}}</mat-icon>{{drop._id !== 'new' ? 'Update' : 'Add' }} Transaction
     </button>
     <oos-tags [selected]="drop.tags" (onSelectTag)="selectedTags($event)"></oos-tags>
 </form>
