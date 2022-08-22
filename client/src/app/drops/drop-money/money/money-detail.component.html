@@ -7,7 +7,7 @@
 
 <form class="form-elements" #dropForm="ngForm">
     <mat-form-field>
-        <mat-label>{{user.settings.transaction.currency}}</mat-label>
+        <mat-label>{{user.settings.currency}}</mat-label>
         <input matInput type="number" [(ngModel)]="drop.content!.value" name="value" required autofocus>
         <mat-error *ngIf="field.hasError('required')">
             Amount is <strong>required</strong>

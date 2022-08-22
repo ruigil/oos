@@ -73,7 +73,8 @@
                 placeholder="Filter..."
                 #tagInput
                 [matAutocomplete]="auto"
-                [matChipInputFor]="chipList">
+                [matChipInputFor]="chipList"
+                (matChipInputTokenEnd)="filterTag($event)">
             </mat-chip-list>
             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="filterTag($event)">
               <mat-option *ngFor="let tag of availableTags$ | async" [value]="tag">

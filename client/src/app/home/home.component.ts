@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Observable, interval, map, distinctUntilChanged } from 'rxjs';
 import { DateTimeService } from '../services/date-time.service';
 import { OceanOSService } from '../services/ocean-os.service';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 
 import { Drop } from '../model/drop';
 import { Tag } from '../model/tag';
@@ -16,16 +15,13 @@ import { HomeStream } from '../model/home-stream';
 export class HomeComponent {
 
   stream: HomeStream = { startAt: 0, preview: 'day' }
-  //separatorKeysCodes: number[] = [ENTER, COMMA];
   availableTags$: Observable<Tag[]>;
   filteredTags$: Observable<Tag[]>;
   streams$:Observable<Tag[]>;
   currentDate$: Observable<string>;
-
   drops: Observable<Drop[]>;
   tags:Observable<Tag[]>;
   
-
   constructor(private oos: OceanOSService, private dts: DateTimeService) {
     this.tags = this.oos.tags();
     this.drops = this.oos.drops();
@@ -41,9 +37,10 @@ export class HomeComponent {
     );
     
     this.oos.settings().pipe( distinctUntilChanged() ).subscribe( u => {
-      this.stream.preview = u.settings.home.preview;
+      this.stream.preview = u.settings.preview;
       this.stream.startAt = this.dts.startOfToday();
     });
+
   }
 
   setStartAt(event:any) {

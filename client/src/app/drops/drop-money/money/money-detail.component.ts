@@ -62,7 +62,7 @@ export class MoneyDetailComponent {
         const type = "transaction";
         this.btnDisabled = true;
         this.drop.date = this.dts.getTimestamp(this.dateISO);
-        this.drop.content!.currency = this.user.settings.transaction.currency;
+        this.drop.content!.currency = this.user.settings.currency;
         this.oos.putDrop(this.drop).then(
             (value) => {
                 this.snackbar

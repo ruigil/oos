@@ -66,7 +66,7 @@ export class OceanOSService {
         })).map( d => [d._id,d]) );
         this.settingsV = us;
         this.settings$.next(this.settingsV);
-        this.fromTime( { preview: this.settingsV.settings.home.preview, startAt:this.dts.startOfToday() });
+        this.fromTime( { preview: this.settingsV.settings.preview, startAt:this.dts.startOfToday() });
       });
   }
 

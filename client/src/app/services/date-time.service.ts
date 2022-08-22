@@ -11,9 +11,10 @@ export class DateTimeService {
 
     user: User = new User( {
         settings: { 
-            system: { day:true, timezone: "Europe/Zurich"},
-            transaction: { currency: "CHF" },
-            home: { preview: 'day' }
+            sys_day:true, 
+            sys_timezone: "Europe/Zurich",
+            currency: "CHF" ,
+            preview: 'day' 
         }
     })
 
@@ -39,15 +40,15 @@ export class DateTimeService {
     getTimestamp(date: Date | string): number {
         // zone to utc
         if (typeof date === 'string') {
-            return zonedTimeToUtc(new Date(date),this.user.settings.system.timezone).getTime();
+            return zonedTimeToUtc(new Date(date),this.user.settings.sys_timezone).getTime();
         } else {
-            return zonedTimeToUtc(date,this.user.settings.system.timezone).getTime();
+            return zonedTimeToUtc(date,this.user.settings.sys_timezone).getTime();
         }
     }
 
     getDateISO(timestamp:number) {
         // utc to timezone
-        return formatISO(utcToZonedTime(timestamp,this.user.settings.system.timezone).getTime()).substring(0,19);
+        return formatISO(utcToZonedTime(timestamp,this.user.settings.sys_timezone).getTime()).substring(0,19);
     }
 
     addDay(date: number, count = 1): number {
