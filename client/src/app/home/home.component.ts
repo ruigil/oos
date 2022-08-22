@@ -8,30 +8,9 @@ import { Drop } from '../model/drop';
 import { Tag } from '../model/tag';
 import { HomeStream } from '../model/home-stream';
 
-import { trigger, state, style, transition, animate } from '@angular/animations';
-
 @Component({
     selector: 'oos-home',
     templateUrl: 'home.component.html',
-    providers: [],
-    animations: [
-        trigger('openClose', [
-            state('fab-buttons-on', style({
-                bottom: 90,
-                opacity: 1.0,
-            })),
-            state('fab-buttons-off', style({
-                bottom: -300,
-                opacity: 0.0
-            })),
-            transition('fab-buttons-on => fab-buttons-off', [
-                animate('0.2s ease-out')
-            ]),
-            transition('fab-buttons-off => fab-buttons-on', [
-                animate('0.3s ease-out')
-            ]),
-        ]),
-    ],
     styleUrls: ['home.component.scss'],
 })
 export class HomeComponent {
