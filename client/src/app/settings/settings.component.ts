@@ -27,6 +27,7 @@ export class SettingsComponent {
     ];
     streams: Observable<Tag[]>;
     streamName: string = "";
+    streamDescription: string = "";
     public timezones:Array<any> = ["Europe/Zurich","Europe/Lisbon","Europe/Paris","Europe/Berlin"];
     user: User = new User({ id: "oos", username: "oos"});
     btnDisabled: boolean = false;
@@ -47,7 +48,7 @@ export class SettingsComponent {
     }
     addStream() {
         if (this.streamName !== "")
-            this.oos.putTag( new Tag({ _id: `${this.streamName}_STREAM`, name: this.streamName, type: "STREAM", icon: 'water', color: 'stream-icon'}) );
+            this.oos.putTag( new Tag({ _id: `${this.streamName}_STREAM`, name: this.streamName, description: this.streamDescription, type: "STREAM", icon: this.oos.getTagIC('STREAM').icon, color: this.oos.getTagIC('STREAM').color}) );
     }
 
     saveSettings() {

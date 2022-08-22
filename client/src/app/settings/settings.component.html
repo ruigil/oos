@@ -45,7 +45,10 @@
     
     <mat-divider class="section"></mat-divider>
     <mat-form-field>
-        <input name="name" matInput [(ngModel)]="streamName" placeholder="Stream name..." autofocus>
+        <input name="name" matInput [(ngModel)]="streamName" placeholder="Stream name...">
+    </mat-form-field>
+    <mat-form-field>
+        <input name="description" matInput [(ngModel)]="streamDescription" placeholder="Stream description...">
     </mat-form-field>
     <button mat-flat-button color="accent" [disabled]="btnDisabled" (click)="addStream()">
         <mat-icon>add</mat-icon> Add Stream
@@ -53,7 +56,7 @@
     <mat-divider class="section"></mat-divider>
     <mat-chip-list class="mat-chip-list-stacked" aria-label="stream selection">
         <mat-chip *ngFor="let stream of streams | async" [removable]="true" (removed)="deleteStream(stream)">
-            <mat-icon matChipRemove>cancel</mat-icon><mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>&nbsp;{{stream.name}}
+            <mat-icon matChipRemove>cancel</mat-icon><mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>&nbsp;{{stream.name}}&nbsp;{{stream.description}}
           </mat-chip>
     </mat-chip-list>
       

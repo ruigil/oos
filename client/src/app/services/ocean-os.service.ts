@@ -219,7 +219,7 @@ export class OceanOSService {
   }
 
   fromTime(stream:HomeStream) {
-    console.log("from time...")
+    // console.log("from time...")
     // from time start at, preview a time
     // start + time 
     this.startAt = stream.startAt;
@@ -265,6 +265,10 @@ export class OceanOSService {
 
   getSettings() {
     this.settings$.next(this.settingsV);
+  }
+
+  getTagIC(id:string) {
+    return this.tagsIC.get(id) || { icon: "bookmark", color:"dark" };
   }
 
   private filterTagsDrops() { 

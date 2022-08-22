@@ -155,7 +155,7 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
     }
 
     async findByTags(uid:string, tags:string[]):Promise<Drop[]> {
-
+      //console.log(uid,tags)
       const now = Date.now();
       const tagsQuery = tags.map( t => `tags._id == "${t}"`).join(' AND ');
       const drops = this.realm.objects<Drop>('Drop').filtered(`uid == '${uid}' AND date < ${now} AND (${tagsQuery})`).sorted('date', true);
