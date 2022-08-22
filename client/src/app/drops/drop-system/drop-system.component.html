@@ -2,7 +2,7 @@
 
     <mat-expansion-panel-header>
         <mat-panel-title>
-            <mat-icon class="system-icon">brightness_7</mat-icon>
+            <mat-icon class="system-icon">smart_toy</mat-icon>
             <span> {{drop.title}}</span>
         </mat-panel-title>
         <mat-panel-description class="description">
@@ -10,6 +10,6 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p [innerHTML]="drop.content | markdown" ></p>
+    <p [innerHTML]="drop.text | markdown" ></p>
 
 </mat-expansion-panel >

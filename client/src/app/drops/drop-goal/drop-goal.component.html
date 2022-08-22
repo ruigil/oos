@@ -33,9 +33,7 @@
         <mat-chip *ngIf="summary('note',null)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('note',null)}}</mat-chip>
     </mat-chip-list>
 
-    <mat-divider></mat-divider>
-
-    <div class="drop-footer">
+    <mat-action-row>
         <button mat-icon-button (click)="edit()">
             <mat-icon aria-label="Menu">edit</mat-icon>
         </button>
@@ -46,6 +44,6 @@
         <button mat-icon-button (click)="delete()">
             <mat-icon aria-label="Menu">delete</mat-icon>
         </button>
-    </div>
+    </mat-action-row>
 </mat-expansion-panel >
     
