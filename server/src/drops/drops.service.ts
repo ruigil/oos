@@ -1,20 +1,17 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { Drop } from 'src/models/drop';
-import { subHours, endOfYear, addMinutes, addDays, addWeeks, addMonths, addYears, addBusinessDays, parseISO, isWithinInterval, parse } from 'date-fns';
+import { addDays, addWeeks, addMonths, addYears, addBusinessDays, parseISO, isWithinInterval, parse } from 'date-fns';
 import { TagsService } from 'src/tags/tags.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DropEntity } from './drop.entity';
-import { DeleteResult, Repository, In } from 'typeorm';
-import { TagEntity } from 'src/tags/tag.entity';
 import { Cron } from '@nestjs/schedule';
 import { subMinutes } from 'date-fns';
-import { UserEntity } from 'src/user/user.entity';
+
 import { utcToZonedTime, zonedTimeToUtc, format } from 'date-fns-tz';
 import * as Realm from "realm";
 import { DropSchema, TagSchema, UserSchema } from 'src/models/schema';
 import { randomUUID } from 'crypto';
 import { Tag } from 'src/models/tag';
-import { de } from 'date-fns/locale';
+import { UserService } from 'src/user/user.service';
+
 
 @Injectable()
 export class DropsService implements OnModuleInit, OnModuleDestroy {
@@ -22,11 +19,7 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
 
   drops: Drop[] = [];
 
-  constructor(
-    @InjectRepository(DropEntity) private drepo: Repository<DropEntity>,
-    @InjectRepository(TagEntity) private trepo:Repository<TagEntity>,
-    @InjectRepository(UserEntity) private urepo:Repository<UserEntity>,
-    private ts: TagsService) {
+  constructor(private ts: TagsService, private us: UserService) {
   }
 
 
@@ -237,8 +230,8 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
     @Cron('0 0 * * * *')
     private async dayDrop() {
       const now = new Date().getTime();
-      const user = await this.urepo.findOneBy({ id: 'oos'});
-      const d = utcToZonedTime(now,user.settings.system.timezone);
+      const user = await this.us.get('oos');
+      const d = utcToZonedTime(now,user.settings.sys_timezone);
       if (d.getHours() == 0) {
         const tag = await this.ts.get("SYS_TYPE");
         this.upsert(new Drop({

@@ -1,21 +1,19 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { UserEntity } from 'src/user/user.entity';
+
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
 
-    constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>, private jwt: JwtService) { 
+    constructor( private jwt: JwtService) { 
 
     }
 
     async validateUser(useraddress: string, password: string): Promise<any> {
-        const foundUser = await this.userRepository.findOne({
-            where: { id: useraddress }
-        });
-        if (foundUser) {
+        //const foundUser = await this.userRepository.findOne({
+            //where: { id: useraddress }
+        //});
+        //if (foundUser) {
             /*
             if (await bcrypt.compare(password, foundUser.password)) {
                 const { password, ...result } = foundUser
@@ -24,7 +22,7 @@ export class AuthService {
  
             return null;
             */
-        }
+        //}
         return null
  
     }    

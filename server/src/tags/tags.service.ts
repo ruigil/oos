@@ -1,9 +1,7 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DropSchema, TagSchema, UserSchema } from 'src/models/schema';
-import { DeleteResult, In, Repository } from 'typeorm';
 import { Tag } from '../models/tag';
-import { TagEntity } from './tag.entity';
+import * as Realm from "realm";
 
 const TAGS = [
     new Tag({ _id:"NOTE_TYPE", name:"NOTE", type: "NOTE" }),
@@ -20,9 +18,7 @@ const TAGS = [
 export class TagsService implements OnModuleInit, OnModuleDestroy {
     realm:Realm;
 
-    constructor(
-        @InjectRepository(TagEntity) private trepo: Repository<TagEntity>,
-    ) {
+    constructor() {
     }
 
     onModuleDestroy() {
@@ -35,6 +31,7 @@ export class TagsService implements OnModuleInit, OnModuleDestroy {
             schema: [DropSchema, TagSchema, UserSchema],
             schemaVersion: 1
         });
+        
         TAGS.forEach( t => this.upsert(t) );
     }
 

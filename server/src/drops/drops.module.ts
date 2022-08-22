@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TagEntity } from 'src/tags/tag.entity';
+
 import { TagsModule } from 'src/tags/tags.module';
-import { UserEntity } from 'src/user/user.entity';
-import { DropEntity } from './drop.entity';
+import { UserModule } from 'src/user/user.module';
+
 import { DropsController } from './drops.controller';
 import { DropsService } from './drops.service';
 
 @Module({
-    imports: [TagsModule, TypeOrmModule.forFeature([DropEntity,TagEntity,UserEntity])],
+    imports: [TagsModule, UserModule],
     providers: [DropsService],
     controllers: [DropsController]
 })

@@ -1,7 +1,6 @@
 import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common';
-import { DeleteResult } from 'typeorm';
 import { Tag } from '../models/tag';
-import { TagEntity } from './tag.entity';
+
 import { TagsService } from './tags.service';
 
 @Controller('api/tags')
