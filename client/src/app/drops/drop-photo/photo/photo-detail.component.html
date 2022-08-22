@@ -9,6 +9,7 @@
         <input name="name" [(ngModel)]="drop.title" matInput placeholder="Title..." autofocus>
     </mat-form-field>
 
+    <mat-label>Photo</mat-label>
     <input type="file" required class="file-input" (change)="onFileSelected($event)" #fileUpload>
 
     <div class="file-upload">
