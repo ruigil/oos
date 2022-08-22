@@ -1,3 +1,3 @@
 # Server
 
-This is the server for OOS build with NestJS and SQLite3
+This is the server for OOS build with NestJS and Realm
