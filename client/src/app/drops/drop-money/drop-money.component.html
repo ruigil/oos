@@ -18,17 +18,16 @@
 
     <p [innerHtml]="drop.text | markdown"></p>
 
-
     <mat-action-row>
-        <button mat-icon-button (click)="edit()">
-            <mat-icon aria-label="Menu">edit</mat-icon>
+        <button mat-icon-button aria-label="Edit" (click)="edit()">
+            <mat-icon>edit</mat-icon>
         </button>
         <div class="spacer"></div>
         <mat-chip-list>
             <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
         </mat-chip-list>
-        <button mat-icon-button (click)="delete()">
-            <mat-icon aria-label="Menu">delete</mat-icon>
+        <button mat-icon-button aria-label="Delete" (click)="delete()">
+            <mat-icon>delete</mat-icon>
         </button>
     </mat-action-row>
 </mat-expansion-panel >
