@@ -53,15 +53,6 @@ export class GoalDetailComponent {
             
         });
     }
-        /*
-         0 -> totals tasks, 
-         1 -> total task completed
-         2 -> total expenses
-         3 -> total incomes
-         4 -> total rates
-         5 -> total rate values
-         6 -> total notes
-        */
 
     dropData(id:string) {
         const op = id ? "updated" : "added";
@@ -72,7 +63,7 @@ export class GoalDetailComponent {
         this.drop.content!.tags = 
             this.drop.tags
             .filter( t => !t._id.endsWith('_TYPE'))
-            .map( t =>  (gtags.get(t._id)) ? { id: t._id, totals: gtags.get(t._id) }: { id: t._id, totals: [0,0,0,0,0,0,0]} );
+            .map( t =>  (gtags.get(t._id)) ? { id: t._id, totals: gtags.get(t._id) }: { id: t._id, totals: [0,0,0,0,0,0,0,0]} );
         
         this.oos.putDrop(this.drop).then(
             (value) => {

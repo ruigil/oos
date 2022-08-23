@@ -87,15 +87,28 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
           try {
             const tags = drop.tags.map( t => this.realm.create('Tag', t, Realm.UpdateMode.Modified));
             if (drop.type === 'GOAL') {
-              const tg = JSON.stringify(drop.content.tags);
-              const d = this.realm.create<Drop>('Drop', {...drop, content:{ completed: drop.content.completed, createdAt:Date.now(), tags: tg }, tags: tags}, Realm.UpdateMode.Modified);
+              const d = this.realm.create<Drop>('Drop', {
+                ...drop, 
+                content: { 
+                  completed: drop.content.completed, 
+                  createdAt:Date.now(), 
+                  tags: JSON.stringify(drop.content.tags) 
+                }, 
+                tags: tags
+              }, Realm.UpdateMode.Modified);
+              
               const nd = d.toJSON();
               nd.content.tags = JSON.parse(nd.content.tags);
-              resolve(new Drop(nd));  
+              resolve(nd);  
             } else {
-              const d = this.realm.create<Drop>('Drop', {...drop, tags: tags}, Realm.UpdateMode.Modified);
+              
+              const d = this.realm.create<Drop>('Drop', {
+                ...drop, 
+                tags: tags
+              }, Realm.UpdateMode.Modified);
+              
               this.updateGoals();
-              resolve(new Drop(d.toJSON()));  
+              resolve(d.toJSON());  
             }
           } catch(e) {
             reject(e);
@@ -109,7 +122,11 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
       return new Promise<Drop>((resolve,reject) => {
         try {
           const d = this.realm.objectForPrimaryKey<Drop>('Drop', id);
-          resolve(new Drop(d.toJSON()));
+          const nd = d.toJSON();
+          if (d.type === 'GOAL') {
+            nd.content.tags = JSON.parse(nd.content.tags);
+          }
+          resolve(nd);
         } catch(e) {
           reject(e);
         }
@@ -179,16 +196,17 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
         const tagsQuery = goalTags.reduce( (acc,v,i) => acc + `${ i == 0 ? '' : 'OR'} tags.name == "${v}" ` ,"");
         const drops = this.realm.objects<Drop>('Drop').filtered(`type <> "GOAL" AND date >= ${goalCreated} AND date < ${goalDate} AND (${tagsQuery})`);
         
-        const totals = new Map( goalTags.map( t => [ t, [0,0,0,0,0,0,0] ]) )
+        const totals = new Map( goalTags.map( t => [ t, [0,0,0,0,0,0,0,0] ]) )
 
         //console.log("drops")
         //drops.forEach(d => out(d));
 
-        const countTotalType = (drop:Drop, tag:Tag) => {
-
+        drops.map(drop => drop.toJSON()).forEach( drop => drop.tags.forEach( tag => {
+          // count total type
           const tot = totals.get(tag._id);
           if (tot) {
             switch(drop.type) {
+              case "PHOTO" : tot[7]++; break;
               case "NOTE" : tot[6]++; break;
               case "RATE" : tot[4]++; tot[5] += drop.content.value; break;
               case "MONEY" : drop.content.type == 'expense' ? tot[2] += drop.content.value : tot[3] += drop.content.value; break;
@@ -196,9 +214,7 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
             }
             totals.set(tag._id,tot);
           }
-        }
-
-        drops.map(d => new Drop(d.toJSON())).forEach( d=> d.tags.forEach( t => countTotalType(d,t) ) )
+        }))
 
         goal.content.tags = [...totals.entries()].map( e => ({ id: e[0], totals: e[1]}))
         //console.log(goal.content.tags)
