@@ -12,7 +12,7 @@
         <input name="name" matInput [(ngModel)]="user.username" placeholder="name...">
     </mat-form-field>
     <mat-form-field>
-        <input name="description" matInput [(ngModel)]="user.bio" placeholder="bio...">
+        <textarea  name="description" matInput placeholder="Bio..." rows="4" [(ngModel)]="user.bio"></textarea>
     </mat-form-field>
     <mat-label>Avatar</mat-label>
     <input type="file" required class="file-input" (change)="onFileSelected($event)" #fileUpload>
