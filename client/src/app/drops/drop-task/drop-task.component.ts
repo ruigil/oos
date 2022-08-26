@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Drop } from 'src/app/model/drop';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
+import { DropTask } from './drop-task';
 
 @Component({
   selector: 'oos-drop-task',
@@ -9,7 +9,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
   styleUrls: ['./drop-task.component.scss']
 })
 export class DropTaskComponent implements OnInit {
-  @Input() drop:Drop = new Drop();
+  @Input() drop:DropTask = new DropTask();
 
   constructor(
     private oos: OceanOSService, 
@@ -19,8 +19,8 @@ export class DropTaskComponent implements OnInit {
   }
 
   complete(event:MouseEvent) {
-        this.drop.content!.completed = !this.drop.content!.completed;
-        this.drop.content!.date = Date.now();
+        this.drop.content.completed = !this.drop.content.completed;
+        this.drop.content.date = Date.now();
         event.stopPropagation();
         this.oos.putDrop(this.drop);
   }
