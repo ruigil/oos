@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
 import { Drop } from 'src/app/model/drop';
+import { DropMoney } from './drop-money';
 
 @Component({
   selector: 'oos-drop-money',
@@ -9,7 +10,7 @@ import { Drop } from 'src/app/model/drop';
   styleUrls: ['./drop-money.component.scss']
 })
 export class DropMoneyComponent implements OnInit {
-  @Input() drop:Drop = new Drop();
+  @Input() drop:DropMoney = new DropMoney();
 
   constructor(
     private router: Router, 

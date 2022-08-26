@@ -1,10 +1,12 @@
+import { IStream } from './oos-types'
+
 type publicStream = { description: string, skin: string }
 
-export class Stream {
+export class Stream implements IStream {
     _id: string = "";
     name: string = "";
     type: string = "PERSONAL";
-    content: any; // stream
+    content?: any; 
     uid: string = "";
     selected?: boolean = false;
     filtered?: boolean = false;

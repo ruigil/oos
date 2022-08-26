@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Drop } from 'src/app/model/drop';
+import { DropText } from './drop-text';
 import { OceanOSService } from '../../services/ocean-os.service';
+import { IDrop } from 'src/app/model/oos-types';
 
 @Component({
   selector: 'oos-drop-text',
@@ -9,7 +10,7 @@ import { OceanOSService } from '../../services/ocean-os.service';
   styleUrls: ['./drop-text.component.scss']
 })
 export class DropTextComponent implements OnInit {
-  @Input() drop:Drop = new Drop();
+  @Input() drop:DropText = new DropText();
 
   constructor(
     private oos: OceanOSService, 

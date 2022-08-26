@@ -2,9 +2,8 @@ import { Component, Input, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { OceanOSService } from 'src/app/services/ocean-os.service';
-import { Drop } from 'src/app/model/drop';
 import { Stream } from 'src/app/model/stream';
-import { compileDeclareInjectorFromMetadata } from '@angular/compiler';
+import { DropGoal } from './drop-goal';
 
 @Component({
   selector: 'oos-drop-goal',
@@ -12,7 +11,7 @@ import { compileDeclareInjectorFromMetadata } from '@angular/compiler';
   styleUrls: ['./drop-goal.component.scss']
 })
 export class DropGoalComponent implements AfterViewInit {
-  @Input() drop:Drop = new Drop();
+  @Input() drop:DropGoal = new DropGoal();
   totals: Array<number> = [0,0,0,0,0,0,0];
   streamTotals: Map<string,number[]> = new Map();
 

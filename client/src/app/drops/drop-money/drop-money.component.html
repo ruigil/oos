@@ -5,8 +5,8 @@
             <mat-icon class="money-icon">money</mat-icon>
             <mat-icon *ngIf="drop.recurrence !== 'none'">loop</mat-icon>
             <mat-chip-list>
-                <mat-chip class="{{drop.content?.type}}" >
-                    <span *ngIf="drop.content!.type === 'expense'">-</span>{{drop.content?.value}} {{drop.content?.currency}}
+                <mat-chip class="{{drop.content.type}}" >
+                    <span *ngIf="drop.content.type === 'expense'">-</span>{{drop.content.value}} {{drop.content.currency}}
                 </mat-chip> 
                 <span>{{drop.name}}</span>
             </mat-chip-list>

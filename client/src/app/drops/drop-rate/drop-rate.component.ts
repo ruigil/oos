@@ -1,7 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Drop } from 'src/app/model/drop';
+
 import { OceanOSService } from 'src/app/services/ocean-os.service';
+import { DropRate } from './drop-rate';
+
 
 @Component({
   selector: 'oos-drop-rate',
@@ -9,7 +11,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
   styleUrls: ['./drop-rate.component.scss']
 })
 export class DropRateComponent implements OnInit {
-  @Input() drop:Drop = new Drop();
+  @Input() drop:DropRate = new DropRate();
 
   constructor(
     private oos: OceanOSService, 

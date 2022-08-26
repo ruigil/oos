@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Drop } from 'src/app/model/drop';
 import { OceanOSService } from 'src/app/services/ocean-os.service';
+import { DropSystem } from './drop-system';
 
 @Component({
   selector: 'oos-drop-system',
@@ -8,7 +8,7 @@ import { OceanOSService } from 'src/app/services/ocean-os.service';
   styleUrls: ['./drop-system.component.scss']
 })
 export class DropSystemComponent implements OnInit {
-  @Input() drop:Drop = new Drop();
+  @Input() drop:DropSystem = new DropSystem();
   constructor(private oos:OceanOSService) { }
 
   ngOnInit(): void {

@@ -7,7 +7,7 @@
             <mat-chip-list [selectable]="true">
                 <mat-chip class="rate-bg">
                     {{drop.name}}
-                    <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate-icon" (click)="rate(key, $event)">{{ key <= drop.content!.value ? 'star_rate' : 'star_border'}}</mat-icon> 
+                    <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate-icon" (click)="rate(key, $event)">{{ key <= drop.content.value ? 'star_rate' : 'star_border'}}</mat-icon> 
                 </mat-chip>
             </mat-chip-list>
         </mat-panel-title>

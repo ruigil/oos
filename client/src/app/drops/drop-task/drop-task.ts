@@ -1,21 +1,20 @@
-import { IDrop, IStream } from './oos-types';
-import { Stream } from './stream';
+import { Stream } from 'src/app/model/stream';
+import { IDrop } from '../../model/oos-types';
 
-
-export class Drop implements IDrop {
+export class DropTask implements IDrop {
     _id: string = "";
     type: string = "";
     name: string = "";
     date: number = 0;
     uid: string = "";
-    content: any;//note | photo | money | task | system | rate | goal;
+    content: { description: string, date: any, completed: boolean } = { description: "", date: 0, completed: false }
     recurrence: string = "";
     clone: boolean = false;
     streams: Array<Stream> = [];
     color?: string = "";
     available?: boolean = true;
     
-    public constructor(init?:Partial<Drop>) {
+    public constructor(init?:Partial<DropTask>) {
         Object.assign(this, init);
     }    
 }

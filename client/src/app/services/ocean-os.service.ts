@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, map, combineLatest, ReplaySubject, of } from 'rxjs';
-import { Drop } from "../model/drop";
+import { IDrop, IStream} from "../model/oos-types";
 import { Stream } from "../model/stream";
+import { Drop } from "../model/drop";
 import { DateTimeService } from './date-time.service';
 
-import { HomeStream } from '../model/home-stream';
+import { HomeStream } from '../model/oos-types';
 import { HttpClient } from '@angular/common/http';
 import { User } from '../model/user';
 import {v4 as uuidv4} from 'uuid';
@@ -19,7 +20,7 @@ export class OceanOSService {
   private streams$: Subject<Stream[]> = new ReplaySubject<Stream[]>(1);
 
   private dropsMap: Map<string,Drop> = new Map();
-  private drops$: Subject<Drop[]> = new ReplaySubject<Drop[]>(1);
+  private drops$: Subject<IDrop[]> = new ReplaySubject<IDrop[]>(1);
 
   private user: User = new User();
   private user$: Subject<User> = new ReplaySubject<User>(1);
@@ -103,9 +104,8 @@ export class OceanOSService {
     });
   }
 
-  putDrop(drop:Drop):Promise<Object> {
-    drop.uid = this.user._id;
-    drop.color = this.previewColor(drop,this.startAt);
+  putDrop(d:IDrop):Promise<Object> {
+    const drop = new Drop({...d, uid: this.user._id, color: this.previewColor(d,this.startAt), streams: d.streams.map( s => new Stream({...s}))});
     if (drop._id === 'new') {
       drop._id = `urn:oos:0x0:${this.user._id}:drop:${uuidv4()}`;
     }
@@ -121,7 +121,7 @@ export class OceanOSService {
     });
   }
 
-  deleteStream(stream : Stream ): Promise<object> {
+  deleteStream(stream : IStream ): Promise<object> {
     return new Promise( (resolve,reject) => {
       this.http.delete(`/api/streams/${stream._id}`).subscribe( r => {
         if (r) {
@@ -136,7 +136,7 @@ export class OceanOSService {
     });
   }
 
-  deleteDrop(drop:Drop): Promise<object> {
+  deleteDrop(drop:IDrop): Promise<object> {
     return new Promise( (resolve,reject) => {
       this.http.delete(`/api/drops/${drop._id}`).subscribe( r => {
         if (r) {
@@ -152,7 +152,7 @@ export class OceanOSService {
     return this.streams$;
   }
   
-  drops():Observable<Drop[]> {
+  drops():Observable<IDrop[]> {
     return this.drops$;
   }
   
@@ -215,7 +215,7 @@ export class OceanOSService {
     }
   }
 
-  private previewColor(drop:Drop, startAt:number): string {    
+  private previewColor(drop:IDrop, startAt:number): string {    
       //if (drop.type === 'SYS') return 'system';
       const color = 
         this.dts.isWithin(drop.date,{ start: startAt, end: this.dts.addDay(startAt) }) ? 'day' :
@@ -253,8 +253,8 @@ export class OceanOSService {
     this.drops$.next( [...this.dropsMap.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
   }
 
-  getPublicStream(uid: string, streams:string[]):Observable<Drop[]> {
-    return this.http.post<Drop[]>(`/api/users/stream/`, { uid: uid, streams: streams });
+  getPublicStream(uid: string, streams:string[]):Observable<IDrop[]> {
+    return this.http.post<IDrop[]>(`/api/users/stream/`, { uid: uid, streams: streams });
   }
 
   getDrop(did:string):Drop {
@@ -284,7 +284,7 @@ export class OceanOSService {
       const availableDrops:Map<string,Drop> = 
         new Map([...this.dropsMap.values()].filter( 
           // for every filter tag, the drop must contain some
-          (d:Drop) => d.date < this.previewAt && fstreams.every( (fts:Stream) => d.streams.some( (s:Stream) => s._id === fts._id ))
+          (d:IDrop) => d.date < this.previewAt && fstreams.every( (fts:Stream) => d.streams.some( (s:IStream) => s._id === fts._id ))
         ).map( d => [d._id,d]) );
 
       // go through all the available drops, and collect unique streams.

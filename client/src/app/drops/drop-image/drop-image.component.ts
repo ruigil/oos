@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
-import { Drop } from 'src/app/model/drop';
 import { OceanOSService } from '../../services/ocean-os.service';
+import { DropImage } from './drop-image';
 
 @Component({
   selector: 'oos-drop-image',
@@ -10,7 +10,7 @@ import { OceanOSService } from '../../services/ocean-os.service';
 })
 export class DropImageComponent implements OnInit {
 
-  @Input() drop:Drop = new Drop();
+  @Input() drop:DropImage = new DropImage();
 
   constructor(
     private oos: OceanOSService, 

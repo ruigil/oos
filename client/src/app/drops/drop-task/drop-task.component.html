@@ -4,8 +4,8 @@
         <mat-panel-title><mat-icon class="task-icon">task</mat-icon>
             <mat-icon *ngIf="drop.recurrence != 'none'">loop</mat-icon>
             <mat-chip-list [selectable]="true">
-                <mat-chip [ngClass]="{'task-completed' : drop.content?.completed }" (click)="complete($event)">
-                    <mat-icon>{{drop.content?.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>
+                <mat-chip [ngClass]="{'task-completed' : drop.content.completed }" (click)="complete($event)">
+                    <mat-icon>{{drop.content.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>
                     <span>&nbsp;{{drop.name}}</span>
                 </mat-chip>
             </mat-chip-list>
@@ -15,7 +15,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p [innerHtml]="drop.content.text | markdown"></p>
+    <p [innerHtml]="drop.content.description | markdown"></p>
     
     <mat-action-row>
         <button mat-icon-button (click)="edit()">
