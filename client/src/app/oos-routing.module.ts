@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PublicStreamComponent } from './public-stream/public-stream.component';
 
 const routes: Routes = [
   {
@@ -9,8 +8,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'stream/:uid/:name', 
-    component: PublicStreamComponent,
+    path: 'public-stream', 
+    loadChildren: () => import('./public-streams/public-streams.module').then( m => m.PublicStreamsModule )
   },
   {
     path: 'home',

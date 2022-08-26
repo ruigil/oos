@@ -32,6 +32,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 
 import { FormatDatePipe } from './pipes/format-date.pipe';
 import { MarkdownPipe } from './pipes/markdown.pipe';
+import { TimeagoPipe } from './pipes/timeago.pipe';
 
 @NgModule({
   providers: [
@@ -69,11 +70,13 @@ import { MarkdownPipe } from './pipes/markdown.pipe';
   ],
   declarations: [
     FormatDatePipe,  
-    MarkdownPipe
+    MarkdownPipe,
+    TimeagoPipe
   ],
   exports: [
     FormatDatePipe, 
     MarkdownPipe,
+    TimeagoPipe,
     FormsModule,
     MatButtonModule,
     MatExpansionModule,

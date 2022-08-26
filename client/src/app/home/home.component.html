@@ -17,7 +17,7 @@
             </button>
         </mat-menu>    
         <mat-menu #streams="matMenu">
-            <button mat-menu-item *ngFor="let stream of publicStreams$ | async" routerLink="/stream/oos/{{stream.name}}">
+            <button mat-menu-item *ngFor="let stream of publicStreams$ | async" routerLink="/public-stream/oos/{{stream.name}}">
                 <mat-icon [ngClass]="stream.color">{{stream.icon}}</mat-icon>{{stream.name}}
             </button>
         </mat-menu>
