@@ -80,7 +80,6 @@ export class UsersService {
     }
     
     async findByTags(uid:string, streams:string[]):Promise<Drop[]> {
-        console.log(uid,streams)
         const now = Date.now();
         const streamsQuery = streams.map( s => `streams._id == "${s}"`).join(' AND ');
         const drops = this.realm.objects<Drop>('Drop').filtered(`uid == '${uid}' AND date < ${now} AND (${streamsQuery})`).sorted('date', true);

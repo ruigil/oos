@@ -54,7 +54,6 @@ export class UsersController {
     
     @Post('stream')
     async stream(@Body() streams: { uid: string, streams: string[] }):Promise<Drop[]> {
-        console.log(streams)
         return this.us.findByTags(streams.uid, streams.streams);
     }  
 }
