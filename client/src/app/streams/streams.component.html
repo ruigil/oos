@@ -1,0 +1,75 @@
+<div class="current-drops">
+<div class="title">Current Drop Streams</div>
+<mat-divider class="divider"></mat-divider>
+<mat-chip-list>
+    <mat-chip *ngFor="let stream of selectedStreams | async" (click)="unselectStream(stream)">
+        <mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>
+        {{stream.name}}
+    </mat-chip>
+</mat-chip-list>
+</div>
+<mat-tab-group mat-align-tabs="center" style="height:600px">
+    <mat-tab label="Personal Streams">
+        <div class="stream-component">
+            <div class="title">Available Personal Streams</div>
+            <mat-divider class="divider"></mat-divider>
+            <mat-chip-list>
+                <mat-chip *ngFor="let stream of personalStreams | async" (click)="selectStream(stream)" [removable]="true" (removed)="deleteStream(stream)">
+                    <mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>
+                    {{stream.name}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+            <mat-divider class="divider"></mat-divider>
+            <mat-form-field>
+                <mat-label>Personal Stream Name...</mat-label>
+                <input matInput [(ngModel)]="currentStream.name">
+            </mat-form-field>
+                
+            <button mat-flat-button color="accent" (click)="newStream('PERSONAL')" class="stream-button">
+                <mat-icon>add</mat-icon>  New Personal Stream
+            </button>
+        </div>
+    </mat-tab>
+    <mat-tab label="Public Streams">
+        <div class="stream-component">
+            <div class="title">Available Public Streams</div>
+            <mat-divider class="divider"></mat-divider>
+            <mat-chip-list class="mat-chip-list-stacked" aria-label="stream selection" class="stream-list">
+                <mat-chip class="stream-list" *ngFor="let stream of publicStreams | async" (click)="selectStream(stream)" [removable]="true" (removed)="deleteStream(stream)">
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                    <mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>{{stream.name}}&nbsp;-&nbsp;
+                    <!--
+                    <div [innerHtml]="tag.content.description.split('\n')[0] | markdown"></div>
+                    -->
+                </mat-chip>
+            </mat-chip-list>
+        <mat-divider class="divider"></mat-divider>
+            <mat-form-field>
+                <mat-label>Public Stream Name...</mat-label>
+                <input matInput [(ngModel)]="currentStream.name">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Public Stream Description...</mat-label>
+                <textarea  name="Description"  matInput placeholder="Enter stream description in markdown..." rows="4" [(ngModel)]="currentStream.content.description"></textarea>
+            </mat-form-field>
+                    
+            <button mat-flat-button color="accent" (click)="newStream('PUBLIC')" class="stream-button">
+                <mat-icon>add</mat-icon>  New Public Stream
+            </button>
+        </div>
+    </mat-tab>
+    <mat-tab label="People">        
+        <div class="stream-component">
+            <div class="title">Available People Streams</div>
+            <mat-divider class="divider"></mat-divider>
+            <mat-chip-list>
+                <mat-chip *ngFor="let stream of peopleStreams | async" (click)="selectStream(stream)" [removable]="true" (removed)="deleteStream(stream)">
+                    <mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>
+                    {{stream.name}}
+                    <mat-icon matChipRemove>cancel</mat-icon>
+                </mat-chip>
+            </mat-chip-list>
+        </div>
+    </mat-tab>
+</mat-tab-group>

@@ -6,7 +6,7 @@
             <mat-icon *ngIf="drop.recurrence != 'none'">loop</mat-icon>
             <mat-chip-list [selectable]="true">
                 <mat-chip class="rate-bg">
-                    {{drop.title}}
+                    {{drop.name}}
                     <mat-icon *ngFor="let key of [1,2,3,4,5]" class="rate-icon" (click)="rate(key, $event)">{{ key <= drop.content!.value ? 'star_rate' : 'star_border'}}</mat-icon> 
                 </mat-chip>
             </mat-chip-list>
@@ -16,7 +16,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p [innerHtml]="drop.text | markdown"></p>
+    <p [innerHtml]="drop.content.description | markdown"></p>
 
     <mat-action-row>
         <button mat-icon-button (click)="edit()">
@@ -24,7 +24,7 @@
         </button>
         <div class="spacer"></div>
         <mat-chip-list>
-            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
+            <mat-chip *ngFor="let t of drop.streams"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
         </mat-chip-list>    
         <button mat-icon-button (click)="delete()">
             <mat-icon aria-label="Menu">delete</mat-icon>

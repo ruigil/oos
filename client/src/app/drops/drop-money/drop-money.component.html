@@ -8,7 +8,7 @@
                 <mat-chip class="{{drop.content?.type}}" >
                     <span *ngIf="drop.content!.type === 'expense'">-</span>{{drop.content?.value}} {{drop.content?.currency}}
                 </mat-chip> 
-                <span>{{drop.title}}</span>
+                <span>{{drop.name}}</span>
             </mat-chip-list>
         </mat-panel-title>
         <mat-panel-description class="description">
@@ -16,7 +16,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p [innerHtml]="drop.text | markdown"></p>
+    <p [innerHtml]="drop.content.description | markdown"></p>
 
     <mat-action-row>
         <button mat-icon-button aria-label="Edit" (click)="edit()">
@@ -24,7 +24,7 @@
         </button>
         <div class="spacer"></div>
         <mat-chip-list>
-            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
+            <mat-chip *ngFor="let t of drop.streams"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
         </mat-chip-list>
         <button mat-icon-button aria-label="Delete" (click)="delete()">
             <mat-icon>delete</mat-icon>

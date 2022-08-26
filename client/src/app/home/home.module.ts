@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router';
 
 import { OOSCommonModule } from '../common.module';
 import { DropsModule } from '../drops/drops.module';
-import { TagsModule } from '../tags/tags.module';
+import { StreamsModule } from '../streams/streams.module';
 
 import { HomeComponent } from './home.component';
 
@@ -14,7 +14,7 @@ import { HomeComponent } from './home.component';
     CommonModule, 
     OOSCommonModule,
     DropsModule,
-    TagsModule,
+    StreamsModule,
     RouterModule.forChild([
       {
         path: '',

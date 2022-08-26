@@ -1,0 +1,9 @@
+<h1 mat-dialog-title>Delete Tag</h1>
+<div mat-dialog-content>
+  <p>Are you sure you want to delete the tag {{data.stream}} ?</p>
+  <p>This tag will be deleted from all the drops that use it...</p>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()" cdkFocusInitial>No</button>
+    <button mat-button [mat-dialog-close]="data.stream">Ok</button>
+</div>

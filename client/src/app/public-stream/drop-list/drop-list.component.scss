@@ -1,0 +1,68 @@
+
+.avatar {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+    vertical-align: middle;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.p-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.post{
+    max-width: 500px;
+    margin-left: auto;
+    margin-right:auto;
+    background-color: #08314b; 
+}
+
+.header {
+    max-width: 532px;
+    margin-left: auto;
+    margin-right:auto;
+    background-color: #08314b; 
+}
+  
+/*
+.post .mat-expansion-panel-header-title,
+.post .mat-expansion-panel-header-description {
+    //flex-basis: 0;
+}
+*/
+.post .mat-expansion-panel-header-description {
+    justify-content: right;
+    align-items: center;
+}
+
+// drop icon colors
+.goal-icon {
+    color: #3998f1;
+}
+.money-icon {
+    color: #ebff3c;
+}
+.note-icon {
+    color: #f83cff;
+}
+.rate-icon {
+    color: #ff874a;
+}
+.system-icon {
+    color: #fff;
+}
+.task-icon {
+    color: #69dd2f;
+}
+.stream-icon {
+    color: #2f80dd;
+}
+.photo-icon {
+    color: #7361d9;
+}
+.tag-list {
+    width: 100%;
+}

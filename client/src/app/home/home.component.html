@@ -5,11 +5,11 @@
         </button>
         <mat-menu #types="matMenu">
             <button mat-menu-item [matMenuTriggerFor]="dropTypes">
-                <mat-icon aria-label="Create">add</mat-icon>New
+                <mat-icon aria-label="Create">add</mat-icon>New Drop
             </button>
             <mat-divider></mat-divider>
             <button mat-menu-item [matMenuTriggerFor]="streams">
-                <mat-icon aria-label="Streams">stream</mat-icon>Streams
+                <mat-icon aria-label="Streams">stream</mat-icon>Public Streams
             </button>
             <mat-divider></mat-divider>
             <button mat-menu-item routerLink="/settings">
@@ -17,27 +17,27 @@
             </button>
         </mat-menu>    
         <mat-menu #streams="matMenu">
-            <button mat-menu-item *ngFor="let stream of streams$ | async" routerLink="/stream/oos/{{stream.name}}">
+            <button mat-menu-item *ngFor="let stream of publicStreams$ | async" routerLink="/stream/oos/{{stream.name}}">
                 <mat-icon [ngClass]="stream.color">{{stream.icon}}</mat-icon>{{stream.name}}
             </button>
         </mat-menu>
         <mat-menu #dropTypes="matMenu">
-            <button mat-menu-item aria-label="Note" routerLink="/note/edit/new">
-                <mat-icon class="note-icon">note</mat-icon> Note
+            <button mat-menu-item aria-label="Note" routerLink="/drop/text/edit/new">
+                <mat-icon class="note-icon">note</mat-icon> Text
             </button>
-            <button mat-menu-item aria-label="Photo" routerLink="/photo/edit/new">
-                <mat-icon class="photo-icon">photo</mat-icon> Photo
+            <button mat-menu-item aria-label="Photo" routerLink="/drop/image/edit/new">
+                <mat-icon class="photo-icon">photo</mat-icon> Image
             </button>
-            <button mat-menu-item aria-label="Transaction" routerLink="/money/edit/new">
-                <mat-icon class="money-icon" >money</mat-icon> Transaction
+            <button mat-menu-item aria-label="Transaction" routerLink="/drop/money/edit/new">
+                <mat-icon class="money-icon" >money</mat-icon> Money
             </button>
-            <button mat-menu-item aria-label="Task" routerLink="/task/edit/new">
+            <button mat-menu-item aria-label="Task" routerLink="/drop/task/edit/new">
                 <mat-icon class="task-icon" >task</mat-icon> Task
             </button>
-            <button mat-menu-item aria-label="Goal" routerLink="/goal/edit/new">
+            <button mat-menu-item aria-label="Goal" routerLink="/drop/goal/edit/new">
                 <mat-icon class="goal-icon">flag_circle</mat-icon> Goal
             </button>
-            <button mat-menu-item aria-label="Rate" routerLink="/rate/edit/new">
+            <button mat-menu-item aria-label="Rate" routerLink="/drop/rate/edit/new">
                 <mat-icon class="rate-icon">star</mat-icon> Rate
             </button>
         </mat-menu>
@@ -63,22 +63,22 @@
         <mat-form-field class="tag-list" >
             <mat-chip-list #chipList aria-label="Tag selection">
               <mat-chip
-                *ngFor="let tag of filteredTags$ | async" (removed)="unfilterTag(tag)">
-                <mat-icon [ngClass]="tag.color" matPrefix>{{tag.icon}}</mat-icon>{{tag.name}}
+                *ngFor="let stream of filteredStreams$ | async" (removed)="unfilterStream(stream)">
+                <mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>{{stream.name}}
                 <button matChipRemove>
                   <mat-icon>cancel</mat-icon>
                 </button>
               </mat-chip>
               <input
-                placeholder="Filter..."
+                placeholder="Stream filter..."
                 #tagInput
                 [matAutocomplete]="auto"
                 [matChipInputFor]="chipList"
-                (matChipInputTokenEnd)="filterTag($event)">
+                (matChipInputTokenEnd)="filterStream($event)">
             </mat-chip-list>
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="filterTag($event)">
-              <mat-option *ngFor="let tag of availableTags$ | async" [value]="tag">
-                <mat-icon class="{{tag.color}}">{{tag.icon}}</mat-icon>{{tag.name}}
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="filterStream($event)">
+              <mat-option *ngFor="let stream of availableStreams$ | async" [value]="stream">
+                <mat-icon class="{{stream.color}}">{{stream.icon}}</mat-icon>{{stream.name}}
               </mat-option>
             </mat-autocomplete>
           </mat-form-field>
@@ -89,25 +89,3 @@
         <oss-drops *cdkVirtualFor="let drop of drops" [drop]="drop"></oss-drops>
     </mat-accordion>          
 </cdk-virtual-scroll-viewport>
-<!-- fab buttons 
-<button class="fab" mat-fab aria-label="Add drop" (click)="toggleFab()">
-    <mat-icon>add</mat-icon>
-</button>
-<div [@openClose]="fabButtons ? 'fab-buttons-on' : 'fab-buttons-off' " [ngClass]="fabButtons ? 'fab-buttons-on' : 'fab-buttons-off'"> 
-    <button mat-mini-fab aria-label="Note" class="note-icon drop-fab" routerLink="/note/edit/new">
-        <mat-icon>note</mat-icon>
-    </button>
-    <button mat-mini-fab aria-label="Money" class="drop-fab money-icon" routerLink="/money/edit/new">
-        <mat-icon>monetization_on</mat-icon>
-    </button>
-    <button mat-mini-fab aria-label="Task" class="drop-fab task-icon" routerLink="/task/edit/new">
-        <mat-icon>folder</mat-icon>
-    </button>
-    <button mat-mini-fab aria-label="Goal" class="goal-icon drop-fab" routerLink="/goal/edit/new">
-        <mat-icon>center_focus_strong</mat-icon>
-    </button>
-    <button mat-mini-fab aria-label="Rate" class="rate-icon drop-fab" routerLink="/rate/edit/new">
-        <mat-icon>star_rate</mat-icon>
-    </button>
-</div>
--->

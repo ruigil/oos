@@ -4,25 +4,25 @@
         <mat-panel-title>
             <mat-icon class="goal-icon">flag_circle</mat-icon>
             <mat-icon *ngIf="drop.recurrence !== 'none'">loop</mat-icon>
-            {{drop.title}}
+            {{drop.name}}
         </mat-panel-title>
         <mat-panel-description class="description">
             {{drop.date | formatDate}}
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <div [innerHTML]="drop.text | markdown" ></div>
+    <div [innerHTML]="drop.content.description | markdown" ></div>
 
     <mat-divider></mat-divider>
     
-    <mat-chip-list *ngFor="let tag of tags()" class="tag-totals">
-        <mat-chip class="tag-summary"><mat-icon class="{{tag.color}}">{{tag.icon}}</mat-icon>{{tag.name}}</mat-chip>
-        <mat-chip *ngIf="summary('task',tag)" class="goal-summary"><mat-icon class="task-icon">task</mat-icon>{{summary('task',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('expense',tag)" class="expense"><mat-icon class="money-icon">money</mat-icon>{{summary('expense',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('income',tag)" class="income"><mat-icon class="money-icon">money</mat-icon>{{summary('income',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('rate',tag)" class="goal-summary"><mat-icon class="rate-icon">star</mat-icon>{{summary('rate',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('note',tag)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('note',tag)}}</mat-chip>
-        <mat-chip *ngIf="summary('photo',tag)" class="goal-summary"><mat-icon class="photo-icon">photo_camera</mat-icon>{{summary('photo',tag)}}</mat-chip>
+    <mat-chip-list *ngFor="let stream of streams()" class="tag-totals">
+        <mat-chip class="tag-summary"><mat-icon class="{{stream.color}}">{{stream.icon}}</mat-icon>{{stream.name}}</mat-chip>
+        <mat-chip *ngIf="summary('task',stream)" class="goal-summary"><mat-icon class="task-icon">task</mat-icon>{{summary('task',stream)}}</mat-chip>
+        <mat-chip *ngIf="summary('expense',stream)" class="expense"><mat-icon class="money-icon">money</mat-icon>{{summary('expense',stream)}}</mat-chip>
+        <mat-chip *ngIf="summary('income',stream)" class="income"><mat-icon class="money-icon">money</mat-icon>{{summary('income',stream)}}</mat-chip>
+        <mat-chip *ngIf="summary('rate',stream)" class="goal-summary"><mat-icon class="rate-icon">star</mat-icon>{{summary('rate',stream)}}</mat-chip>
+        <mat-chip *ngIf="summary('text',stream)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('text',stream)}}</mat-chip>
+        <mat-chip *ngIf="summary('image',stream)" class="goal-summary"><mat-icon class="photo-icon">photo_camera</mat-icon>{{summary('image',stream)}}</mat-chip>
     </mat-chip-list>
     <mat-divider></mat-divider>
     <mat-chip-list class="tag-totals">
@@ -31,8 +31,8 @@
         <mat-chip *ngIf="summary('expense',null)" class="expense"><mat-icon class="money-icon">money</mat-icon>{{summary('expense',null)}}</mat-chip>
         <mat-chip *ngIf="summary('income',null)" class="income"><mat-icon class="money-icon">money</mat-icon>{{summary('income',null)}}</mat-chip>
         <mat-chip *ngIf="summary('rate',null)" class="goal-summary"><mat-icon class="rate-icon">star</mat-icon>{{summary('rate',null)}}</mat-chip>
-        <mat-chip *ngIf="summary('note',null)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('note',null)}}</mat-chip>
-        <mat-chip *ngIf="summary('photo',null)" class="goal-summary"><mat-icon class="photo-icon">photo_camera</mat-icon>{{summary('photo',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('text',null)" class="goal-summary"><mat-icon class="note-icon">note</mat-icon>{{summary('text',null)}}</mat-chip>
+        <mat-chip *ngIf="summary('image',null)" class="goal-summary"><mat-icon class="photo-icon">photo_camera</mat-icon>{{summary('image',null)}}</mat-chip>
     </mat-chip-list>
 
     <mat-action-row>
@@ -41,7 +41,7 @@
         </button>
         <div class="spacer"></div>
         <mat-chip-list>
-            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon>{{t.name}}</mat-chip>
+            <mat-chip *ngFor="let t of drop.streams"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon>{{t.name}}</mat-chip>
         </mat-chip-list>
         <button mat-icon-button (click)="delete()">
             <mat-icon aria-label="Menu">delete</mat-icon>

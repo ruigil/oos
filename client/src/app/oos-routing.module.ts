@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { StreamComponent } from './stream/stream.component';
+import { PublicStreamComponent } from './public-stream/public-stream.component';
 
 const routes: Routes = [
   {
@@ -9,8 +9,8 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'stream/:uid/:id',
-    component: StreamComponent,
+    path: 'stream/:uid/:name', 
+    component: PublicStreamComponent,
   },
   {
     path: 'home',
@@ -18,31 +18,11 @@ const routes: Routes = [
   },
   {
     path: 'settings',
-    loadChildren: () => import('./settings/settings.module').then( m => m.SettingsModule )
+    loadChildren: () => import('./users/users.module').then( m => m.UsersModule )
   },
   {
-    path: 'note',
-    loadChildren: () => import('./drops/drop-note/note/note.module').then( m => m.NoteModule )
-  },
-  {
-    path: 'photo',
-    loadChildren: () => import('./drops/drop-photo/photo/photo.module').then( m => m.PhotoModule )
-  },
-  {
-    path: 'money',
-    loadChildren: () => import('./drops/drop-money/money/money.module').then( m => m.MoneyModule )
-  },
-  {
-    path: 'task',
-    loadChildren: () => import('./drops/drop-task/task/task.module').then( m => m.TaskModule )
-  },
-  {
-    path: 'rate',
-    loadChildren: () => import('./drops/drop-rate/rate/rate.module').then( m => m.RateModule )
-  },
-  {
-    path: 'goal',
-    loadChildren: () => import('./drops/drop-goal/goal/goal.module').then( m => m.GoalModule )
+    path: 'drop',
+    loadChildren: () => import('./drops/drops.module').then( m => m.DropsModule )
   }
 ];
 

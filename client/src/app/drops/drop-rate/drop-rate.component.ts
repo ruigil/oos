@@ -25,7 +25,7 @@ export class DropRateComponent implements OnInit {
   }  
 
   edit() {
-    this.router.navigate(['/rate/edit', this.drop._id]);
+    this.router.navigate(['/drop/rate/edit', this.drop._id]);
   }
 
   delete() {

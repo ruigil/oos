@@ -1,24 +1,23 @@
-import { Tag } from './tag';
+import { Stream } from './stream';
 
-type note = {  }
-type photo = { filename: string, mimetype:string, originalname:string }; 
-type money = { value: number, type: string, currency: string };
-type task = { date: any, completed: boolean };
-type system = {  }
-type rate = { value: number }
-export type goal = { completed: boolean, tags: Array<{id: string, totals: Array<number>}> };
+type text = {  text: string }
+type image = { description: string, filename: string, mimetype:string, originalname:string }; 
+type money = { description: string, value: number, type: string, currency: string };
+type task = { description: string, date: any, completed: boolean };
+type system = { text: string }
+type rate = { description:string, value: number }
+type goal = { description: string, completed: boolean, streams: Array<{id: string, totals: Array<number>}> };
 
 export class Drop {
     _id: string = "";
     type: string = "";
-    title: string = "";
-    text: string = "";
+    name: string = "";
+    date: number = 0;
+    uid: string = "";
     content?: any;//note | photo | money | task | system | rate | goal;
     recurrence: string = "";
     clone: boolean = false;
-    tags: Array<Tag> = [];
-    date: number = 0;
-    uid: string = "";
+    streams: Array<Stream> = [];
     color?: string = "";
     available?: boolean = true;
     

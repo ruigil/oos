@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { TagsModule } from 'src/tags/tags.module';
-import { UserModule } from 'src/user/user.module';
+import { StreamsModule } from 'src/streams/streams.module';
+import { UsersModule } from 'src/users/users.module';
 
 import { DropsController } from './drops.controller';
 import { DropsService } from './drops.service';
 
 @Module({
-    imports: [TagsModule, UserModule],
+    imports: [StreamsModule, UsersModule],
     providers: [DropsService],
     controllers: [DropsController]
 })

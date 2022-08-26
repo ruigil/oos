@@ -1,0 +1,70 @@
+<!-- drop list -->
+<mat-accordion >
+  <mat-expansion-panel class="header">
+  <mat-expansion-panel-header >
+    <mat-panel-title>{{stream.name}}</mat-panel-title>
+    <mat-panel-description></mat-panel-description>
+  </mat-expansion-panel-header>
+
+  <div [innerHTML]="stream.content.description | markdown"></div>
+
+  <mat-action-row>
+    <mat-form-field class="tag-list" >
+      <mat-chip-list #chipList aria-label="Stream selection">
+        <mat-chip
+          *ngFor="let stream of streamsSelected.values()" (removed)="unselectStream(stream)">
+          <mat-icon [ngClass]="stream.color" matPrefix>{{stream.icon}}</mat-icon>{{stream.name}}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip>
+        <input
+          placeholder="Filter..."
+          #tagInput
+          [matAutocomplete]="auto"
+          [matChipInputFor]="chipList">
+      </mat-chip-list>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectStream($event)">
+        <mat-option *ngFor="let stream of streamsAvailable.values()" [value]="stream">
+          <mat-icon class="{{stream.color}}">{{stream.icon}}</mat-icon>{{stream.name}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </mat-action-row>
+  </mat-expansion-panel>
+</mat-accordion>
+  
+<mat-divider class="p-divider"></mat-divider>
+
+<div *ngFor="let d of drops$ | async">
+  <mat-card class="post" >
+    <!--
+      style="background-color: #000;color: #fff;"
+    -->
+  
+    <mat-card-header>
+      <div mat-card-avatar class="avatar"></div>
+      <mat-card-title>{{d.name}}</mat-card-title>
+      <mat-card-subtitle>{{d.date | timeago}}</mat-card-subtitle>
+    </mat-card-header>
+  
+    <img *ngIf="d.type =='IMAGE_TYPE'" mat-card-image src="/api/file/{{d.content!.filename}}" alt="{{d.name}}">
+  
+    <mat-card-content>
+      <p [innerHTML]="d.content.text | markdown"></p>
+    </mat-card-content>
+  
+    <mat-card-actions>
+      <mat-chip-list>
+        <mat-chip *ngFor="let s of d.streams"><mat-icon class="{{s.color}}">{{s.icon}}</mat-icon> {{s.name}}</mat-chip> 
+      </mat-chip-list>
+      <button mat-icon-button >
+        <mat-icon aria-label="Favorite">favorite</mat-icon>
+      </button>
+      <button mat-icon-button >
+        <mat-icon aria-label="Comment">chat_bubble</mat-icon>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+  <mat-divider class="p-divider"></mat-divider>
+</div>

@@ -1,0 +1,7 @@
+<div *ngIf="stream$ | async as stream" class="start" style="background-color: #0d7594;">
+  <button mat-icon-button style="color: #0d7594;" class="home" aria-label="home" routerLink="/home">
+    <mat-icon >home</mat-icon>
+  </button>
+  <oos-skin *ngIf="stream$ | async as stream and stream.content.skin == 'oos'"></oos-skin>
+  <drop-list [stream]="stream"></drop-list>
+</div>

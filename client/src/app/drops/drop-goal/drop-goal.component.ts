@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 
 import { OceanOSService } from 'src/app/services/ocean-os.service';
 import { Drop } from 'src/app/model/drop';
-import { Tag } from 'src/app/model/tag';
+import { Stream } from 'src/app/model/stream';
 import { compileDeclareInjectorFromMetadata } from '@angular/compiler';
 
 @Component({
@@ -14,29 +14,25 @@ import { compileDeclareInjectorFromMetadata } from '@angular/compiler';
 export class DropGoalComponent implements AfterViewInit {
   @Input() drop:Drop = new Drop();
   totals: Array<number> = [0,0,0,0,0,0,0];
-  tagTotals: Map<string,number[]> = new Map();
+  streamTotals: Map<string,number[]> = new Map();
 
-  constructor(
-    private oos:OceanOSService, 
-    private router:Router) { 
-
-    }
+  constructor(private oos:OceanOSService, private router:Router) { }
         /*
-         0 -> totals tasks, 
+         0 -> totals tasks,
          1 -> total task completed
          2 -> total expenses
          3 -> total incomes
          4 -> total rates
          5 -> total rate values
-         6 -> total notes
-         7 -> total photos
+         6 -> total texts
+         7 -> total images
         */
 
   ngAfterViewInit(): void {
     // construct a map with the totals for each tag
-    this.tagTotals = new Map(this.drop.content!.tags.map((t:any) => [t.id,t.totals]))
+    this.streamTotals = new Map(this.drop.content!.streams.map((t:any) => [t.id,t.totals]))
     // construct an entry for totals, there is double count if a drop belongs to more than one tag
-    this.tagTotals.set('all', [...this.tagTotals.values()].reduce( (acc,v) => acc.map( (t,i) =>  t + v[i]), [0,0,0,0,0,0,0,0] ) )
+    this.streamTotals.set('all', [...this.streamTotals.values()].reduce( (acc,v) => acc.map( (t,i) =>  t + v[i]), [0,0,0,0,0,0,0,0] ) )
 }
 
   edit() {
@@ -47,11 +43,11 @@ export class DropGoalComponent implements AfterViewInit {
     this.oos.deleteDrop(this.drop);
   }
 
-  tags():Tag[] {
-    return this.drop.tags.filter( t => !t._id.endsWith('_TYPE'));
+  streams():Stream[] {
+    return this.drop.streams.filter( t => t.type.endsWith('_TYPE'));
   }
 
-  summary(type:string, tag:Tag | null) {
+  summary(type:string, stream:Stream | null) {
     
     const task = (total:number,completed:number):string => `${total} of ${completed} (${((completed/total)*100 ).toFixed(2)} %)` 
 
@@ -61,19 +57,19 @@ export class DropGoalComponent implements AfterViewInit {
 
     const rate = (total:number, values: number) => `${total} (${ (values/total).toFixed(2) } avg)`
 
-    const note = (total:number) => `${total}`
+    const text = (total:number) => `${total}`
 
-    const photo = (total:number) => `${total}`
+    const image = (total:number) => `${total}`
 
-    const totals = (tag ? this.tagTotals.get(tag._id) : this.tagTotals.get('all')) || [0,0,0,0,0,0,0]; 
+    const totals = (stream ? this.streamTotals.get(stream._id) : this.streamTotals.get('all')) || [0,0,0,0,0,0,0,0]; 
 
     return  type === 'task' && totals[0] != 0 ?  task(totals[0],totals[1]) :
             type === 'expense' && totals[2] != 0 ? expense(totals[2]) :
             type === 'income' && totals[3] != 0 ? income(totals[3]) :
             type === 'rate' && totals[4] != 0 ? rate(totals[4],totals[5]) :
-            type === 'note' && totals[6] != 0 ? note (totals[6]) :
-            type === 'photo' && totals[7] != 0 ? note (totals[7]) :
-            null;
+            type === 'text' && totals[6] != 0 ? text (totals[6]) :
+            type === 'image' && totals[7] != 0 ? image (totals[7]) :
+            "";
   }
 
 }

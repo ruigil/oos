@@ -19,7 +19,7 @@ export class DropMoneyComponent implements OnInit {
   }
 
   edit() {
-    this.router.navigate(['/money/edit', this.drop._id]);
+    this.router.navigate(['/drop/money/edit', this.drop._id]);
   }
 
   delete() {

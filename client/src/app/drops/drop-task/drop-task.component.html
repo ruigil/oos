@@ -6,7 +6,7 @@
             <mat-chip-list [selectable]="true">
                 <mat-chip [ngClass]="{'task-completed' : drop.content?.completed }" (click)="complete($event)">
                     <mat-icon>{{drop.content?.completed ? 'check_circle_outline' : 'panorama_fish_eye'}}</mat-icon>
-                    <span>&nbsp;{{drop.title}}</span>
+                    <span>&nbsp;{{drop.name}}</span>
                 </mat-chip>
             </mat-chip-list>
         </mat-panel-title>
@@ -15,7 +15,7 @@
         </mat-panel-description>
     </mat-expansion-panel-header>
 
-    <p [innerHtml]="drop.text | markdown"></p>
+    <p [innerHtml]="drop.content.text | markdown"></p>
     
     <mat-action-row>
         <button mat-icon-button (click)="edit()">
@@ -23,7 +23,7 @@
         </button>
         <div class="spacer"></div>
         <mat-chip-list>
-            <mat-chip *ngFor="let t of drop.tags"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
+            <mat-chip *ngFor="let t of drop.streams"><mat-icon class="{{t.color}}">{{t.icon}}</mat-icon> {{t.name}}</mat-chip> 
         </mat-chip-list>
     
         <button mat-icon-button (click)="delete()">

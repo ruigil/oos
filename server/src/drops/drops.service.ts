@@ -1,16 +1,16 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Drop } from 'src/models/drop';
-import { addDays, addWeeks, addMonths, addYears, addBusinessDays, parseISO, isWithinInterval, parse } from 'date-fns';
-import { TagsService } from 'src/tags/tags.service';
+import { addDays, addWeeks, addMonths, addYears, addBusinessDays } from 'date-fns';
 import { Cron } from '@nestjs/schedule';
 import { subMinutes } from 'date-fns';
+import { randomUUID } from 'crypto';
 
 import { utcToZonedTime, zonedTimeToUtc, format } from 'date-fns-tz';
+import { DropSchema, StreamSchema, UserSchema } from 'src/models/schema';
+import { StreamsService } from 'src/streams/streams.service';
+import { UsersService } from 'src/users/users.service';
+import { Drop } from 'src/models/drop';
+
 import * as Realm from "realm";
-import { DropSchema, TagSchema, UserSchema } from 'src/models/schema';
-import { randomUUID } from 'crypto';
-import { Tag } from 'src/models/tag';
-import { UserService } from 'src/user/user.service';
 
 
 @Injectable()
@@ -19,7 +19,7 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
 
   drops: Drop[] = [];
 
-  constructor(private ts: TagsService, private us: UserService) {
+  constructor(private ts: StreamsService, private us: UsersService) {
   }
 
 
@@ -29,9 +29,9 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleInit() {
     this.realm = await Realm.open({
-      path: 'db/oos.realm',
-      schema: [DropSchema, TagSchema, UserSchema],
-      schemaVersion: 1
+      path: '/oos/db/oos.realm',
+      schema: [DropSchema, StreamSchema, UserSchema],
+      schemaVersion: 2
     });
   }
 
@@ -85,26 +85,27 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
       return new Promise<Drop>((resolve,reject) => {
         this.realm.write(() => {          
           try {
-            const tags = drop.tags.map( t => this.realm.create('Tag', t, Realm.UpdateMode.Modified));
-            if (drop.type === 'GOAL') {
+            const streams = drop.streams.map( t => this.realm.create('Stream', t, Realm.UpdateMode.Modified));
+            if (drop.type === 'GOAL_TYPE') {
               const d = this.realm.create<Drop>('Drop', {
                 ...drop, 
-                content: { 
+                content: {
+                  text: drop.content.text, 
                   completed: drop.content.completed, 
                   createdAt:Date.now(), 
-                  tags: JSON.stringify(drop.content.tags) 
+                  streams: JSON.stringify(drop.content.streams)
                 }, 
-                tags: tags
+                streams: streams
               }, Realm.UpdateMode.Modified);
               
               const nd = d.toJSON();
-              nd.content.tags = JSON.parse(nd.content.tags);
+              nd.content.streams = JSON.parse(nd.content.streams);
               resolve(nd);  
             } else {
               
               const d = this.realm.create<Drop>('Drop', {
                 ...drop, 
-                tags: tags
+                streams: streams
               }, Realm.UpdateMode.Modified);
               
               this.updateGoals();
@@ -123,8 +124,8 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
         try {
           const d = this.realm.objectForPrimaryKey<Drop>('Drop', id);
           const nd = d.toJSON();
-          if (d.type === 'GOAL') {
-            nd.content.tags = JSON.parse(nd.content.tags);
+          if (d.type === 'GOAL_TYPE') {
+            nd.content.streams = JSON.parse(nd.content.streams);
           }
           resolve(nd);
         } catch(e) {
@@ -153,8 +154,8 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
           const drops = this.realm.objects<Drop>('Drop');
           resolve(drops.map( d => { 
             const nd = d.toJSON();
-            if (d.type === 'GOAL') {
-              nd.content.tags = JSON.parse(nd.content.tags);
+            if (d.type === 'GOAL_TYPE') {
+              nd.content.streams = JSON.parse(nd.content.streams);
             }
             return new Drop(nd) 
           } ));
@@ -164,21 +165,13 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
       });
     }
 
-    async findByTags(uid:string, tags:string[]):Promise<Drop[]> {
-      //console.log(uid,tags)
-      const now = Date.now();
-      const tagsQuery = tags.map( t => `tags._id == "${t}"`).join(' AND ');
-      const drops = this.realm.objects<Drop>('Drop').filtered(`uid == '${uid}' AND date < ${now} AND (${tagsQuery})`).sorted('date', true);
-      return Promise.resolve(drops.map( d => d.toJSON()));
-    }
-
     private async updateGoals() {
       const now = Date.now();
 
       const out = (d:Drop) => {
-        console.log(`drop [${d.type}] [${d.title}]`)
-        if (d.tags) console.log(`tags [${ d.tags.map(t => t._id+',' ) }]`)
-        if (d.content?.tags) console.log(`tags [${ JSON.parse(d.content.tags).map(t => t.id+',' ) }]`)
+        console.log(`drop [${d.type}] [${d.name}]`)
+        if (d.streams) console.log(`streams [${ d.streams.map(s => s._id+',' ) }]`)
+        if (d.content?.streams) console.log(`goal streams [${ JSON.parse(d.content.streams).map(s => s.id+',' ) }]`)
       }
       
       const goals = this.realm.objects<Drop>('Drop').filtered('date >= $0 AND type = "GOAL"', now);      
@@ -188,22 +181,22 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
 
       for (let g of goals) {
         const goal = new Drop(g.toJSON());
-        goal.content.tags = JSON.parse(goal.content.tags);
+        goal.content.streams = JSON.parse(goal.content.streams);
         const goalDate = goal.date;
         const goalCreated:number = goal.content.createdAt;
-        const goalTags = goal.content.tags.map( t => t.id);
+        const goalStreams = goal.content.streams.map( s => s.id);
 
-        const tagsQuery = goalTags.reduce( (acc,v,i) => acc + `${ i == 0 ? '' : 'OR'} tags.name == "${v}" ` ,"");
-        const drops = this.realm.objects<Drop>('Drop').filtered(`type <> "GOAL" AND date >= ${goalCreated} AND date < ${goalDate} AND (${tagsQuery})`);
+        const streamsQuery = goalStreams.reduce( (acc,v,i) => acc + `${ i == 0 ? '' : 'OR'} tags.name == "${v}" ` ,"");
+        const drops = this.realm.objects<Drop>('Drop').filtered(`type <> "GOAL" AND date >= ${goalCreated} AND date < ${goalDate} AND (${streamsQuery})`);
         
-        const totals = new Map( goalTags.map( t => [ t, [0,0,0,0,0,0,0,0] ]) )
+        const totals = new Map( goalStreams.map( t => [ t, [0,0,0,0,0,0,0,0] ]) )
 
         //console.log("drops")
         //drops.forEach(d => out(d));
 
-        drops.map(drop => drop.toJSON()).forEach( drop => drop.tags.forEach( tag => {
+        drops.map(drop => drop.toJSON()).forEach( drop => drop.streams.forEach( stream => {
           // count total type
-          const tot = totals.get(tag._id);
+          const tot = totals.get(stream._id);
           if (tot) {
             switch(drop.type) {
               case "PHOTO" : tot[7]++; break;
@@ -212,18 +205,19 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
               case "MONEY" : drop.content.type == 'expense' ? tot[2] += drop.content.value : tot[3] += drop.content.value; break;
               case "TASK" : tot[0]++; tot[1] += drop.content.completed ? 1 : 0; break;
             }
-            totals.set(tag._id,tot);
+            totals.set(stream._id,tot);
           }
         }))
 
-        goal.content.tags = [...totals.entries()].map( e => ({ id: e[0], totals: e[1]}))
-        //console.log(goal.content.tags)
+        goal.content.streams = [...totals.entries()].map( e => ({ id: e[0], totals: e[1]}))
+        //console.log(goal.content.streams)
         const d = this.realm.create<Drop>('Drop', {
           ...goal, 
           content: { 
+            text: goal.content.text,
             completed: goal.content.completed,
             createdAt: goal.content.createdAt, 
-            tags: JSON.stringify(goal.content.tags) 
+            streams: JSON.stringify(goal.content.streams) 
           }, 
         }, 
         Realm.UpdateMode.Modified);
@@ -243,20 +237,20 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
         */
 
 
+    // TODO: Rethink this as a voluntary subscription that the user make to a service.
     @Cron('0 0 * * * *')
     private async dayDrop() {
       const now = new Date().getTime();
       const user = await this.us.get('oos');
       const d = utcToZonedTime(now,user.settings.sys_timezone);
       if (d.getHours() == 0) {
-        const tag = await this.ts.get("SYS_TYPE");
+        const stream = await this.ts.get("SYS_TYPE");
         this.upsert(new Drop({
           _id: randomUUID(),
           type: "SYS",
-          title: format(d,"eeee dd MMMM"),
-          text: format(d,"eeee dd MMMM"),
-          content: { },
-          tags: [ tag ],
+          name: format(d,"eeee dd MMMM"),
+          content: { text: format(d,"eeee dd MMMM") },
+          streams: [ stream ],
           date: now,
           recurrence: 'none'
         }))
@@ -281,11 +275,26 @@ export class DropsService implements OnModuleInit, OnModuleDestroy {
                       d.recurrence === 'weekdays' ? addBusinessDays(d.date,1).getTime() :
                       d.date;
           drop._id = randomUUID();
-          drop.text = (d.clone ? d.text : "")
+
+          const reset = (type:string) => {
+            // TODO: Probably content types, should be aligned with mimetypes.
+            switch (type) {
+              case "TEXT": return { text: "" }; 
+              case "IMAGE": return { description: "", filename: "", mimetype: "", originalname: "" }; 
+              case "MONEY": return { description: "", value: 0, type: "expense", currency: "" }; 
+              case "TASK": return { description: "", date: 0, completed: false }; 
+              case "RATE": return { description: "", value: 0 }; 
+              case "GOAL": return { 
+                text: "", 
+                completed: false, 
+                createdAt: Date.now(), 
+                streams: JSON.stringify( JSON.parse(drop.content.streams).map( s => ({id: s.id, totals: [0,0,0,0,0,0,0,0]}) ) ) }; 
+            }
+            return {};
+          }
+
+          drop.content = ( d.clone ? d.content : reset(drop.type) )
           
-          if (d.type === 'RATE') drop.content.value = 0;
-          if (d.type === 'TASK') drop.content.completed = false;
-          if (d.type === 'GOAL') drop.content.createdAt = Date.now();
           this.upsert(drop);
         })
       };

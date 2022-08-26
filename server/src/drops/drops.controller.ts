@@ -7,11 +7,6 @@ export class DropsController {
 
     constructor(private ds: DropsService) {}
 
-    @Post('stream')
-    async stream(@Body() tags: { uid: string, tags: [] }):Promise<Drop[]> {
-        return this.ds.findByTags(tags.uid, tags.tags);
-    }
-
     @Get()
     async findAll(): Promise<Drop[]> {
         return this.ds.findAll();        

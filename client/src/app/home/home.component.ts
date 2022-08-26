@@ -4,7 +4,7 @@ import { DateTimeService } from '../services/date-time.service';
 import { OceanOSService } from '../services/ocean-os.service';
 
 import { Drop } from '../model/drop';
-import { Tag } from '../model/tag';
+import { Stream } from '../model/stream';
 import { HomeStream } from '../model/home-stream';
 
 @Component({
@@ -15,20 +15,20 @@ import { HomeStream } from '../model/home-stream';
 export class HomeComponent {
 
   stream: HomeStream = { startAt: 0, preview: 'day' }
-  availableTags$: Observable<Tag[]>;
-  filteredTags$: Observable<Tag[]>;
-  streams$:Observable<Tag[]>;
+  availableStreams$: Observable<Stream[]>;
+  filteredStreams$: Observable<Stream[]>;
+  publicStreams$:Observable<Stream[]>;
   currentDate$: Observable<string>;
   drops: Observable<Drop[]>;
-  tags:Observable<Tag[]>;
+  tags:Observable<Stream[]>;
   
   constructor(private oos: OceanOSService, private dts: DateTimeService) {
-    this.tags = this.oos.tags();
+    this.tags = this.oos.streams();
     this.drops = this.oos.drops();
 
-    this.filteredTags$ = this.oos.filteredTags();
-    this.availableTags$ = this.oos.availableTags();
-    this.streams$ = this.oos.tags().pipe( map( ts => ts.filter( t => t.type === "STREAM" )));
+    this.filteredStreams$ = this.oos.filteredStreams();
+    this.availableStreams$ = this.oos.availableStreams();
+    this.publicStreams$ = this.oos.streams().pipe( map( ts => ts.filter( t => t.type === "PUBLIC" )));
 
     this.currentDate$ = interval(1000).pipe( 
       map( t => this.dts.isToday(this.stream.startAt) ? 
@@ -53,12 +53,12 @@ export class HomeComponent {
     this.oos.fromTime(this.stream);
   }
 
-  filterTag(event:any) {
-    this.oos.filterTag(event.option.value);
+  filterStream(event:any) {
+    this.oos.filterStream(event.option.value);
   }
 
-  unfilterTag(tag:Tag) {
-    this.oos.unfilterTag(tag);
+  unfilterStream(stream:Stream) {
+    this.oos.unfilterStream(stream);
   }
 
 }

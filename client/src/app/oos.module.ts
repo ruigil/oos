@@ -9,7 +9,9 @@ import { ServiceWorkerModule } from '@angular/service-worker';
  
 import { OOSRoutingModule } from './oos-routing.module';
 import { OOSComponent } from './oos.component';
-import { StreamComponent } from './stream/stream.component';
+import { PublicStreamComponent } from './public-stream/public-stream.component';
+import { DropListComponent } from './public-stream/drop-list/drop-list.component';
+import { OOSSkinComponent } from './public-stream/oos-skin/oos-skin.component';
 import { OOSCommonModule } from './common.module';
 import { TimeagoPipe } from './pipes/timeago.pipe';
 
@@ -19,7 +21,9 @@ import { TimeagoPipe } from './pipes/timeago.pipe';
 @NgModule({
   declarations: [
     OOSComponent,
-    StreamComponent,
+    PublicStreamComponent,
+    DropListComponent,
+    OOSSkinComponent,
     TimeagoPipe
   ],
   imports: [

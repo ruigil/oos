@@ -1,0 +1,72 @@
+<mat-toolbar class="toolbar" color="primary">
+    <button mat-icon-button routerLink="/home">
+        <mat-icon aria-label="Back">arrow_back</mat-icon>
+    </button>
+  <span>Settings</span>
+</mat-toolbar>
+<div class="form-elements">
+    <mat-label class="section-title"><b>User</b></mat-label>
+    
+    <mat-divider class="section"></mat-divider>
+    <mat-form-field>
+        <input name="name" matInput [(ngModel)]="user.username" placeholder="name...">
+    </mat-form-field>
+    <mat-form-field>
+        <textarea  name="Bio" matInput placeholder="Bio..." rows="4" [(ngModel)]="user.bio"></textarea>
+    </mat-form-field>
+    <mat-label>Avatar</mat-label>
+    <input type="file" required class="file-input" (change)="onFileSelected($event)" #fileUpload>
+
+    <div class="file-upload">
+        <button mat-mini-fab color="accent" class="upload-btn" (click)="fileUpload.click()">
+            <mat-icon>attach_file</mat-icon>
+        </button>
+        &nbsp;{{fileName || "No file uploaded yet."}}
+    </div>
+    <div class="progress">
+        <mat-progress-bar class="progress-bar" mode="determinate" [value]="uploadProgress" *ngIf="uploadProgress != 0">
+        </mat-progress-bar>
+        <mat-icon class="cancel-upload" (click)="cancelUpload()" *ngIf="uploadProgress">cancel</mat-icon>
+    </div>
+    <mat-label class="section-title"><b>Transaction</b></mat-label>
+    <mat-divider class="section"></mat-divider>
+    <mat-form-field>
+        <mat-label>Currency</mat-label>
+        <mat-select [(ngModel)]="user.settings.currency">
+            <mat-option *ngFor="let currency of currencies" [value]="currency.value">
+            {{currency.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+    <mat-label class="section-title"><b>Home</b></mat-label>
+    <mat-divider class="section"></mat-divider>
+    <mat-form-field>
+        <mat-label>Default Preview</mat-label>
+        <mat-select [(ngModel)]="user.settings.preview">
+            <mat-option *ngFor="let preview of previews" [value]="preview.value">
+            {{preview.name}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    
+    <mat-label class="section-title"><b>System</b></mat-label>
+    
+    <mat-divider class="section"></mat-divider>
+    <mat-form-field>
+        <mat-label>Timezone</mat-label>
+        <mat-select [(ngModel)]="user.settings.sys_timezone">
+            <mat-option *ngFor="let tz of timezones" [value]="tz">
+            {{tz}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+
+
+    <mat-slide-toggle class="slide" [(ngModel)]="user.settings.sys_day">Current Day is {{ user.settings.sys_day ? 'Active' : 'Inactive' }}</mat-slide-toggle>
+      
+    <mat-divider class="section"></mat-divider>
+    <button mat-flat-button color="accent" [disabled]="btnDisabled" (click)="saveSettings()">
+        <mat-icon>save</mat-icon> Save Settings
+    </button>
+</div>

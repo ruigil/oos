@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Subject, Observable, map, combineLatest, ReplaySubject, of } from 'rxjs';
 import { Drop } from "../model/drop";
-import { Tag } from "../model/tag";
+import { Stream } from "../model/stream";
 import { DateTimeService } from './date-time.service';
 
 import { HomeStream } from '../model/home-stream';
@@ -15,64 +15,65 @@ import {v4 as uuidv4} from 'uuid';
 })
 export class OceanOSService {
 
-  private tagsV: Map<string,Tag> = new Map();
-  private tags$: Subject<Tag[]> = new ReplaySubject<Tag[]>(1);
+  private streamsMap: Map<string,Stream> = new Map();
+  private streams$: Subject<Stream[]> = new ReplaySubject<Stream[]>(1);
 
-  private dropsV: Map<string,Drop> = new Map();
+  private dropsMap: Map<string,Drop> = new Map();
   private drops$: Subject<Drop[]> = new ReplaySubject<Drop[]>(1);
 
-  private userV: User = new User();
-  private settings$: Subject<User> = new ReplaySubject<User>(1);
+  private user: User = new User();
+  private user$: Subject<User> = new ReplaySubject<User>(1);
 
   private previewAt: number = 0;
   private startAt: number = 0;
-  private tagsIC: Map<string,{icon:string,color:string}> = new Map([
-    ["NOTE",{icon:"note",color:"note-icon"}],
-    ["RATE",{icon:"star",color:"rate-icon"}],
-    ["PHOTO",{icon:"photo",color:"photo-icon"}],
-    ["GOAL",{icon:"flag_circle",color:"goal-icon"}],
-    ["TASK",{icon:"task",color:"task-icon"}],
-    ["MONEY",{icon:"money",color:"money-icon"}],
-    ["STREAM",{icon:"stream",color:"stream-icon"}],
-    ["SYS",{icon:"smart_toy",color:"system-icon"}],    
-    ["USER1",{icon:"bookmark",color:"dark"}],
-    ["USER2",{icon:"bookmark",color:"light"}],
-    ["USER3",{icon:"bookmark",color:"red"}],
-    ["USER4",{icon:"bookmark",color:"blue"}],
-    ["USER5",{icon:"bookmark",color:"green"}],
-    ["USER6",{icon:"bookmark",color:"yellow"}]
+
+  private streamStyle: Map<string,{icon:string,color:string}> = new Map([
+    ["TEXT_TYPE",{icon:"note",color:"note-icon"}],
+    ["RATE_TYPE",{icon:"star",color:"rate-icon"}],
+    ["IMAGE_TYPE",{icon:"photo_camera",color:"photo-icon"}],
+    ["GOAL_TYPE",{icon:"flag_circle",color:"goal-icon"}],
+    ["TASK_TYPE",{icon:"task",color:"task-icon"}],
+    ["MONEY_TYPE",{icon:"money",color:"money-icon"}],
+    ["SYSTEM_TYPE",{icon:"smart_toy",color:"system-icon"}],    
+    ["PUBLIC",{icon:"stream",color:"stream-icon"}],
+    ["PERSONAL",{icon:"person_pin_circle",color:"dark"}],
   ]);
+
+  private streamType: Map<string,Stream> = new Map();
 
   constructor(private dts:DateTimeService, private http:HttpClient) {
 
     combineLatest([
-      this.http.get<Tag[]>(`/api/tags`),
+      this.http.get<Stream[]>(`/api/streams`),
       this.http.get<Drop[]>(`/api/drops`),
-      this.http.get<User>(`/api/user/oos`)]).subscribe( ([ts,ds,us]) => {
-        
-        this.tagsV = new Map( ts.map( t => new Tag({
-          ...t, 
+      this.http.get<User>(`/api/users/oos`)]).subscribe( ([ss,ds,us]) => {
+
+        this.streamType = new Map(ss.filter( s => s.type.endsWith("TYPE")).map( s => [s.type,s]))
+
+        this.streamsMap = new Map( ss.map( s => new Stream({
+          ...s, 
           available: true, 
           filtered: false, 
           selected: false,
-          icon: this.tagsIC.get(t.type)!.icon,
-          color: this.tagsIC.get(t.type)!.color
+          icon: this.streamStyle.get(s.type)?.icon,
+          color: this.streamStyle.get(s.type)?.color
         })).map( t => [t._id,t]) );
 
-        this.dropsV = new Map( ds.map( d => new Drop({
+
+        this.dropsMap = new Map( ds.map( d => new Drop({
           ...d, 
           available: true,
-          tags: d.tags.map( t => new Tag({
-            ...t, 
-            icon: this.tagsIC.get(t.type)!.icon, 
-            color: this.tagsIC.get(t.type)!.color
+          streams: d.streams.map( s => new Stream({
+            ...s, 
+            icon: this.streamStyle.get(s.type)?.icon, 
+            color: this.streamStyle.get(s.type)?.color
           }))
         })).map( d => [d._id,d]) );
         
-        this.userV = us;
-        this.settings$.next(this.userV);
+        this.user = us;
+        this.user$.next(this.user);
         
-        this.fromTime( { preview: this.userV.settings.preview, startAt:this.dts.startOfToday() });
+        this.fromTime( { preview: this.user.settings.preview, startAt:this.dts.startOfToday() });
       });
   }
 
@@ -80,21 +81,22 @@ export class OceanOSService {
     return new Promise( (resolve,reject) => {
       this.http.post(`/api/user`, settings).subscribe( u => {
         if (u) {
-          this.userV = new User({...settings});
-          this.settings$.next(this.userV);
+          this.user = new User({...settings});
+          this.user$.next(this.user);
           resolve(u);
         } else reject();
       });
     });
   }
 
-  putTag(tag : Tag ): Promise<Object> {
-    tag.uid = this.userV._id;
+  putStream(stream : Stream ): Promise<Object> {
+    stream.uid = this.user._id;
+    stream._id = `urn:oos:0x0:${this.user._id}:stream:${stream.name}:${stream.type}`
     return new Promise( (resolve,reject) => {
-      this.http.post(`/api/tags`, tag).subscribe( r => {
+      this.http.post(`/api/streams`, stream).subscribe( r => {
         if (r) {
-          this.tagsV.set( tag._id, tag );
-          this.getTags();
+          this.streamsMap.set( stream._id, stream);
+          this.newStreams();
           resolve(r);
         } else reject();
       });
@@ -102,32 +104,32 @@ export class OceanOSService {
   }
 
   putDrop(drop:Drop):Promise<Object> {
-    drop.uid = this.userV._id;
+    drop.uid = this.user._id;
     drop.color = this.previewColor(drop,this.startAt);
     if (drop._id === 'new') {
-      drop._id = uuidv4();
+      drop._id = `urn:oos:0x0:${this.user._id}:drop:${uuidv4()}`;
     }
     return new Promise( (resolve,reject) => {
       this.http.post(`/api/drops`, drop).subscribe( (r:any) => {
         if (r) {
           //console.log(r);
-          this.dropsV.set(drop._id, drop );
-          this.getDrops();
+          this.dropsMap.set(drop._id, drop );
+          this.newDrops();
           resolve(r);
-        } else reject();
+        } else reject(false);
       });
     });
   }
 
-  deleteTag(tag : Tag ): Promise<object> {
+  deleteStream(stream : Stream ): Promise<object> {
     return new Promise( (resolve,reject) => {
-      this.http.delete(`/api/tags/${tag._id}`).subscribe( r => {
+      this.http.delete(`/api/streams/${stream._id}`).subscribe( r => {
         if (r) {
-          this.tagsV.delete( tag._id );
-          for (let d of this.dropsV.values()) {
-            d.tags = d.tags.filter( t => t._id !== tag._id);
+          this.streamsMap.delete( stream._id );
+          for (let d of this.dropsMap.values()) {
+            d.streams = d.streams.filter( t => t._id !== stream._id);
           }
-          this.getTags();
+          this.newStreams();
           resolve(r);
         } else reject();
       });
@@ -138,16 +140,16 @@ export class OceanOSService {
     return new Promise( (resolve,reject) => {
       this.http.delete(`/api/drops/${drop._id}`).subscribe( r => {
         if (r) {
-          this.dropsV.delete(drop._id);
-          this.getDrops();
+          this.dropsMap.delete(drop._id);
+          this.newDrops();
           resolve(r);
         } else reject();
       });
     });
   }
 
-  tags():Observable<Tag[]> {
-    return this.tags$;
+  streams():Observable<Stream[]> {
+    return this.streams$;
   }
   
   drops():Observable<Drop[]> {
@@ -155,61 +157,61 @@ export class OceanOSService {
   }
   
   settings():Observable<User> {
-    return this.settings$;
+    return this.user$;
   }
 
-  filteredTags() {
-    return this.tags$.pipe( map( tags => tags.filter( t => t.filtered) ) );
+  filteredStreams() {
+    return this.streams$.pipe( map( tags => tags.filter( t => t.filtered) ) );
   }
 
-  availableTags() {
-    return this.tags$.pipe( map( tags => tags.filter( t => t.available) ) );
+  availableStreams() {
+    return this.streams$.pipe( map( tags => tags.filter( t => t.available) ) );
   }
 
-  selectedTags() {
-    return this.tags$.pipe( map( tags => tags.filter( t => t.selected) ) );
+  selectedStreams() {
+    return this.streams$.pipe( map( tags => tags.filter( t => t.selected) ) );
   }
 
-  unselectedTags() {
-    return this.tags$.pipe( map( tags => tags.filter(t => !t.selected && !t._id.endsWith("_TYPE") ) ) );
+  unselectedStreams() {
+    return this.streams$.pipe( map( tags => tags.filter(t => !t.selected && !t._id.endsWith("_TYPE") ) ) );
   }
 
-  selectTag(tag: Tag) {
-    const t = this.tagsV.get(tag._id) 
+  selectStream(stream: Stream) {
+    const t = this.streamsMap.get(stream._id) 
     if (t) {
       t.selected = true;
-      this.getTags();
+      this.newStreams();
     }
   }
-  unselectTag(tag: Tag) {
-    const t = this.tagsV.get(tag._id) 
+  unselectStream(stream: Stream) {
+    const t = this.streamsMap.get(stream._id) 
     if (t) {
       t.selected = false;
-      this.getTags();
+      this.newStreams();
     }
   }
 
-  initTagSelection(tags: Tag[]) {
-    for (let t of this.tagsV.values()) {
-      t.selected = tags.some(st => st._id === t._id)
+  initStreamSelection(streams: Stream[]) {
+    for (let s of this.streamsMap.values()) {
+      s.selected = streams.some(st => st._id === s._id)
     }
-    this.getTags();
+    this.newStreams();
   }
 
 
-  filterTag(tag: Tag) {
-    const t = this.tagsV.get(tag._id) 
-    if (t) {
-      t.filtered = true;
-      this.filterTagsDrops();
+  filterStream(stream: Stream) {
+    const s = this.streamsMap.get(stream._id) 
+    if (s) {
+      s.filtered = true;
+      this.filterStreamDrops();
     }
   }
 
-  unfilterTag(tag: Tag) {
-    const t = this.tagsV.get(tag._id) 
-    if (t) {
-      t.filtered = false;
-      this.filterTagsDrops();
+  unfilterStream(stream: Stream) {
+    const s = this.streamsMap.get(stream._id) 
+    if (s) {
+      s.filtered = false;
+      this.filterStreamDrops();
     }
   }
 
@@ -236,81 +238,76 @@ export class OceanOSService {
       stream.preview === 'year' ? this.dts.addYear(stream.startAt) : stream.startAt;
     
     
-    for (let d of this.dropsV.values()) {
+    for (let d of this.dropsMap.values()) {
       d.color = this.previewColor(d, stream.startAt);        
       d.available = (d.date < this.previewAt ) && (!d.available) || !(d.date > this.previewAt) && (d.available);
     }
-    this.filterTagsDrops();
+    this.filterStreamDrops();
   }
 
-  getTags() {
-    //console.log(`get tags ${this.tagsV.size}`)
-    if (this.tagsV.size != 0)
-      this.tags$.next( [...this.tagsV.values()] );
+  private newStreams() {
+    this.streams$.next( [...this.streamsMap.values()] );
   }
 
-  getDrops() {
-    //console.log(`get drops ${this.dropsV.size}`)
-    this.drops$.next( [...this.dropsV.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
+  private newDrops() {
+    this.drops$.next( [...this.dropsMap.values()].filter( d => d.available) .sort( (a,b) => b.date-a.date) );
   }
 
-  getStream(uid: string, tags:string[]):Observable<Drop[]> {
-      return this.http.post<Drop[]>(`/api/drops/stream/`, { uid: uid, tags: tags });
+  getPublicStream(uid: string, streams:string[]):Observable<Drop[]> {
+    return this.http.post<Drop[]>(`/api/users/stream/`, { uid: uid, streams: streams });
   }
 
   getDrop(did:string):Drop {
-    //console.log(`get drop ${did}`)
-    let drop = this.dropsV.get(did) || new Drop();
-    return new Drop({...drop});
+    return this.dropsMap.get(did) || new Drop();
   }
 
-  getTag(tid:string):Tag {
-    return this.tagsV.get(tid) || new Tag();
+  getStreamByType(stype:string):Stream {
+    return this.streamType.get(stype) || new Stream();
   }
 
-  getSettings() {
-    this.settings$.next(this.userV);
+  getStreamById(userid:string | null, sname:string | null):Observable<Stream> {
+    return this.http.get<Stream>(`/api/streams/urn:oos:0x0:${userid}:stream:${sname}:PUBLIC`);
   }
 
-  getTagIC(id:string) {
-    return this.tagsIC.get(id) || { icon: "bookmark", color:"dark" };
+  getStreamStyle(type:string) {
+    return this.streamStyle.get(type) || { icon: "bookmark", color: "dark"};
   }
 
-  private filterTagsDrops() { 
+  private filterStreamDrops() { 
     // collect filtered tags
-    const ftags = [...this.tagsV.values()].filter( t => t.filtered);
+    const fstreams = [...this.streamsMap.values()].filter( s => s.filtered);
     
     // if there are some, apply filters
-    if (ftags.length !== 0) {
+    if (fstreams.length !== 0) {
 
       // with these filtered tags, calculate the available drops
       const availableDrops:Map<string,Drop> = 
-        new Map([...this.dropsV.values()].filter( 
+        new Map([...this.dropsMap.values()].filter( 
           // for every filter tag, the drop must contain some
-          (d:Drop) => d.date < this.previewAt && ftags.every( (fts:Tag) => d.tags.some( (t:Tag) => t._id === fts._id ))
+          (d:Drop) => d.date < this.previewAt && fstreams.every( (fts:Stream) => d.streams.some( (s:Stream) => s._id === fts._id ))
         ).map( d => [d._id,d]) );
 
-      // go through all the available drops, and collect unique tags.
-      const availableTags = new Map( [...availableDrops.values()].flatMap( d => d.tags.map( t => [ t._id, t ]) ) );
+      // go through all the available drops, and collect unique streams.
+      const availableStreams = new Map( [...availableDrops.values()].flatMap( d => d.streams.map( s => [ s._id, s ]) ) );
       
       // update available drops
-      for (let d of this.dropsV.values()) d.available = !!availableDrops.get(d._id);
+      for (let d of this.dropsMap.values()) d.available = !!availableDrops.get(d._id);
 
       // update available tags
-      for(let t of this.tagsV.values()) t.available = !!availableTags.get(t._id) && !t.filtered;
+      for(let s of this.streamsMap.values()) s.available = !!availableStreams.get(s._id) && !s.filtered;
 
     } else {
       // no filter, so render all tags available
-      for (let t of this.tagsV.values()) {
-        t.filtered = false;
-        t.available = true;
+      for (let s of this.streamsMap.values()) {
+        s.filtered = false;
+        s.available = true;
       }
       // no filter, so render all drops until preview available
-      for (let d of this.dropsV.values()) d.available = d.date < this.previewAt; 
+      for (let d of this.dropsMap.values()) d.available = d.date < this.previewAt; 
       
     }
-    this.getTags();
-    this.getDrops();    
+    this.newStreams();
+    this.newDrops();    
   }
 
 }

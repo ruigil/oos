@@ -4,28 +4,27 @@ export const DropSchema = {
 
     properties: {
         _id: 'string',
+        name: 'string',
         type: 'string',
+        uid: 'string',
         date: 'int',
-        title: 'string',
-        text: 'string',
+        content: '{}',
         recurrence: 'string',
         clone: 'bool',
-        uid: 'string',
-        content: '{}',
-        tags: 'Tag[]',
+        streams: 'Stream[]',
     }
 }
 
-export const TagSchema = {
-    name: 'Tag',
+export const StreamSchema = {
+    name: 'Stream',
     primaryKey: '_id',
 
     properties: {
         _id: 'string',
         name: 'string',
         type: 'string',
-        description: 'string',
         uid: 'string',
+        content: '{}',
     }
 }
 

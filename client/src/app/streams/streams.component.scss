@@ -1,0 +1,36 @@
+@import '../../oos.scss';
+.stream-component {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-bottom: 100px;
+  }
+
+.current-drops {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.divider {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.stream-list {
+  width: 100%;
+}
+
+.title {
+  margin-top: 20px;
+  font-weight: bold;
+  color: $light-primary-text;
+}
+
+.stream-button {
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 20px;
+}
+

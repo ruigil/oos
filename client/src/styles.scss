@@ -11,7 +11,7 @@ html {
 
   
 body {
-    height: 100vh;
+    min-height: 100vh;
     margin: 0; 
     background: #{$dark-background};
     color: $light-primary-text;
@@ -23,7 +23,8 @@ body {
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    padding: 40px;
+    margin: 40px;
+    margin-bottom: 0px;
 }
 
 // drop basics

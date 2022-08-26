@@ -26,7 +26,7 @@ export class DropTaskComponent implements OnInit {
   }
 
   edit() {
-    this.router.navigate(['/task/edit', this.drop._id]);
+    this.router.navigate(['/drop/task/edit', this.drop._id]);
   }
 
   delete() {

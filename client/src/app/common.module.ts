@@ -27,6 +27,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 import { FormatDatePipe } from './pipes/format-date.pipe';
@@ -63,6 +64,7 @@ import { MarkdownPipe } from './pipes/markdown.pipe';
     MatAutocompleteModule,
     MatDialogModule,
     MatCardModule,
+    MatTabsModule,
     MatProgressBarModule
   ],
   declarations: [
@@ -97,6 +99,7 @@ import { MarkdownPipe } from './pipes/markdown.pipe';
     MatAutocompleteModule,
     MatDialogModule, 
     MatCardModule,
+    MatTabsModule,
     MatProgressBarModule
   ] 
 })
