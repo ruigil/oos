@@ -11,6 +11,9 @@ import { IDrop } from 'src/app/model/oos-types';
 })
 export class DropTextComponent implements OnInit {
   @Input() drop:DropText = new DropText();
+  @Input() public: boolean = false;
+  @Input() colors: {[key: string]: string} = { 'background-color': "", 'color': "" };
+
 
   constructor(
     private oos: OceanOSService, 

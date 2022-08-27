@@ -50,7 +50,6 @@ export class StreamsService implements OnModuleInit, OnModuleDestroy {
     }
 
     get(id:string):Promise<Stream> {
-        console.log(id)
         return new Promise<Stream>((resolve,reject) => {
             try {
                 const t = this.realm.objectForPrimaryKey<Stream>('Stream', id);

@@ -72,7 +72,7 @@ export class DropImageDetailComponent implements AfterViewInit {
 
             formData.append("file", file);
 
-            this.uploadSub = this.http.post("/api/upload", formData, {
+            this.uploadSub = this.http.post("/api/users/upload", formData, {
                 reportProgress: true,
                 observe: 'events'
             })

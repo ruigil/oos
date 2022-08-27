@@ -10,6 +10,8 @@ import { DropTask } from './drop-task';
 })
 export class DropTaskComponent implements OnInit {
   @Input() drop:DropTask = new DropTask();
+  @Input() public: boolean = false;
+  @Input() colors: {[key: string]: string} = { 'background-color': "", 'color': "" };
 
   constructor(
     private oos: OceanOSService, 

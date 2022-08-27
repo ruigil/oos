@@ -12,6 +12,9 @@ import { DropGoal } from './drop-goal';
 })
 export class DropGoalComponent implements AfterViewInit {
   @Input() drop:DropGoal = new DropGoal();
+  @Input() public: boolean = false;
+  @Input() colors: {[key: string]: string} = { 'background-color': "", 'color': "" };
+
   totals: Array<number> = [0,0,0,0,0,0,0];
   streamTotals: Map<string,number[]> = new Map();
 

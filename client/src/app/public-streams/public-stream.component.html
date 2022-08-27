@@ -1,7 +1,39 @@
-<div *ngIf="stream$ | async as stream" class="start" style="background-color: #0d7594;">
-  <button mat-icon-button style="color: #0d7594;" class="home" aria-label="home" routerLink="/home">
-    <mat-icon >home</mat-icon>
-  </button>
-  <oos-skin *ngIf="stream$ | async as stream and stream.content.skin == 'oos'"></oos-skin>
-  <drop-list [stream]="stream"></drop-list>
-</div>
+<oos-skin *ngIf="stream$ | async as stream" [skin]="stream.content.skin" (onColor)="setColor($event)">
+  <!-- stream header -->
+  <mat-accordion>
+    <mat-expansion-panel class="header" [ngStyle]="colors">
+      <mat-expansion-panel-header>
+        <mat-panel-title>{{ stream.name }}</mat-panel-title>
+        <mat-panel-description></mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <div [innerHTML]="stream.content.description | markdown"></div>
+
+      <mat-action-row>
+        <mat-form-field class="stream-list">
+          <mat-chip-list #chipList aria-label="Stream selection">
+            <mat-chip *ngFor="let stream of streamsSelected.values()" (removed)="unselectStream(stream)">
+              <mat-icon [ngClass]="stream.color" matPrefix>{{ stream.icon }}</mat-icon>
+              {{ stream.name }}
+              <button matChipRemove>
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </mat-chip>
+            <input placeholder="Filter..." #tagInput [matAutocomplete]="auto" [matChipInputFor]="chipList" />
+          </mat-chip-list>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectStream($event)">
+            <mat-option *ngFor="let stream of streamsAvailable.values()" [value]="stream">
+              <mat-icon class="{{ stream.color }}">{{ stream.icon }}</mat-icon>{{ stream.name }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+      </mat-action-row>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <mat-divider class="p-divider"></mat-divider>
+  
+  <!-- drop-list -->
+  <oos-drop *ngFor="let d of drops$ | async" [drop]="d" [public]="true" [colors]="colors"></oos-drop>
+
+</oos-skin>

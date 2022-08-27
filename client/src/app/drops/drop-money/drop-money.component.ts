@@ -11,6 +11,8 @@ import { DropMoney } from './drop-money';
 })
 export class DropMoneyComponent implements OnInit {
   @Input() drop:DropMoney = new DropMoney();
+  @Input() public: boolean = false;
+  @Input() colors: {[key: string]: string} = { 'background-color': "", 'color': "" };
 
   constructor(
     private router: Router, 

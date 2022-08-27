@@ -1,4 +1,4 @@
-<mat-expansion-panel class="{{drop.color}}">
+<mat-expansion-panel class="{{drop.color}}" *ngIf="!public">
 
     <mat-expansion-panel-header>
         <mat-panel-title>
@@ -12,7 +12,7 @@
     </mat-expansion-panel-header>
 
     <ng-template matExpansionPanelContent>
-        <img class="image" src="/api/file/{{drop.content.filename}}"/>
+        <img class="image" src="/api/users/file/{{drop.content.filename}}"/>
         <p [innerHTML]="drop.content.description | markdown" ></p>
     </ng-template>
 
@@ -28,4 +28,34 @@
             <mat-icon aria-label="Menu">delete</mat-icon>
         </button>
     </mat-action-row>    
-</mat-expansion-panel >
+</mat-expansion-panel>
+
+<mat-card class="post" [ngStyle]="colors" *ngIf="public">
+    <mat-card-header>
+      <div mat-card-avatar class="avatar"></div>
+      <mat-card-title><span>{{ drop.name }}</span></mat-card-title>
+      <mat-card-subtitle>{{ drop.date | timeago }}</mat-card-subtitle>
+    </mat-card-header>
+  
+    <img mat-card-image src="/api/users/file/{{ drop.content.filename }}"
+    alt="{{ drop.name }}" />
+  
+    <mat-card-content >
+          <p [innerHTML]="drop.content.description | markdown"></p>
+    </mat-card-content>
+  
+    <mat-card-actions>
+      <mat-chip-list>
+        <mat-chip *ngFor="let s of drop.streams">
+          <mat-icon class="{{ s.color }}">{{ s.icon }}</mat-icon>
+          {{ s.name }}
+        </mat-chip>
+      </mat-chip-list>
+      <button mat-icon-button>
+        <mat-icon aria-label="Favorite">favorite</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon aria-label="Comment">chat_bubble</mat-icon>
+      </button>
+    </mat-card-actions>
+</mat-card>

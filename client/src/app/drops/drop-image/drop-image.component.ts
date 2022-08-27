@@ -11,11 +11,14 @@ import { DropImage } from './drop-image';
 export class DropImageComponent implements OnInit {
 
   @Input() drop:DropImage = new DropImage();
+  @Input() public: boolean = false;
+  @Input() colors: {[key: string]: string} = { 'background-color': "", 'color': "" };
+
 
   constructor(
     private oos: OceanOSService, 
     private router: Router) { 
-  }
+    }
 
   ngOnInit(): void {
   }

@@ -3,7 +3,6 @@ import { Observable, interval, map, distinctUntilChanged } from 'rxjs';
 import { DateTimeService } from '../services/date-time.service';
 import { OceanOSService } from '../services/ocean-os.service';
 
-import { Drop } from '../model/drop';
 import { Stream } from '../model/stream';
 import { HomeStream, IDrop } from '../model/oos-types';
 

@@ -1,4 +1,5 @@
-<mat-expansion-panel class="{{drop.color}}">
+
+<mat-expansion-panel class="{{drop.color}}" *ngIf="!public">
 
     <mat-expansion-panel-header>
         <mat-panel-title>
@@ -26,3 +27,31 @@
         </button>
     </mat-action-row>
 </mat-expansion-panel >
+<!-- public -->
+<mat-card class="post" [ngStyle]="colors" *ngIf="public">
+
+    <mat-card-header>
+      <div mat-card-avatar class="avatar"></div>
+      <mat-card-title><span>{{ drop.name }}</span></mat-card-title>
+      <mat-card-subtitle>{{ drop.date | timeago }}</mat-card-subtitle>
+    </mat-card-header>
+  
+    <mat-card-content >
+          <p [innerHTML]="drop.content.text | markdown"></p>
+    </mat-card-content>
+  
+    <mat-card-actions>
+      <mat-chip-list>
+        <mat-chip *ngFor="let s of drop.streams">
+          <mat-icon class="{{ s.color }}">{{ s.icon }}</mat-icon>
+          {{ s.name }}
+        </mat-chip>
+      </mat-chip-list>
+      <button mat-icon-button>
+        <mat-icon aria-label="Favorite">favorite</mat-icon>
+      </button>
+      <button mat-icon-button>
+        <mat-icon aria-label="Comment">chat_bubble</mat-icon>
+      </button>
+    </mat-card-actions>
+</mat-card>

@@ -1,8 +1,9 @@
 
-<oos-drop-text *ngIf="drop.type ==='TEXT_TYPE'" [drop]="drop"></oos-drop-text>
-<oos-drop-money *ngIf="drop.type ==='MONEY_TYPE'" [drop]="drop"></oos-drop-money>
-<oos-drop-task *ngIf="drop.type ==='TASK_TYPE'" [drop]="drop"></oos-drop-task>
-<oos-drop-rate *ngIf="drop.type ==='RATE_TYPE'" [drop]="drop"></oos-drop-rate>
-<oos-drop-goal *ngIf="drop.type ==='GOAL_TYPE'" [drop]="drop"></oos-drop-goal>
-<oos-drop-system *ngIf="drop.type ==='SYSTEM_TYPE'" [drop]="drop"></oos-drop-system>
-<oos-drop-image *ngIf="drop.type ==='IMAGE_TYPE'" [drop]="drop"></oos-drop-image>
+<oos-drop-text *ngIf="drop.type ==='TEXT_TYPE'" [drop]="drop" [public]="public" [colors]="colors"></oos-drop-text>
+<oos-drop-image *ngIf="drop.type ==='IMAGE_TYPE'" [drop]="drop" [public]="public" [colors]="colors"></oos-drop-image>
+<oos-drop-money *ngIf="drop.type ==='MONEY_TYPE'" [drop]="drop" [public]="public" [colors]="colors"></oos-drop-money>
+<oos-drop-task *ngIf="drop.type ==='TASK_TYPE'" [drop]="drop" [public]="public" [colors]="colors"></oos-drop-task>
+<oos-drop-rate *ngIf="drop.type ==='RATE_TYPE'" [drop]="drop" [public]="public" [colors]="colors"></oos-drop-rate>
+<oos-drop-goal *ngIf="drop.type ==='GOAL_TYPE'" [drop]="drop" [public]="public" [colors]="colors"></oos-drop-goal>
+<oos-drop-system *ngIf="drop.type ==='SYSTEM_TYPE'" [drop]="drop" [public]="public" [colors]="colors"></oos-drop-system>
+

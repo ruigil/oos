@@ -1,11 +1,17 @@
-.start {
-    width: 100%;
-    min-height: 100%;
+
+
+.header {
+    max-width: 532px;
+    margin-left: auto;
+    margin-right:auto; 
 }
 
-.home {
-    position: absolute;
-    top: 0px;
-    left:0px;
-    //color: #0d7594;
+
+.p-divider {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.stream-list {
+    width: 100%;
 }

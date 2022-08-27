@@ -12,6 +12,8 @@ import { DropRate } from './drop-rate';
 })
 export class DropRateComponent implements OnInit {
   @Input() drop:DropRate = new DropRate();
+  @Input() public: boolean = false;
+  @Input() colors: {[key: string]: string} = { 'background-color': "", 'color': "" };
 
   constructor(
     private oos: OceanOSService, 

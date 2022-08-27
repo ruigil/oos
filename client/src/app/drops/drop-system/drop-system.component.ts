@@ -9,6 +9,10 @@ import { DropSystem } from './drop-system';
 })
 export class DropSystemComponent implements OnInit {
   @Input() drop:DropSystem = new DropSystem();
+  @Input() public: boolean = false;
+  @Input() colors: {[key: string]: string} = { 'background-color': "", 'color': "" };
+
+
   constructor(private oos:OceanOSService) { }
 
   ngOnInit(): void {
