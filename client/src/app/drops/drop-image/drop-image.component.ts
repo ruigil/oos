@@ -24,7 +24,7 @@ export class DropImageComponent implements OnInit {
   }
 
   edit() {
-    this.router.navigate(['/drop/photo/edit', this.drop._id]);
+    this.router.navigate(['/drop/image/edit', this.drop._id]);
   }
 
   delete() {

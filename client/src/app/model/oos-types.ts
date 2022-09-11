@@ -18,7 +18,7 @@ export interface IDrop {
     name: string;
     date: number;
     uid: string;
-    content: text | image | system | task | money | rate | goal;
+    content: any;
     recurrence: string;
     clone: boolean;
     streams: Array<Stream>;
